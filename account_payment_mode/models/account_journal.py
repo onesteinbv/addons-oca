@@ -15,6 +15,12 @@ class AccountJournal(models.Model):
         )
         return all_out
 
+    def _default_inbound_payment_methods(self):
+        all_in = self.env["account.payment.method"].search(
+            [("payment_type", "=", "inbound")]
+        )
+        return all_in
+
     @api.constrains("company_id")
     def company_id_account_payment_mode_constrains(self):
         for journal in self:
