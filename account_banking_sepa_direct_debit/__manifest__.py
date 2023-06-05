@@ -13,7 +13,7 @@
     "category": "Banking addons",
     "depends": ["account_banking_pain_base", "account_banking_mandate"],
     "assets": {
-        "web.assets_backend": [
+        "web.report_assets_common": [
             "/account_banking_sepa_direct_debit/static/src/css/report.css"
         ],
     },

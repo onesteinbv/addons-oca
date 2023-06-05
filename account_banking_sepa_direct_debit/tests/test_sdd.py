@@ -86,7 +86,7 @@ class TestSDDBase(TransactionCase):
             {
                 "name": "Company Bank journal",
                 "type": "bank",
-                "code": "BNKF",
+                "code": "BNKFC",
                 "payment_sequence": False,
                 "bank_account_id": cls.company_bank.id,
                 "bank_id": cls.company_bank.bank_id.id,
