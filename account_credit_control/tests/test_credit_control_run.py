@@ -248,3 +248,30 @@ class TestCreditControlRun(AccountTestInvoicingCommon):
         # Invoking open_credit_lines: AccessError not raised
         action = control_run.with_user(user_demo.id).open_credit_lines()
         self.assertIn("domain", action)
+
+    def test_open_credit_communications(self):
+        """
+        Test access rights when invoking method open_credit_communications
+        """
+        # Create credit lines
+        control_run = self.env["credit.control.run"].create(
+            {"date": fields.Date.today(), "policy_ids": [(6, 0, [self.policy.id])]}
+        )
+        control_run.with_context(lang="en_US").generate_credit_lines()
+        self.assertEqual(len(self.invoice.credit_control_line_ids), 1)
+        self.assertEqual(control_run.state, "done")
+
+        # Set company_ids for user demo
+        user_demo = self.env.ref("base.user_demo")
+        user_demo.company_ids += control_run.company_id
+
+        # User demo tries to read credit_control_communication_action directly
+        action_name = "account_credit_control.credit_control_communication_action"
+        action = self.env.ref(action_name)
+        with self.assertRaises(AccessError):
+            # AccessError raised
+            action.with_user(user_demo.id).read()[0]
+
+        # Invoking open_credit_communications: AccessError not raised
+        action = control_run.with_user(user_demo.id).open_credit_communications()
+        self.assertIn("domain", action)
