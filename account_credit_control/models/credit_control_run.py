@@ -195,8 +195,7 @@ class CreditControlRun(models.Model):
         """Open the generated lines"""
         self.ensure_one()
         action_name = "account_credit_control.credit_control_line_action"
-        action = self.env.ref(action_name)
-        action = action.read()[0]
+        action = self.env["ir.actions.act_window"]._for_xml_id(action_name)
         action["domain"] = [("id", "in", self.line_ids.ids)]
         return action
 
