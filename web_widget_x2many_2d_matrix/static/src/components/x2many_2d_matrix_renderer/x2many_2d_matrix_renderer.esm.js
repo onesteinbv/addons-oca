@@ -119,7 +119,7 @@ export class X2Many2DMatrixRenderer extends Component {
     _canAggregate() {
         return ["integer", "float", "monetary"].includes(
             this.list.fields[this.matrixFields.value].type
-        );
+        )
     }
 
     update(x, y, value) {
@@ -134,8 +134,7 @@ export class X2Many2DMatrixRenderer extends Component {
         const x = this.columns.findIndex((c) => c.value === column);
         const y = this.rows.findIndex((r) => r.value === row);
         const props = this.list.activeFields[this.matrixFields.value].props;
-        const propsFromAttrs =
-            this.list.activeFields[this.matrixFields.value].propsFromAttrs;
+        const propsFromAttrs = this.list.activeFields[this.matrixFields.value].propsFromAttrs;
         const record = this.matrix[y][x].records[0];
         let value = this.matrix[y][x].value;
         if (!this._canAggregate()) {
@@ -148,7 +147,7 @@ export class X2Many2DMatrixRenderer extends Component {
             value: value,
             update: (value) => this.update(x, y, value),
             readonly: this.props.readonly,
-            record: record,
+            record: record
         };
     }
 }
