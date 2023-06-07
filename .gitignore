@@ -158,5 +158,4 @@ oca.recipe.odoo
 etc
 upgrade.py
 *.run
-src/
 local.cfg
