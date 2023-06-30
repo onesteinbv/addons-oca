@@ -65,15 +65,33 @@ class NLTaxStatementXlsx(models.AbstractModel):
         report_data["formats"] = {
             "bold": workbook.add_format({"bold": True}),
             "header_left": workbook.add_format(
-                {"bold": True, "align": "left", "border": False, "bg_color": color_row_header}
+                {
+                    "bold": True,
+                    "align": "left",
+                    "border": False,
+                    "bg_color": color_row_header,
+                }
             ),
             "header_right": workbook.add_format(
-                {"bold": True, "align": "right", "border": False, "bg_color": color_row_header}
+                {
+                    "bold": True,
+                    "align": "right",
+                    "border": False,
+                    "bg_color": color_row_header,
+                }
             ),
-            "row_odd": workbook.add_format({"border": False, "bg_color": color_row_odd}),
-            "row_pair": workbook.add_format({"border": False, "bg_color": color_row_pair}),
-            "row_amount_odd": workbook.add_format({"border": False, "bg_color": color_row_odd}),
-            "row_amount_pair": workbook.add_format({"border": False, "bg_color": color_row_pair}),
+            "row_odd": workbook.add_format(
+                {"border": False, "bg_color": color_row_odd}
+            ),
+            "row_pair": workbook.add_format(
+                {"border": False, "bg_color": color_row_pair}
+            ),
+            "row_amount_odd": workbook.add_format(
+                {"border": False, "bg_color": color_row_odd}
+            ),
+            "row_amount_pair": workbook.add_format(
+                {"border": False, "bg_color": color_row_pair}
+            ),
         }
         report_data["formats"]["row_amount_odd"].set_num_format(num_format)
         report_data["formats"]["row_amount_pair"].set_num_format(num_format)
@@ -120,14 +138,20 @@ class NLTaxStatementXlsx(models.AbstractModel):
 
             # Write code and name
             if column["field"] in ["code", "name"]:
-                format = report_data["formats"]["row_pair"] if is_pair_line else report_data["formats"]["row_odd"]
-                format = report_data["formats"]["header_left"] if is_group else format
+                report_format = (
+                    report_data["formats"]["row_pair"]
+                    if is_pair_line
+                    else report_data["formats"]["row_odd"]
+                )
+                report_format = (
+                    report_data["formats"]["header_left"] if is_group else report_format
+                )
 
                 report_data["sheet"].write_string(
                     report_data["row_pos"],
                     col_pos,
                     value or "",
-                    format,
+                    report_format,
                 )
 
             # Write amount values
@@ -140,20 +164,30 @@ class NLTaxStatementXlsx(models.AbstractModel):
                         report_data["formats"]["header_right"],
                     )
                 else:
-                    to_display = (column["field"] == "omzet" and line.format_omzet is not False) or (column["field"] == "btw" and line.format_btw is not False)
+                    to_display = (
+                        column["field"] == "omzet" and line.format_omzet is not False
+                    ) or (column["field"] == "btw" and line.format_btw is not False)
                     if to_display:
-                        format = report_data["formats"]["row_amount_pair"] if is_pair_line else report_data["formats"]["row_amount_odd"]
+                        report_format = (
+                            report_data["formats"]["row_amount_pair"]
+                            if is_pair_line
+                            else report_data["formats"]["row_amount_odd"]
+                        )
                         report_data["sheet"].write_number(
-                            report_data["row_pos"], col_pos, float(value), format
+                            report_data["row_pos"], col_pos, float(value), report_format
                         )
                     else:
-                        format = report_data["formats"]["row_pair"] if is_pair_line else report_data["formats"]["row_odd"]
+                        report_format = (
+                            report_data["formats"]["row_pair"]
+                            if is_pair_line
+                            else report_data["formats"]["row_odd"]
+                        )
                         # Nothing to be displayed: empty cell
                         report_data["sheet"].write_string(
                             report_data["row_pos"],
                             col_pos,
                             "",
-                            format,
+                            report_format,
                         )
         report_data["row_pos"] += 1
 
