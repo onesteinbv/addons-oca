@@ -136,4 +136,4 @@ class AccountAnalyticLine(models.Model):
         return self[0]
 
     def _check_can_update_timesheet(self):
-        return super()._check_can_update_timesheet() or not self.filtered('sheet_id')
+        return super()._check_can_update_timesheet() or not self.filtered("sheet_id")
