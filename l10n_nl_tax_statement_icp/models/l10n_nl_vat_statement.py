@@ -58,7 +58,9 @@ class VatStatement(models.Model):
         if line.tax_tag_ids.filtered(lambda t: "3b" in t.name):
             if line.product_id and line.product_id.type != "service":
                 return True
-            if not line.product_id and line.tax_ids.filtered(lambda t: "dienst" not in t.name):
+            if not line.product_id and line.tax_ids.filtered(
+                lambda t: "dienst" not in t.name
+            ):
                 return True
         return False
 
@@ -66,7 +68,9 @@ class VatStatement(models.Model):
         if line.tax_tag_ids.filtered(lambda t: "3b" in t.name):
             if line.product_id and line.product_id.type == "service":
                 return True
-            if not line.product_id and line.tax_ids.filtered(lambda t: "dienst" in t.name):
+            if not line.product_id and line.tax_ids.filtered(
+                lambda t: "dienst" in t.name
+            ):
                 return True
         return False
 

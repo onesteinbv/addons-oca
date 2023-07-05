@@ -14,7 +14,9 @@
                     <group name="icp_lines" string="ICP Statement lines">
                         <span class="text-muted"> </span>
                         <div class="o_row o_row_readonly">
-                            <div states="posted">Press the Update button in order to recompute the lines!</div>
+                            <div
+                                states="posted"
+                            >Press the Update button in order to recompute the lines!</div>
                             <button
                                 name="icp_update"
                                 string="Update"
