@@ -30,14 +30,13 @@
                 <xpath expr="//div[@id='password_policy']" position="move" />
             </xpath>
 
-            <!-- Ensure our settings will come before any former customization -->
+            <!-- Ensure our settings will come after any former customization -->
             <xpath
                 expr="//div[@id='password_policy']//div[hasclass('o_setting_right_pane')]/*"
                 position="after"
             >
                 <label string="Password Policy" for="password_expiration" />
                 <div class="content-group">
-                    <!-- Add our password policy fields -->
                     <div class="mt16">
                         <span>
                             Password expires in

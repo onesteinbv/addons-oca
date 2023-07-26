@@ -9,7 +9,6 @@ from requests.exceptions import HTTPError
 from odoo import http
 from odoo.exceptions import ValidationError
 from odoo.tests.common import HOST, HttpCase, Opener, get_db_name, tagged
-from odoo.tools import mute_logger
 
 from odoo.addons.auth_signup.models.res_users import SignupError
 
@@ -128,7 +127,6 @@ class TestPasswordSecuritySignup(HttpCase):
                 # Catch HTTPError: 400 Client Error: BAD REQUEST
                 self.signup("jackoneill", "!asdQWE12345_3")
 
-    @mute_logger("odoo.addons.auth_signup_verify_email.controllers.main")
     def test_06_web_auth_signup_invalid_render(self):
         """It should render & return signup form on invalid"""
         self.session = http.root.session_store.new()
@@ -142,6 +140,8 @@ class TestPasswordSecuritySignup(HttpCase):
                 "/web/signup",
                 data={
                     "login": "test@test.com",
+                    "password": "!asdQWE12345_7",
+                    "confirm_password": "!asdQWE12345_7",
                     "csrf_token": http.Request.csrf_token(self),
                 },
             )
@@ -149,12 +149,14 @@ class TestPasswordSecuritySignup(HttpCase):
         # Ensure we stay in the signup page
         self.assertEqual(response.request.path_url, "/web/signup")
         self.assertEqual(response.status_code, 200)
-        # Expected message would be "Signup: no name or partner given for new user",
-        # however it may be varying in case of extra module installed.
-        # For example with auth_signup_verify_email installed, expected message
-        # would be "Something went wrong, please try again later or contact us."
-        # So here we just check that a generic error message is displayed.
         self.assertIn(
-            "alert alert-danger",
+            "Signup: no name or partner given for new user",
             response.text,
+        )
+        self.assertIn("X-Frame-Options", response.headers)
+        self.assertEqual(response.headers["X-Frame-Options"], "SAMEORIGIN")
+
+        self.assertIn("Content-Security-Policy", response.headers)
+        self.assertEqual(
+            response.headers["Content-Security-Policy"], "frame-ancestors 'self'"
         )
