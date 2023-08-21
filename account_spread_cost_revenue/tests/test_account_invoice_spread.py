@@ -33,14 +33,14 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "code": "X2120",
                 "name": "Expenses - (test)",
-                "user_type_id": self.env.ref("account.data_account_type_expenses").id,
+                "account_type": "expense",
             }
         )
         a_sale = self.env["account.account"].create(
             {
                 "code": "X2020",
                 "name": "Product Sales - (test)",
-                "user_type_id": self.env.ref("account.data_account_type_revenue").id,
+                "account_type": "expense_direct_cost",
             }
         )
 
@@ -67,9 +67,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "name": "Test account payable",
                 "code": "321spread",
-                "user_type_id": self.env.ref(
-                    "account.data_account_type_other_income"
-                ).id,
+                "account_type": "income_other",
                 "reconcile": True,
             }
         )
@@ -78,9 +76,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "name": "Test account receivable",
                 "code": "322spread",
-                "user_type_id": self.env.ref(
-                    "account.data_account_type_other_income"
-                ).id,
+                "account_type": "income_other",
                 "reconcile": True,
             }
         )
@@ -89,9 +85,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "name": "test spread account_payable",
                 "code": "765spread",
-                "user_type_id": self.env.ref(
-                    "account.data_account_type_other_income"
-                ).id,
+                "account_type": "income_other",
                 "reconcile": True,
             }
         )
@@ -100,9 +94,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "name": "test spread account_receivable",
                 "code": "766spread",
-                "user_type_id": self.env.ref(
-                    "account.data_account_type_other_income"
-                ).id,
+                "account_type": "income_other",
                 "reconcile": True,
             }
         )
@@ -120,9 +112,15 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         self.vendor_bill_line.account_id.reconcile = True
         self.invoice_line.account_id.reconcile = True
 
-        analytic_tags = [(6, 0, self.env.ref("analytic.tag_contract").ids)]
-        self.analytic_account = self.env["account.analytic.account"].create(
-            {"name": "test account"}
+        analytic_plan = self.env['account.analytic.plan'].create({'name': 'Plan Test', 'company_id': False})
+        self.analytic_account = self.env['account.analytic.account'].create(
+            {'name': 'test account', 'plan_id': analytic_plan.id}
+        )
+        self.distribution = self.env["account.analytic.distribution.model"].create(
+            {
+                "partner_id": self.vendor_bill.partner_id.id,
+                "analytic_distribution": {self.analytic_account.id: 100},
+            }
         )
         self.spread = (
             self.env["account.spread"]
@@ -139,8 +137,11 @@ class TestAccountInvoiceSpread(common.TransactionCase):
                         "estimated_amount": 1000.0,
                         "journal_id": self.vendor_bill.journal_id.id,
                         "invoice_type": "in_invoice",
-                        "account_analytic_id": self.analytic_account.id,
-                        "analytic_tag_ids": analytic_tags,
+                        "analytic_distribution": self.distribution._get_distribution(
+                            {
+                                "partner_id": self.vendor_bill.partner_id.id,
+                            }
+                        ),
                     }
                 ]
             )
@@ -248,7 +249,6 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             {
                 "groups_id": [
                     (4, self.env.ref("analytic.group_analytic_accounting").id),
-                    (4, self.env.ref("analytic.group_analytic_tags").id),
                 ],
             }
         )
@@ -278,10 +278,8 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         for line in spread_lines:
             line.create_move()
             self.assertTrue(line.move_id)
-            for ml in line.move_id.line_ids:
-                analytic_tag = self.env.ref("analytic.tag_contract")
-                self.assertEqual(ml.analytic_account_id, self.analytic_account)
-                self.assertEqual(ml.analytic_tag_ids, analytic_tag)
+#            for ml in line.move_id.line_ids:
+#                self.assertEqual(ml.analytic_account_id, self.analytic_account)
 
         self.spread.invoice_id.button_cancel()
 

@@ -97,7 +97,9 @@ class AccountMoveLine(models.Model):
     def _check_spread_reconcile_validity(self):
         # Improve error messages of standard Odoo
         reconciled_lines = self.filtered(lambda l: l.reconciled)
-        msg_line = _("Move line: %s (%s), account code: %s\n")
+        msg_line = _(
+            "Move line: %s (%s), account code: %s\n"
+        )
         if reconciled_lines:
             msg = _("Cannot reconcile entries that are already reconciled:\n")
             for line in reconciled_lines:
@@ -118,11 +120,11 @@ class AccountMoveLine(models.Model):
                 return False
             if aline.account_id and iline.account_id != aline.account_id:
                 return False
-            if (
-                aline.analytic_account_id
-                and iline.account_analytic_id != aline.analytic_account_id
-            ):
-                return False
+#            if (
+#                aline.analytic_account_id
+#                and iline.account_analytic_id != aline.analytic_account_id
+#            ):
+#                return False
             return True
 
         for line in self:

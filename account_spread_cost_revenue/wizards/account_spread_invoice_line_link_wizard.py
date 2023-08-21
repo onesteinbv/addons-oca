@@ -163,9 +163,8 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                     self.exp_rev_account_id or self.invoice_line_id.account_id
                 )
 
-            analytic_account = self.invoice_line_id.analytic_account_id
-            analytic_tags = self.invoice_line_id.analytic_tag_ids
-            date_invoice = self.invoice_id.invoice_date or fields.Date.today()
+#            analytic_account = self.invoice_line_id.analytic_line_ids[0]
+#            date_invoice = self.invoice_id.invoice_date or fields.Date.today()
 
             return {
                 "name": _("New Spread Board"),
@@ -183,9 +182,8 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                     "default_debit_account_id": debit_account.id,
                     "default_credit_account_id": credit_account.id,
                     "default_journal_id": self.spread_journal_id.id,
-                    "default_account_analytic_id": analytic_account.id,
-                    "default_analytic_tag_ids": analytic_tags.ids,
-                    "default_spread_date": date_invoice,
+#                    "default_account_analytic_id": analytic_account.id,
+#                    "default_spread_date": date_invoice,
                 },
             }
         elif self.spread_action_type == "template":
@@ -214,15 +212,12 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                 else:
                     spread_vals["debit_account_id"] = account.id
 
-                analytic_account = self.invoice_line_id.analytic_account_id
-                spread_vals["account_analytic_id"] = analytic_account.id
+#                analytic_account = self.invoice_line_id.analytic_line_ids[0]
+#                spread_vals["account_analytic_id"] = analytic_account.id
 
                 spread_vals["currency_id"] = self.invoice_id.currency_id.id
 
                 spread = self.env["account.spread"].create(spread_vals)
-
-                analytic_tags = self.invoice_line_id.analytic_tag_ids
-                spread.analytic_tag_ids = analytic_tags
 
                 self.invoice_line_id.spread_id = spread
             return {

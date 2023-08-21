@@ -10,8 +10,6 @@ from odoo.tests import common
 class TestComputeSpreadBoard(common.TransactionCase):
     def setUp(self):
         super().setUp()
-        type_receivable = self.env.ref("account.data_account_type_receivable")
-        type_expenses = self.env.ref("account.data_account_type_expenses")
 
         journal = self.env["account.journal"].create(
             {"name": "Test", "type": "general", "code": "test"}
@@ -21,7 +19,7 @@ class TestComputeSpreadBoard(common.TransactionCase):
             {
                 "name": "test_account_receivable",
                 "code": "123",
-                "user_type_id": type_receivable.id,
+                "account_type": "asset_receivable",
                 "reconcile": True,
             }
         )
@@ -30,7 +28,7 @@ class TestComputeSpreadBoard(common.TransactionCase):
             {
                 "name": "test account_expenses",
                 "code": "765",
-                "user_type_id": type_expenses.id,
+                "account_type": "expense",
                 "reconcile": True,
             }
         )
@@ -39,7 +37,7 @@ class TestComputeSpreadBoard(common.TransactionCase):
             {
                 "name": "test spread account_expenses",
                 "code": "321",
-                "user_type_id": type_expenses.id,
+                "account_type": "expense",
                 "reconcile": True,
             }
         )

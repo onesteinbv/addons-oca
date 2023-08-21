@@ -7,6 +7,7 @@ from odoo.exceptions import UserError
 
 class AccountSpreadTemplate(models.Model):
     _name = "account.spread.template"
+    _inherit = "analytic.mixin"
     _description = "Account Spread Template"
 
     name = fields.Char(required=True)
@@ -171,6 +172,7 @@ class AccountSpreadTemplate(models.Model):
 
 class AccountSpreadTemplateAuto(models.Model):
     _name = "account.spread.template.auto"
+    _inherit = "analytic.mixin"
     _description = "Auto create spread, based on product/account/analytic"
 
     template_id = fields.Many2one(
@@ -198,5 +200,4 @@ class AccountSpreadTemplateAuto(models.Model):
     )
     analytic_account_id = fields.Many2one(
         comodel_name="account.analytic.account",
-        string="Analytic",
     )
