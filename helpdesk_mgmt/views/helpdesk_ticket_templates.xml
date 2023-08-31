@@ -36,19 +36,7 @@
                 <t t-set="url" t-value="'/my/tickets'" />
                 <t t-set="placeholder_count" t-value="'ticket_count'" />
             </t>
-            <form method="POST" t-attf-action="/new/ticket">
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    t-att-value="request.csrf_token()"
-                />
-                <button
-                    name="create_new_ticket"
-                    type="action"
-                    class="btn btn-primary"
-                    style="float: right; margin-right: 0px; margin-bottom: 5px;"
-                >New Ticket</button>
-            </form>
+
         </xpath>
     </template>
 
@@ -59,20 +47,22 @@
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">Tickets</t>
             </t>
+            <div class="border border-top-0">
+                <form method="POST" t-attf-action="/new/ticket">
+                    <button
+                        name="create_new_ticket"
+                        type="action"
+                        class="btn btn-primary"
+                        style="margin-bottom: 5px;"
+                    >New Ticket</button>
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        t-att-value="request.csrf_token()"
+                    />
+                </form>
 
-            <form method="POST" t-attf-action="/new/ticket">
-                <button
-                    name="create_new_ticket"
-                    type="action"
-                    class="btn btn-primary"
-                    style="float: right; margin-right: 0px; margin-bottom: 5px;"
-                >New Ticket</button>
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    t-att-value="request.csrf_token()"
-                />
-            </form>
+            </div>
 
             <t t-if="not grouped_tickets">
                 <div class="alert alert-warning mt8" role="alert">
@@ -421,7 +411,7 @@
                         class="col-md-12"
                     >
                                                                         <h1
-                            class="text-center"
+                            class="text-left"
                         >Send a new ticket</h1>
                                                                     </div>
                                                                 </div>
@@ -523,7 +513,7 @@
                         class="col-md-7 col-sm-8"
                     >
                                                                         <div
-                            class="btn btn-default btn-file col-md-12"
+                            class="btn-default btn-file col-md-12"
                         >
                                                                             <input
                                 class="form-control o_website_form_input"
@@ -551,7 +541,10 @@
                         />
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group">
+                                                                <div
+                    class="form-group"
+                    style="margin-top: 5px;"
+                >
                                                                     <div
                         class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7"
                     >
