@@ -717,3 +717,17 @@ class AccountBankStatementLine(models.Model):
     def action_checked(self):
         self.ensure_one()
         self.move_id.to_check = False
+
+    def _get_reconcile_line(
+        self, line, kind, is_counterpart=False, max_amount=False, from_unreconcile=False
+    ):
+        vals = super()._get_reconcile_line(
+            line,
+            kind,
+            is_counterpart=is_counterpart,
+            max_amount=max_amount,
+            from_unreconcile=from_unreconcile,
+        )
+        if vals["partner_id"] is False:
+            vals["partner_id"] = (False, self.partner_name)
+        return vals
