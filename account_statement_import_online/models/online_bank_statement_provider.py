@@ -256,7 +256,7 @@ class OnlineBankStatementProvider(models.Model):
             statement_date_until,
         )
         if not filtered_lines:
-            return
+            return self.env["account.bank.statement"]
         if filtered_lines:
             statement_values.update(
                 {"line_ids": [[0, False, line] for line in filtered_lines]}

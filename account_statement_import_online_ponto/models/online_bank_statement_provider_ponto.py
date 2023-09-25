@@ -162,9 +162,11 @@ class OnlineBankStatementProvider(models.Model):
         for period, statement_lines in grouped_periods.items():
             (statement_date_since, statement_date_until) = period
 
-            self._create_or_update_statement(
+            statement = self._create_or_update_statement(
                 (statement_lines, {}), statement_date_since, statement_date_until
             )
+            for line in statement.line_ids.filtered(lambda l: not l.partner_id):
+                line.partner_id = line._retrieve_partner()
 
     def _ponto_get_transaction_vals(self, transaction):
         """Translate information from Ponto to statement line vals."""
