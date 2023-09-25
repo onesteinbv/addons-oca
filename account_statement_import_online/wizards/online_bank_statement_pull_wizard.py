@@ -24,12 +24,14 @@ class OnlineBankStatementPullWizard(models.TransientModel):
     def action_pull(self):
         """Pull statements from provider and then show list of statements."""
         self.ensure_one()
-        active_model = self.env.context.get('active_model')
+        active_model = self.env.context.get("active_model")
         active_id = self.env.context.get("active_id")
-        record = self.env[active_model].browse(active_id)
+        active_record = self.env[active_model].browse(active_id)
         if active_model == "account.journal":
-            record = record.online_bank_statement_provider_id
-        record._pull(self.date_since, self.date_until)
+            provider = active_record.online_bank_statement_provider_id
+        else:
+            provider = active_record
+        provider._pull(self.date_since, self.date_until)
         action = self.env.ref("account.action_bank_statement_tree").sudo().read([])[0]
-        action["domain"] = [("journal_id", "=", record.journal_id.id)]
+        action["domain"] = [("journal_id", "=", provider.journal_id.id)]
         return action
