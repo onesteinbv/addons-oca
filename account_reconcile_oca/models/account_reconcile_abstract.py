@@ -69,7 +69,7 @@ class AccountReconcileAbstract(models.AbstractModel):
             "reference": "account.move.line;%s" % line.id,
             "id": line.id,
             "account_id": line.account_id.name_get()[0],
-            "partner_id": line.partner_id and line.partner_id.name_get()[0] or False,
+            "partner_id": line.partner_id and line.partner_id.name_get()[0] or (False, self.partner_name),
             "date": fields.Date.to_string(line.date),
             "name": line.name,
             "debit": amount if amount > 0 else 0.0,
