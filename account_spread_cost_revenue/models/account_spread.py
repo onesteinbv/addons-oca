@@ -597,12 +597,13 @@ class AccountSpread(models.Model):
             spread.is_debit_account_deprecated = spread.debit_account_id.deprecated
             spread.is_credit_account_deprecated = spread.credit_account_id.deprecated
 
-    def open_reconcile_view(self):
+    def open_posted_view(self):
         action_name = "account_spread_cost_revenue.action_account_moves_all_spread"
         action = self.env["ir.actions.act_window"]._for_xml_id(action_name)
         action["domain"] = [("id", "in", [])]
         spread_mls = self.line_ids.mapped("move_id.line_ids")
-        spread_mls = spread_mls.filtered(lambda m: m.reconciled)
+        if self.env.context.get("show_reconciled_only"):
+            spread_mls = spread_mls.filtered(lambda m: m.reconciled)
         if spread_mls:
             domain = [("id", "in", spread_mls.ids + [self.invoice_line_id.id])]
             action["domain"] = domain

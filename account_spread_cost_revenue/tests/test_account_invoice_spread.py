@@ -556,10 +556,10 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             if spread_ml.credit:
                 self.assertFalse(spread_ml.full_reconcile_id)
 
-        action_reconcile_view = self.spread2.open_reconcile_view()
-        self.assertTrue(isinstance(action_reconcile_view, dict))
-        self.assertFalse(action_reconcile_view.get("domain")[0][2])
-        self.assertTrue(action_reconcile_view.get("context"))
+        action_posted_view = self.spread2.open_posted_view()
+        self.assertTrue(isinstance(action_posted_view, dict))
+        self.assertFalse(action_posted_view.get("domain")[0][2])
+        self.assertTrue(action_posted_view.get("context"))
 
     def test_11_link_vendor_bill_line_with_spread_sheet(self):
         invoice_form = Form(self.vendor_bill)
@@ -623,10 +623,10 @@ class TestAccountInvoiceSpread(common.TransactionCase):
                 self.assertEqual(spread_ml.account_id, expense_account)
                 self.assertFalse(spread_ml.full_reconcile_id)
 
-        action_reconcile_view = self.spread.open_reconcile_view()
-        self.assertTrue(isinstance(action_reconcile_view, dict))
-        self.assertFalse(action_reconcile_view.get("domain")[0][2])
-        self.assertTrue(action_reconcile_view.get("context"))
+        action_posted_view = self.spread.open_posted_view()
+        self.assertTrue(isinstance(action_posted_view, dict))
+        self.assertFalse(action_posted_view.get("domain")[0][2])
+        self.assertTrue(action_posted_view.get("context"))
 
         action_spread_details = self.vendor_bill_line.spread_details()
         self.assertTrue(isinstance(action_spread_details, dict))
@@ -677,11 +677,11 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         for invoice_ml in invoice_mls:
             self.assertEqual(invoice_ml.account_id, balance_sheet)
 
-        action_reconcile_view = self.spread2.open_reconcile_view()
-        self.assertTrue(isinstance(action_reconcile_view, dict))
-        self.assertFalse(action_reconcile_view.get("domain")[0][2])
-        self.assertFalse(action_reconcile_view.get("res_id"))
-        self.assertTrue(action_reconcile_view.get("context"))
+        action_posted_view = self.spread2.open_posted_view()
+        self.assertTrue(isinstance(action_posted_view, dict))
+        self.assertFalse(action_posted_view.get("domain")[0][2])
+        self.assertFalse(action_posted_view.get("res_id"))
+        self.assertTrue(action_posted_view.get("context"))
 
         action_spread_details = self.invoice_line.spread_details()
         self.assertTrue(isinstance(action_spread_details, dict))
