@@ -212,8 +212,8 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                 else:
                     spread_vals["debit_account_id"] = account.id
 
-#                analytic_account = self.invoice_line_id.analytic_line_ids[0]
-#                spread_vals["account_analytic_id"] = analytic_account.id
+                analytic_distribution = self.invoice_line_id.analytic_distribution
+                spread_vals["analytic_distribution"] = analytic_distribution
 
                 spread_vals["currency_id"] = self.invoice_id.currency_id.id
 

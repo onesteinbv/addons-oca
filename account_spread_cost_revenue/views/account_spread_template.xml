@@ -46,6 +46,11 @@
                                 name="spread_journal_id"
                                 widget="selection"
                             />
+                            <field
+                                name="analytic_distribution"
+                                groups="analytic.group_analytic_accounting"
+                                widget="analytic_distribution"
+                            />
                         </group>
                     </group>
                     <div>
@@ -64,11 +69,6 @@
                             <field name="name" />
                             <field name="product_id" />
                             <field name="account_id" />
-                            <field
-                                name="analytic_distribution"
-                                groups="analytic.group_analytic_accounting"
-                                widget="analytic_distribution"
-                            />
                         </tree>
                     </field>
                 </sheet>

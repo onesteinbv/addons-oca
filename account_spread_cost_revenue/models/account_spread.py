@@ -257,6 +257,8 @@ class AccountSpread(models.Model):
                 self.period_type = self.template_id.period_type
             if self.template_id.start_date:
                 self.spread_date = self.template_id.start_date
+            if self.template_id.analytic_distribution:
+                self.analytic_distribution = self.template_id.analytic_distribution
             self.days_calc = self.template_id.days_calc
 
     @api.depends("invoice_type", "company_id")
