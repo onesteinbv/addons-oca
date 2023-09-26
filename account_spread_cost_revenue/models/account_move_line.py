@@ -120,11 +120,11 @@ class AccountMoveLine(models.Model):
                 return False
             if aline.account_id and iline.account_id != aline.account_id:
                 return False
-#            if (
-#                aline.analytic_account_id
-#                and iline.account_analytic_id != aline.analytic_account_id
-#            ):
-#                return False
+            if (
+                aline.analytic_distribution
+                and iline.analytic_distribution != aline.analytic_distribution
+            ):
+                return False
             return True
 
         for line in self:

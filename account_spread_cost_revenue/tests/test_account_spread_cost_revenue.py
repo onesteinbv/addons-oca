@@ -81,7 +81,7 @@ class TestAccountSpreadCostRevenue(common.TransactionCase):
         self.assertFalse(spread.invoice_line_ids)
         self.assertFalse(spread.invoice_line_id)
         self.assertFalse(spread.invoice_id)
-#        self.assertFalse(spread.account_analytic_id)
+        self.assertFalse(spread.analytic_distribution)
         self.assertTrue(spread.move_line_auto_post)
         self.assertEqual(spread.name, "test")
         self.assertEqual(spread.invoice_type, "out_invoice")
@@ -147,6 +147,8 @@ class TestAccountSpreadCostRevenue(common.TransactionCase):
         self.assertTrue(self.env.company.default_spread_revenue_journal_id)
         self.assertTrue(self.env.company.default_spread_expense_journal_id)
 
+        self.env.user.groups_id += self.env.ref('base.group_multi_company')
+
         spread_form = Form(self.env["account.spread"])
         spread_form.name = "test"
         spread_form.invoice_type = "in_invoice"
@@ -159,7 +161,7 @@ class TestAccountSpreadCostRevenue(common.TransactionCase):
         self.assertFalse(spread.invoice_line_ids)
         self.assertFalse(spread.invoice_line_id)
         self.assertFalse(spread.invoice_id)
-#        self.assertFalse(spread.account_analytic_id)
+        self.assertFalse(spread.analytic_distribution)
         self.assertTrue(spread.move_line_auto_post)
 
         defaults = self.env["account.spread"].default_get(["company_id", "currency_id"])

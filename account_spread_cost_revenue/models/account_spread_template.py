@@ -142,33 +142,6 @@ class AccountSpreadTemplate(models.Model):
         spread_vals["invoice_type"] = invoice_type
         return spread_vals
 
-    @api.constrains("auto_spread_ids", "auto_spread")
-    def _check_auto_spread_ids_unique(self):
-        query = """
-        select product_id, account_id, analytic_account_id
-        from (
-            select product_id, account_id, analytic_account_id, count(*)
-            from account_spread_template_auto a
-            join account_spread_template b on a.template_id = b.id
-            where b.auto_spread = true and b.id in %s
-            group by product_id, account_id, analytic_account_id
-        ) x where x.count > 1 """
-        self._cr.execute(query, [self._ids])
-        results = []
-        for res in self._cr.fetchall():
-            product = self.env["product.product"].browse(res[0])
-            account = self.env["account.account"].browse(res[1])
-            analytic = self.env["account.analytic.account"].browse(res[2])
-            results.append(
-                "{} / {} / {}".format(product.name, account.name, analytic.name)
-            )
-        if results:
-            raise UserError(
-                _("Followings are duplicated combinations,\n\n{}").format(
-                    "\n".join(results)
-                )
-            )
-
 
 class AccountSpreadTemplateAuto(models.Model):
     _name = "account.spread.template.auto"
@@ -197,7 +170,4 @@ class AccountSpreadTemplateAuto(models.Model):
     account_id = fields.Many2one(
         comodel_name="account.account",
         string="Account",
-    )
-    analytic_account_id = fields.Many2one(
-        comodel_name="account.analytic.account",
     )

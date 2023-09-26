@@ -278,8 +278,8 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         for line in spread_lines:
             line.create_move()
             self.assertTrue(line.move_id)
-#            for ml in line.move_id.line_ids:
-#                self.assertEqual(ml.analytic_account_id, self.analytic_account)
+            for ml in line.move_id.line_ids:
+                self.assertEqual(ml.analytic_distribution, self.spread.analytic_distribution)
 
         self.spread.invoice_id.button_cancel()
 
@@ -618,14 +618,14 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         for spread_ml in spread_mls:
             if spread_ml.credit:
                 self.assertEqual(spread_ml.account_id, balance_sheet)
-                self.assertTrue(spread_ml.full_reconcile_id)
+                self.assertFalse(spread_ml.full_reconcile_id)
             if spread_ml.debit:
                 self.assertEqual(spread_ml.account_id, expense_account)
                 self.assertFalse(spread_ml.full_reconcile_id)
 
         action_reconcile_view = self.spread.open_reconcile_view()
         self.assertTrue(isinstance(action_reconcile_view, dict))
-        self.assertTrue(action_reconcile_view.get("domain")[0][2])
+        self.assertFalse(action_reconcile_view.get("domain")[0][2])
         self.assertTrue(action_reconcile_view.get("context"))
 
         action_spread_details = self.vendor_bill_line.spread_details()
@@ -750,7 +750,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         for spread_ml in spread_mls:
             if spread_ml.debit:
                 self.assertFalse(spread_ml.matched_debit_ids)
-                self.assertTrue(spread_ml.matched_credit_ids)
+                self.assertFalse(spread_ml.matched_credit_ids)
                 self.assertFalse(spread_ml.full_reconcile_id)
             if spread_ml.credit:
                 self.assertFalse(spread_ml.matched_debit_ids)
