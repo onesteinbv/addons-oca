@@ -7,11 +7,11 @@ registerPatch({
     recordMethods: {
         async _init({failed_counter = 0}) {
             await this._super(...arguments);
-            this._initMailboxesFailed(failed_counter);
+            this._initFailedMailboxes(failed_counter);
         },
 
-        _initMailboxesFailed(failedmsg_counter) {
-            this.messaging.failedmsg.update({counter: failedmsg_counter});
+        _initFailedMailboxes(failed_counter) {
+            this.messaging.failedmsg.update({counter: failed_counter});
         },
     },
 });

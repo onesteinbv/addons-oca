@@ -6,13 +6,13 @@ import {registerPatch} from "@mail/model/model_core";
 registerPatch({
     name: "DiscussSidebarMailboxView",
     fields: {
-        discussViewOwnerAsFailedmsg: one("DiscussView", {
+        discussViewOwnerAsFailedMessage: one("DiscussView", {
             identifying: true,
-            inverse: "failedmsgView",
+            inverse: "failedMessageView",
         }),
         mailbox: {
             compute() {
-                if (this.discussViewOwnerAsFailedmsg) {
+                if (this.discussViewOwnerAsFailedMessage) {
                     return this.messaging.failedmsg;
                 }
                 return this._super();
