@@ -244,12 +244,12 @@
                             <field name="period_number" />
                             <field name="period_type" />
                             <field name="spread_date" />
+                            <field name="days_calc" />
                             <field name="suitable_journal_ids" invisible="1"/>
                             <field
                                 name="journal_id"
                                 widget="selection"
                             />
-                            <field name="days_calc" />
                         </group>
                     </group>
                     <notebook name="notebook">
