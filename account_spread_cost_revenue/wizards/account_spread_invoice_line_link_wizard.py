@@ -163,7 +163,7 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                     self.exp_rev_account_id or self.invoice_line_id.account_id
                 )
 
-#            analytic_account = self.invoice_line_id.analytic_line_ids[0]
+            analytic_distribution = self.invoice_line_id.analytic_distribution
 #            date_invoice = self.invoice_id.invoice_date or fields.Date.today()
 
             return {
@@ -182,7 +182,7 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                     "default_debit_account_id": debit_account.id,
                     "default_credit_account_id": credit_account.id,
                     "default_journal_id": self.spread_journal_id.id,
-#                    "default_account_analytic_id": analytic_account.id,
+                    "default_analytic_distribution": analytic_distribution,
 #                    "default_spread_date": date_invoice,
                 },
             }
