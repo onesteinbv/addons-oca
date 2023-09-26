@@ -164,7 +164,7 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                 )
 
             analytic_distribution = self.invoice_line_id.analytic_distribution
-#            date_invoice = self.invoice_id.invoice_date or fields.Date.today()
+            date_invoice = self.invoice_id.invoice_date or fields.Date.today()
 
             return {
                 "name": _("New Spread Board"),
@@ -183,7 +183,7 @@ class AccountSpreadInvoiceLineLinkWizard(models.TransientModel):
                     "default_credit_account_id": credit_account.id,
                     "default_journal_id": self.spread_journal_id.id,
                     "default_analytic_distribution": analytic_distribution,
-#                    "default_spread_date": date_invoice,
+                    "default_spread_date": date_invoice,
                 },
             }
         elif self.spread_action_type == "template":
