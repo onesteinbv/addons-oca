@@ -625,7 +625,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
 
         action_posted_view = self.spread.open_posted_view()
         self.assertTrue(isinstance(action_posted_view, dict))
-        self.assertFalse(action_posted_view.get("domain")[0][2])
+        self.assertTrue(action_posted_view.get("domain")[0][2])
         self.assertTrue(action_posted_view.get("context"))
 
         action_spread_details = self.vendor_bill_line.spread_details()
@@ -679,7 +679,7 @@ class TestAccountInvoiceSpread(common.TransactionCase):
 
         action_posted_view = self.spread2.open_posted_view()
         self.assertTrue(isinstance(action_posted_view, dict))
-        self.assertFalse(action_posted_view.get("domain")[0][2])
+        self.assertTrue(action_posted_view.get("domain")[0][2])
         self.assertFalse(action_posted_view.get("res_id"))
         self.assertTrue(action_posted_view.get("context"))
 

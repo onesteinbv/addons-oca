@@ -555,29 +555,6 @@ class AccountSpread(models.Model):
             raise ValidationError(err_msg)
         return super().unlink()
 
-    def reconcile_spread_moves(self):
-        for spread in self:
-            spread._reconcile_spread_moves()
-
-    def _reconcile_spread_moves(self, created_moves=False):
-        """Reconcile spread moves if possible"""
-        self.ensure_one()
-
-        spread_mls = self.line_ids.mapped("move_id.line_ids")
-        if created_moves:
-            spread_mls |= created_moves.mapped("line_ids")
-
-        account = self.invoice_line_id.account_id
-        mls_to_reconcile = spread_mls.filtered(lambda l: l.account_id == account)
-
-        if mls_to_reconcile:
-            do_reconcile = mls_to_reconcile + self.invoice_line_id
-            do_reconcile.remove_move_reconcile()
-            # ensure to reconcile only posted items
-            do_reconcile = do_reconcile.filtered(lambda l: l.move_id.state == "posted")
-            do_reconcile._check_spread_reconcile_validity()
-            do_reconcile.reconcile()
-
     def create_all_moves(self):
         for line in self.mapped("line_ids").filtered(lambda l: not l.move_id):
             line.create_move()

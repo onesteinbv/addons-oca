@@ -57,7 +57,7 @@ the spreading right-arrow icon is now displayed in green color.
    :alt: On the invoice line the spreading icon is displayed in green color
 
 Validate the invoice/bill. Click on the spreading (green) right-arrow icon to open the spread board, then click
-on the smart button *Reconciled entries*: the moves of the spread lines are reconciled with the move of the invoice line.
+on the smart button *Posted entries* to see the moves of the spread lines together with the move of the invoice line.
 
 In case the Subtotal Price of the invoice line is different than the *Estimated Amount* of the spread board, the spread
 lines (not yet posted) will be recalculated when validating the invoice/bill.

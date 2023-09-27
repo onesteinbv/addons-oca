@@ -94,23 +94,6 @@ class AccountMoveLine(models.Model):
                 vals["account_id"] = spread.credit_account_id.id
         return super().write(vals)
 
-    def _check_spread_reconcile_validity(self):
-        # Improve error messages of standard Odoo
-        reconciled_lines = self.filtered(lambda l: l.reconciled)
-        msg_line = _(
-            "Move line: %s (%s), account code: %s\n"
-        )
-        if reconciled_lines:
-            msg = _("Cannot reconcile entries that are already reconciled:\n")
-            for line in reconciled_lines:
-                msg += msg_line % (line.id, line.name, line.account_id.code)
-            raise ValidationError(msg)
-        if len(self.mapped("account_id").ids) > 1:
-            msg = _("Some entries are not from the same account:\n")
-            for line in self:
-                msg += msg_line % (line.id, line.name, line.account_id.code)
-            raise ValidationError(msg)
-
     def create_auto_spread(self):
         """Create auto spread table for each invoice line, when needed"""
 
