@@ -35,12 +35,18 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
     _onAttachmentPreview(attachment_id, attachment_info_list) {
         if (this.is_move_line) {
             $(".o_list_renderer").addClass("attachment_preview");
-            this.attachmentPreviewWidget.setAttachments(
-                attachment_info_list,
-                attachment_id
-            );
-            this.attachmentPreviewWidget.show();
-            window.dispatchEvent(new Event('resize'));
+            if (attachment_id === undefined) {
+                this.attachmentPreviewWidget.$iframe.attr("src", "about:blank");
+                $("button.attachment_preview_popout").addClass("d-none");
+            } else {
+                this.attachmentPreviewWidget.setAttachments(
+                    attachment_info_list,
+                    attachment_id
+                );
+                $("button.attachment_preview_popout").removeClass("d-none");
+                this.attachmentPreviewWidget.show();
+                window.dispatchEvent(new Event('resize'));
+            }
         }
     },
 });
