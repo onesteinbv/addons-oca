@@ -1,4 +1,5 @@
 /** @odoo-module **/
+
 import {onMounted} from "@odoo/owl";
 import {AttachmentPreviewWidget} from "@attachment_preview/js/attachmentPreviewWidget.esm";
 import {ListRenderer} from "@web/views/list/list_renderer";
@@ -11,6 +12,9 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
     setup() {
         var res = this._super(...arguments);
         this.is_move_line = this.props.list.resModel === "account.move.line";
+        if (!this.is_move_line) {
+            return res;
+        }
         this.attachmentPreviewWidget = new AttachmentPreviewWidget(this);
         this.attachmentPreviewWidget.on(
             "hidden",
