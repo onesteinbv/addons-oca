@@ -12,9 +12,8 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
     setup() {
         var res = this._super(...arguments);
         this.is_move_line = this.props.list.resModel === "account.move.line";
-        if (!this.is_move_line) {
-            return res;
-        }
+        if(!this.is_move_line) return res;
+
         this.attachmentPreviewWidget = new AttachmentPreviewWidget(this);
         this.attachmentPreviewWidget.on(
             "hidden",
@@ -22,35 +21,31 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
             this._attachmentPreviewWidgetHidden
         );
         onMounted(() => {
-            if (this.is_move_line) {
-                this.attachmentPreviewWidget.insertAfter($(".o_list_renderer"));
-                bus.on("open_attachment_preview", this, this._onAttachmentPreview);
-            }
+            this.attachmentPreviewWidget.insertAfter($(".o_list_renderer"));
+            bus.on("open_attachment_preview", this, this._onAttachmentPreview);
         });
         return res;
     },
 
     _attachmentPreviewWidgetHidden() {
-        if (this.is_move_line) {
-            $(".o_list_renderer").removeClass("attachment_preview");
-        }
+        if(!this.is_move_line) return;
+        $(".o_list_renderer").removeClass("attachment_preview");
     },
 
     _onAttachmentPreview(attachment_id, attachment_info_list) {
-        if (this.is_move_line) {
-            $(".o_list_renderer").addClass("attachment_preview");
-            if (attachment_id === undefined) {
-                this.attachmentPreviewWidget.$iframe.attr("src", "about:blank");
-                $("button.attachment_preview_popout").addClass("d-none");
-            } else {
-                this.attachmentPreviewWidget.setAttachments(
-                    attachment_info_list,
-                    attachment_id
-                );
-                $("button.attachment_preview_popout").removeClass("d-none");
-                this.attachmentPreviewWidget.show();
-                window.dispatchEvent(new Event('resize'));
-            }
+        if(!this.is_move_line) return;
+        $(".o_list_renderer").addClass("attachment_preview");
+        if (attachment_id === undefined) {
+            this.attachmentPreviewWidget.$iframe.attr("src", "about:blank");
+            $("button.attachment_preview_popout").addClass("d-none");
+        } else {
+            this.attachmentPreviewWidget.setAttachments(
+                attachment_info_list,
+                attachment_id
+            );
+            $("button.attachment_preview_popout").removeClass("d-none");
+            this.attachmentPreviewWidget.show();
+            window.dispatchEvent(new Event('resize'));
         }
     },
 });

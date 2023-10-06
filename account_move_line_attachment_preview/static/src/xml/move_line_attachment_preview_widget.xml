@@ -4,7 +4,7 @@
     <t t-name="account_move_line_attachment_preview.MoveLineAttachmentWidget" owl="1">
         <a
                 href="#"
-                t-esc="props.value and props.value[1] or '------'"
+                t-esc="props.value and props.value[1] or '---'"
                 t-on-click.prevent.stop="() => this.openAttachment()"
                 t-on-focusin.prevent.stop="() => this.openAttachment()"
         />
