@@ -21,6 +21,12 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
             this._attachmentPreviewWidgetHidden
         );
         onMounted(() => {
+            var form_view_container = $(".o_form_view_container");
+            if (form_view_container.length > 0) {
+                this.is_move_line = false;
+                return;
+            }
+
             this.attachmentPreviewWidget.insertAfter($(".o_list_renderer"));
             bus.on("open_attachment_preview", this, this._onAttachmentPreview);
         });
@@ -29,12 +35,12 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
 
     _attachmentPreviewWidgetHidden() {
         if(!this.is_move_line) return;
-        $(".o_list_renderer").removeClass("attachment_preview");
+        $(".o_list_renderer").removeClass("attachment_preview_list");
     },
 
     _onAttachmentPreview(attachment_id, attachment_info_list) {
         if(!this.is_move_line) return;
-        $(".o_list_renderer").addClass("attachment_preview");
+        $(".o_list_renderer").addClass("attachment_preview_list");
         if (attachment_id === undefined) {
             this.attachmentPreviewWidget.$iframe.attr("src", "about:blank");
             $("button.attachment_preview_popout").addClass("d-none");
