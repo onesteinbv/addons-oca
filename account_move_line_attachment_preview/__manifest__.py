@@ -3,7 +3,7 @@
 
 {
     "name": "Move Line Attachment Preview",
-    "summary": "Preview PDF on journal item list",
+    "summary": "Preview attachment on journal item list",
     "version": "16.0.1.0.0",
     "author": "Onestein,Odoo Community Association (OCA)",
     "category": "Accounting/Accounting",
