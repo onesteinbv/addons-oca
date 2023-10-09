@@ -39,6 +39,11 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
     },
 
     _onAttachmentPreview(attachment_id, attachment_info_list) {
+        var form_view_container = $(".o_form_view_container");
+        if (form_view_container.length > 0) {
+            this.is_move_line = false;
+            return;
+        }
         if(!this.is_move_line) return;
         $(".o_list_renderer").addClass("attachment_preview_list");
         if (attachment_id === undefined) {
