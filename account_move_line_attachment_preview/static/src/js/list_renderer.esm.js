@@ -1,5 +1,4 @@
 /** @odoo-module **/
-
 import {onMounted} from "@odoo/owl";
 import {AttachmentPreviewWidget} from "@attachment_preview/js/attachmentPreviewWidget.esm";
 import {ListRenderer} from "@web/views/list/list_renderer";
@@ -13,7 +12,7 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
         var res = this._super(...arguments);
         // Only enable preview widget if model is "account.move.line"
         this.is_move_line = this.props.list.resModel === "account.move.line";
-        if(!this.is_move_line) return res;
+        if (!this.is_move_line) return res;
 
         this.attachmentPreviewWidget = new AttachmentPreviewWidget(this);
         this.attachmentPreviewWidget.on(
@@ -36,13 +35,13 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
 
     _attachmentPreviewWidgetHidden() {
         // Hide the preview widget.
-        if(!this.is_move_line) return;
+        if (!this.is_move_line) return;
         $(".o_list_renderer").removeClass("attachment_preview_list");
     },
 
     _onAttachmentPreview(attachment_id, attachment_info_list) {
         // Only preview if model is "account.move.line"
-        if(!this.is_move_line) return;
+        if (!this.is_move_line) return;
         // Only preview if form container is defined, otherwise it's likely
         // that the list renderer is invoked inside an "account.move" form.
         var form_view_container = $(".o_form_view_container");
@@ -61,7 +60,7 @@ patch(ListRenderer.prototype, "account_move_line_attachment_preview.ListRenderer
             );
             $("button.attachment_preview_popout").removeClass("d-none");
             this.attachmentPreviewWidget.show();
-            window.dispatchEvent(new Event('resize'));
+            window.dispatchEvent(new Event("resize"));
         }
     },
 });

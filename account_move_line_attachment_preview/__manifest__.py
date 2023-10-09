@@ -6,8 +6,10 @@
     "summary": "Preview attachment on journal item list",
     "version": "16.0.1.0.0",
     "author": "Onestein,Odoo Community Association (OCA)",
+    "website": "https://github.com/OCA/account-financial-tools",
     "category": "Accounting/Accounting",
     "development_status": "Alpha",
+    "license": "AGPL-3",
     "depends": ["account", "attachment_preview"],
     "data": [
         "views/account_move_line.xml",

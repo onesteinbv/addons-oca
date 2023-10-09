@@ -1,11 +1,10 @@
 /** @odoo-module **/
-
 import {registry} from "@web/core/registry";
 import {query} from "web.rpc";
 import {canPreview, showPreview, getUrl} from "@attachment_preview/js/utils.esm";
 import {sprintf} from "@web/core/utils/strings";
 import {useService} from "@web/core/utils/hooks";
-import {SIZES} from '@web/core/ui/ui_service';
+import {SIZES} from "@web/core/ui/ui_service";
 
 const {Component} = owl;
 
@@ -14,7 +13,7 @@ class MoveLineAttachmentWidget extends Component {
         super.setup();
         const ui = useService("ui");
         // Preview on new tab instead of widget in case the monitor is not big enough
-        this.split_screen = (ui.size >= SIZES.XXL);
+        this.split_screen = ui.size >= SIZES.XXL;
     }
 
     async openAttachment() {
@@ -34,35 +33,27 @@ class MoveLineAttachmentWidget extends Component {
             }
 
             // Invoke showPreview() from module attachment_preview
-            showPreview(
-                attachment_id,
-                "",
-                extension,
-                filename,
-                split_screen,
-                [{
+            showPreview(attachment_id, "", extension, filename, split_screen, [
+                {
                     id: attachment_id,
-                    url: sprintf(
-                        "/web/content/%s",
-                        attachment_id
-                    ),
+                    url: sprintf("/web/content/%s", attachment_id),
                     extension: extension,
                     title: filename,
                     previewUrl: getUrl(
                         attachment_id,
-                        sprintf(
-                            "/web/content/%s#pagemode=none",
-                            attachment_id
-                        ),
+                        sprintf("/web/content/%s#pagemode=none", attachment_id),
                         extension,
                         filename
-                    )
-                }]
-            );
+                    ),
+                },
+            ]);
         });
 
     }
 }
 
-MoveLineAttachmentWidget.template = "account_move_line_attachment_preview.MoveLineAttachmentWidget";
-registry.category("fields").add("move_line_attachment_preview_widget", MoveLineAttachmentWidget);
+MoveLineAttachmentWidget.template =
+    "account_move_line_attachment_preview.MoveLineAttachmentWidget";
+registry
+    .category("fields")
+    .add("move_line_attachment_preview_widget", MoveLineAttachmentWidget);
