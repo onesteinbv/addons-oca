@@ -13,12 +13,13 @@ class MoveLineAttachmentWidget extends Component {
     setup() {
         super.setup();
         const ui = useService("ui");
+        // Preview on new tab instead of widget in case the monitor is not big enough
         this.split_screen = (ui.size >= SIZES.XXL);
     }
 
     async openAttachment() {
 
-        const attachment_id = this.props.record.data.preview_attachment_id[0];
+        var attachment_id = this.props.record.data.preview_attachment_id[0];
         const filename = this.props.record.data.preview_attachment_id[1];
         const split_screen = this.split_screen;
 
@@ -27,6 +28,12 @@ class MoveLineAttachmentWidget extends Component {
             method: "get_attachment_extension",
             args: [attachment_id],
         }).then(function (extension) {
+            // In case extension not supported, emulate attachment like it's undefined
+            if (!canPreview(extension)) {
+                attachment_id = undefined;
+            }
+
+            // Invoke showPreview() from module attachment_preview
             showPreview(
                 attachment_id,
                 "",
