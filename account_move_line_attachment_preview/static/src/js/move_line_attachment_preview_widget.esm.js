@@ -17,7 +17,6 @@ class MoveLineAttachmentWidget extends Component {
     }
 
     async openAttachment() {
-
         var attachment_id = this.props.record.data.preview_attachment_id[0];
         const filename = this.props.record.data.preview_attachment_id[1];
         const split_screen = this.split_screen;
@@ -48,7 +47,6 @@ class MoveLineAttachmentWidget extends Component {
                 },
             ]);
         });
-
     }
 }
 
