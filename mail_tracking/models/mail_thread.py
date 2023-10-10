@@ -74,7 +74,8 @@ class MailThread(models.AbstractModel):
         partners_info = self.sudo()._message_partner_info_from_emails(email_extra_list)
         for pinfo in partners_info:
             partner_id = pinfo["partner_id"]
-            email = email_split(pinfo["full_name"])[0].lower()
+            email_formed = email_split(pinfo["full_name"])
+            email = email_formed and email_formed[0].lower()
             if not partner_id:
                 if email not in aliases:
                     self._message_add_suggested_recipient(
@@ -87,59 +88,42 @@ class MailThread(models.AbstractModel):
                 )
 
     @api.model
-    def _get_view(self, view_id=None, view_type="form", **options):
+    def get_view(self, view_id=None, view_type="form", **options):
         """Add filters for failed messages.
 
-        These filters will show up on any form or search views of any
+        These filters will show up on any search views of any
         model inheriting from ``mail.thread``.
         """
-
-        arch, view = super()._get_view(view_id, view_type, **options)
-        # import pdb; pdb.set_trace()
-        if view_type in {"search", "form"}:
-            doc = arch
-            if view_type == "search":
-                # Modify view to add new filter element
-                nodes = doc.xpath("//search")
-                if nodes:
-                    # Create filter element
-                    new_filter = etree.Element(
-                        "filter",
-                        {
-                            "string": _("Failed sent messages"),
-                            "name": "failed_message_ids",
-                            "domain": str(
-                                [
-                                    [
-                                        "failed_message_ids.mail_tracking_ids.state",
-                                        "in",
-                                        list(
-                                            self.env["mail.message"].get_failed_states()
-                                        ),
-                                    ],
-                                    [
-                                        "failed_message_ids.mail_tracking_needs_action",
-                                        "=",
-                                        True,
-                                    ],
-                                ]
-                            ),
-                        },
-                    )
-                    nodes[0].append(etree.Element("separator"))
-                    nodes[0].append(new_filter)
-            elif view_type == "form":
-                # Modify view to add new field element
-                nodes = doc.xpath(
-                    "//field[@name='message_ids' and @widget='mail_thread']"
-                )
-                if nodes:
-                    # Create field
-                    field_failed_messages = etree.Element(
-                        "field",
-                        {"name": "failed_message_ids", "widget": "mail_failed_message"},
-                    )
-                    nodes[0].addprevious(field_failed_messages)
-            arch = doc
-
-        return arch, view
+        res = super().get_view(view_id, view_type, **options)
+        if view_type != "search":
+            return res
+        doc = etree.XML(res["arch"])
+        # Modify view to add new filter element
+        nodes = doc.xpath("//search")
+        if nodes:
+            # Create filter element
+            new_filter = etree.Element(
+                "filter",
+                {
+                    "string": _("Failed sent messages"),
+                    "name": "failed_message_ids",
+                    "domain": str(
+                        [
+                            [
+                                "failed_message_ids.mail_tracking_ids.state",
+                                "in",
+                                list(self.env["mail.message"].get_failed_states()),
+                            ],
+                            [
+                                "failed_message_ids.mail_tracking_needs_action",
+                                "=",
+                                True,
+                            ],
+                        ]
+                    ),
+                },
+            )
+            nodes[0].append(etree.Element("separator"))
+            nodes[0].append(new_filter)
+        res["arch"] = etree.tostring(doc, encoding="unicode")
+        return res

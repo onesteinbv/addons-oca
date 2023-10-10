@@ -196,6 +196,17 @@ class TestAccountBankAccountStatementImportOnline(common.TransactionCase):
         wizard.action_pull()
         self._getExpectedStatements(1)
 
+    def test_wizard_on_journal(self):
+        vals = {
+            "date_since": self.now - relativedelta(hours=1),
+            "date_until": self.now,
+        }
+        wizard = self.OnlineBankStatementPullWizard.with_context(
+            active_model=self.journal._name, active_id=self.journal.id
+        ).create(vals)
+        wizard.action_pull()
+        self._getExpectedStatements(1)
+
     def test_pull_statement_partially(self):
         self.provider.statement_creation_mode = "monthly"
         provider_context = {
