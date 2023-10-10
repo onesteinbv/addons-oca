@@ -103,8 +103,8 @@ class AccountSpread(models.Model):
         domain="[('id', 'in', suitable_journal_ids)]",
     )
     suitable_journal_ids = fields.Many2many(
-        'account.journal',
-        compute='_compute_suitable_journal_ids',
+        "account.journal",
+        compute="_compute_suitable_journal_ids",
     )
     invoice_line_ids = fields.One2many(
         "account.move.line", "spread_id", copy=False, string="Invoice Lines"
@@ -158,11 +158,11 @@ class AccountSpread(models.Model):
                 res["journal_id"] = default_journal.id
         return res
 
-    @api.depends('company_id')
+    @api.depends("company_id")
     def _compute_suitable_journal_ids(self):
         for spread in self:
-            domain = [('company_id', '=', spread.company_id.id)]
-            spread.suitable_journal_ids = self.env['account.journal'].search(domain)
+            domain = [("company_id", "=", spread.company_id.id)]
+            spread.suitable_journal_ids = self.env["account.journal"].search(domain)
 
     @api.depends("invoice_type")
     def _compute_spread_type(self):
@@ -531,19 +531,21 @@ class AccountSpread(models.Model):
                 "<a href=# data-oe-model=account.move "
                 "data-oe-id=%d>%s</a>" % (spread.invoice_id.id, _("Invoice"))
             )
-            msg_body = _("Unlinked invoice line '{}' (view {}).").format(
-                spread.invoice_line_id.name,
-                inv_link,
-            )
+            msg_body = _(
+                "Unlinked invoice line '%(spread_line_name)s' (view %(inv_link)s)."
+            ) % {
+                "spread_line_name": spread.invoice_line_id.name,
+                "inv_link": inv_link,
+            }
             spread.message_post(body=msg_body)
             spread_link = (
                 "<a href=# data-oe-model=account.spread "
                 "data-oe-id=%d>%s</a>" % (spread.id, _("Spread"))
             )
-            msg_body = _("Unlinked '{}' (invoice line {}).").format(
-                spread_link,
-                spread.invoice_line_id.name,
-            )
+            msg_body = _("Unlinked '%(spread_link)s' (invoice line %(inv_line)s).") % {
+                "spread_link": spread_link,
+                "inv_line": spread.invoice_line_id.name,
+            }
             spread.invoice_id.message_post(body=msg_body)
 
     def unlink(self):

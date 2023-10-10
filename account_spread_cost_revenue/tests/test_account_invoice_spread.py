@@ -112,9 +112,11 @@ class TestAccountInvoiceSpread(common.TransactionCase):
         self.vendor_bill_line.account_id.reconcile = True
         self.invoice_line.account_id.reconcile = True
 
-        analytic_plan = self.env['account.analytic.plan'].create({'name': 'Plan Test', 'company_id': False})
-        self.analytic_account = self.env['account.analytic.account'].create(
-            {'name': 'test account', 'plan_id': analytic_plan.id}
+        analytic_plan = self.env["account.analytic.plan"].create(
+            {"name": "Plan Test", "company_id": False}
+        )
+        self.analytic_account = self.env["account.analytic.account"].create(
+            {"name": "test account", "plan_id": analytic_plan.id}
         )
         self.distribution = self.env["account.analytic.distribution.model"].create(
             {
@@ -279,7 +281,9 @@ class TestAccountInvoiceSpread(common.TransactionCase):
             line.create_move()
             self.assertTrue(line.move_id)
             for ml in line.move_id.line_ids:
-                self.assertEqual(ml.analytic_distribution, self.spread.analytic_distribution)
+                self.assertEqual(
+                    ml.analytic_distribution, self.spread.analytic_distribution
+                )
 
         self.spread.invoice_id.button_cancel()
 

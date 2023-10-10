@@ -7,7 +7,6 @@
     "version": "16.0.1.0.0",
     "development_status": "Beta",
     "author": "Onestein,Odoo Community Association (OCA)",
-    "maintainers": ["astirpe"],
     "license": "AGPL-3",
     "website": "https://github.com/OCA/account-financial-tools",
     "category": "Accounting & Finance",
