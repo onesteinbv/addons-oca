@@ -34,10 +34,7 @@ export const AttachmentPreviewWidget = Widget.extend({
     },
 
     _onPopoutClick: function () {
-        if (!this.attachments[this.activeIndex]) {
-            return;
-        }
-
+        if (!this.attachments[this.activeIndex]) return;
         window.open(this.attachments[this.activeIndex].previewUrl);
     },
 
@@ -94,9 +91,7 @@ export const AttachmentPreviewWidget = Widget.extend({
 
     setAttachments: function (attachments, active_attachment_id) {
         this.attachments = attachments;
-        if (!attachments) {
-            return;
-        }
+        if (!attachments) return;
         for (let i = 0; i < attachments.length; ++i) {
             if (parseInt(attachments[i].id, 10) === active_attachment_id) {
                 this.activeIndex = i;

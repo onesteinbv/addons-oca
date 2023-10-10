@@ -32,9 +32,7 @@ patch(BinaryField.prototype, "attachment_preview.BinaryField", {
     _renderPreviewButton(extension) {
         // Add a button same as standard fa-download one.
         var dl_button = $(this.__owl__.bdom.parentEl).find("button.fa-download");
-        if (dl_button.length !== 1) {
-            return;
-        }
+        if (dl_button.length !== 1) return;
         var preview_button = $("<button/>");
         preview_button.addClass("btn btn-secondary fa fa-external-link");
         preview_button.attr("data-tooltip", "Preview");
