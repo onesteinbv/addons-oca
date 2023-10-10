@@ -1,7 +1,7 @@
 /** @odoo-module **/
 import {registry} from "@web/core/registry";
 import {query} from "web.rpc";
-import {canPreview, showPreview, getUrl} from "@attachment_preview/js/utils.esm";
+import {canPreview, getUrl, showPreview} from "@attachment_preview/js/utils.esm";
 import {sprintf} from "@web/core/utils/strings";
 import {useService} from "@web/core/utils/hooks";
 import {SIZES} from "@web/core/ui/ui_service";
