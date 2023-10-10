@@ -287,6 +287,7 @@ class MailMessage(models.Model):
         self.env["bus.bus"]._sendone(
             self.env.user.partner_id, "toggle_tracking_status", self.ids
         )
+        return self.mail_tracking_needs_action
 
     @api.model
     def get_failed_count(self):

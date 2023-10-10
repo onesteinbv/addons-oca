@@ -11,6 +11,12 @@ registerPatch({
                 isMessageFailedBoxVisible: !this.isMessageFailedBoxVisible,
             });
         },
+        _getNonReviewedFailedMessageItems(messageItems, reviewedMessageIds) {
+            if (!messageItems.length) return [];
+            return messageItems.filter(
+                (item) => !reviewedMessageIds.has(item.message.id)
+            );
+        },
     },
     fields: {
         isMessageFailedBoxVisible: attr({

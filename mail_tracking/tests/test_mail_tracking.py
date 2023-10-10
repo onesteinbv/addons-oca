@@ -10,7 +10,7 @@ from werkzeug.exceptions import BadRequest
 from odoo import http
 from odoo.fields import Command
 from odoo.tests.common import TransactionCase
-from odoo.tools.misc import mute_logger
+from odoo.tools import mute_logger
 
 from ..controllers.discuss import MailTrackingDiscussController
 from ..controllers.main import BLANK, MailTrackingController
@@ -107,7 +107,7 @@ class TestMailTracking(TransactionCase):
         self.assertEqual(tracking_email.state, "sent")
         # message_dict read by web interface
         message_dict = message.message_format()[0]
-        self.assertTrue(len(message_dict["history_partner_ids"]) > 0)
+        self.assertTrue(message_dict["history_partner_ids"])
         # First partner is recipient
         partner_id = message_dict["history_partner_ids"][0]
         self.assertEqual(partner_id, self.recipient.id)
