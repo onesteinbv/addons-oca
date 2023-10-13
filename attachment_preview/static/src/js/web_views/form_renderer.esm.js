@@ -23,6 +23,7 @@ patch(FormRenderer.prototype, "attachment_preview.FormRenderer", {
         onWillUnmount(() => {
             bus.off("open_attachment_preview", this, this._onAttachmentPreview);
             this.attachmentPreviewWidget.hide();
+            this.attachmentPreviewWidget.destroy();
         });
         return res;
     },

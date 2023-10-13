@@ -13,7 +13,6 @@ export const AttachmentPreviewWidget = Widget.extend({
     },
 
     start: function () {
-        // First_click = true;
         var res = this._super.apply(this, arguments);
         this.$overlay = $(".attachment_preview_overlay");
         this.$iframe = $(".attachment_preview_iframe");
