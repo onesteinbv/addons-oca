@@ -29,7 +29,7 @@ class AccountMove(models.Model):
         compute="_compute_overdue_reminder",
         help="This counter is not increased in case of phone reminder.",
     )
-    overdue_remind_sent = fields.Boolean(compute="_compute_overdue_reminder")
+    overdue_remind_sent = fields.Boolean(compute="_compute_overdue_reminder", compute_sudo=True)
     overdue = fields.Boolean(compute="_compute_overdue")
 
     _sql_constraints = [
