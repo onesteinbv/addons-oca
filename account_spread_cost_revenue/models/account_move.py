@@ -18,7 +18,7 @@ class AccountMove(models.Model):
             [("line_ids.move_id", "in", self.ids)]
         )
         spreads += move_spreads
-#        spreads.reconcile_spread_moves()
+        spreads.reconcile_spread_moves()
         return res
 
     def button_cancel(self):
