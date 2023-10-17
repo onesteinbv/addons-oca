@@ -98,17 +98,25 @@ class AccountMoveLine(models.Model):
         # Improve error messages of standard Odoo
         reconciled_lines = self.filtered(lambda l: l.reconciled)
         msg_line = _(
-            "Move line: %s (%s), account code: %s\n"
+            "Move line: %(line_id)s (%(line_name)s), account code: %(account_code)s\n"
         )
         if reconciled_lines:
             msg = _("Cannot reconcile entries that are already reconciled:\n")
             for line in reconciled_lines:
-                msg += msg_line % (line.id, line.name, line.account_id.code)
+                msg += msg_line % {
+                    "line_id": line.id,
+                    "line_name": line.name,
+                    "account_code": line.account_id.code,
+                }
             raise ValidationError(msg)
         if len(self.mapped("account_id").ids) > 1:
             msg = _("Some entries are not from the same account:\n")
             for line in self:
-                msg += msg_line % (line.id, line.name, line.account_id.code)
+                msg += msg_line % {
+                    "line_id": line.id,
+                    "line_name": line.name,
+                    "account_code": line.account_id.code,
+                }
             raise ValidationError(msg)
 
     def create_auto_spread(self):
