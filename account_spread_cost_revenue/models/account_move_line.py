@@ -148,9 +148,10 @@ class AccountMoveLine(models.Model):
             elif len(template) > 1:
                 raise UserError(
                     _(
-                        "Too many auto spread templates ({}) matched with the "
-                        "invoice line, {}"
-                    ).format(len(template), line.display_name)
+                        "Too many auto spread templates (%(len_template)s) matched with the "
+                        "invoice line, %(line_name)s"
+                    )
+                    % {"len_template": len(template), "line_name": line.display_name}
                 )
             # Found auto spread template for this invoice line, create it
             wizard = self.env["account.spread.invoice.line.link.wizard"].new(

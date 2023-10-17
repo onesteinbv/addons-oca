@@ -42,10 +42,7 @@
                                 domain="[('deprecated', '=', False)]"
                                 options="{'no_create': True}"
                             />
-                            <field
-                                name="spread_journal_id"
-                                widget="selection"
-                            />
+                            <field name="spread_journal_id" widget="selection" />
                             <field
                                 name="analytic_distribution"
                                 groups="analytic.group_analytic_accounting"
