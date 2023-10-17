@@ -573,6 +573,8 @@ class AccountSpread(models.Model):
         if mls_to_reconcile:
             do_reconcile = mls_to_reconcile + self.invoice_line_id
             do_reconcile.remove_move_reconcile()
+            for line in do_reconcile:
+                line.reconciled = False
             # ensure to reconcile only posted items
             do_reconcile = do_reconcile.filtered(lambda l: l.move_id.state == "posted")
             do_reconcile._check_spread_reconcile_validity()
