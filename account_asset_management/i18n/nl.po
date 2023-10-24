@@ -240,7 +240,7 @@ msgstr "Activa categorieën"
 #: model:ir.ui.menu,name:account_asset_management.account_asset_profile_menu
 #, fuzzy
 msgid "Asset Profiles"
-msgstr "Activa categorieën"
+msgstr "Activa profielen"
 
 #. module: account_asset_management
 #: model:ir.model.fields.selection,name:account_asset_management.selection__account_asset_line__type__remove
