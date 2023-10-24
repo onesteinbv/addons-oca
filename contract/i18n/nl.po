@@ -1409,14 +1409,14 @@ msgstr ""
 #: model:ir.ui.menu,name:contract.purchase_contract_manually_create_invoice_menu
 #, fuzzy
 msgid "Manually Invoice Purchase Contracts"
-msgstr "Inkoop Contracten"
+msgstr "Handmatig factureren inkoop contracten"
 
 #. module: contract
 #: model:ir.actions.act_window,name:contract.sale_contract_manually_create_invoice_act_window
 #: model:ir.ui.menu,name:contract.sale_contract_manually_create_invoice_menu
 #, fuzzy
 msgid "Manually Invoice Sale Contracts"
-msgstr "Verkoop Contracten"
+msgstr "Handmatig factureren verkoop contracten"
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_abstract_contract__line_recurrence
