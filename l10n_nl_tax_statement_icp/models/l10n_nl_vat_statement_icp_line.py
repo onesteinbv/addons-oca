@@ -37,7 +37,7 @@ class VatStatementIcpLine(models.Model):
 
     @api.depends("vat", "country_code")
     def _compute_format_vat(self):
-        for line in self.filtered(lambda l: l.country_code):
+        for line in self.filtered(lambda l: l.country_code and l.vat):
             line.format_vat = line.vat.lstrip(line.country_code)
 
     @api.depends("amount_products", "amount_services")
