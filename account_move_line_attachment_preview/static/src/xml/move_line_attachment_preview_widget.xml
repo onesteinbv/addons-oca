@@ -5,7 +5,7 @@
         <a
             href="#"
             t-esc="props.value and props.value[1] or ' - - - '"
-            t-on-click.prevent.stop="() => this.openAttachment()"
+            t-on-focusin.prevent.stop="() => this.openAttachment()"
         />
     </t>
 
