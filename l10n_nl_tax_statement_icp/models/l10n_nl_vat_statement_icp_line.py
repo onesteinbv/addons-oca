@@ -22,6 +22,9 @@ class VatStatementIcpLine(models.Model):
         string="VAT",
         readonly=True,
     )
+    format_vat = fields.Char(
+        compute="_compute_format_vat",
+    )
     country_code = fields.Char(
         readonly=True,
     )
@@ -31,6 +34,11 @@ class VatStatementIcpLine(models.Model):
     format_amount_products = fields.Char(compute="_compute_icp_amount_format")
     amount_services = fields.Monetary(readonly=True)
     format_amount_services = fields.Char(compute="_compute_icp_amount_format")
+
+    @api.depends("vat", "country_code")
+    def _compute_format_vat(self):
+        for line in self:
+            line.format_vat = line.vat.lstrip(line.country_code)
 
     @api.depends("amount_products", "amount_services")
     def _compute_icp_amount_format(self):
