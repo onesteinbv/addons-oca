@@ -25,9 +25,7 @@ class OnlineBankStatementProvider(models.Model):
         ],
         default="execution_date",
         help="Select the Ponto date field that will be used for "
-        "the Odoo bank statement line date. If you change this parameter "
-        "on a provider that already has transactions, you will have to "
-        "purge the Ponto buffers.",
+        "the Odoo bank statement line date.",
     )
 
     @api.model
@@ -140,30 +138,31 @@ class OnlineBankStatementProvider(models.Model):
         return lines
 
     def _ponto_store_lines(self, lines):
-        """Store transactions retrieved from Ponto in statements.
-
-        The data retrieved has the most recent first. However we need to create
-        the bank statements in ascending date order. as the balance_end of
-        one statement will be the balanxe_start of the next statement.
-        """
+        """Store transactions retrieved from Ponto in statements."""
         lines = sorted(lines, key=itemgetter("transaction_datetime"))
+
+        # Group statement lines by date per period (date range)
         grouped_periods = {}
         for line in lines:
             date_since = line["transaction_datetime"]
             statement_date_since = self._get_statement_date_since(date_since)
-            statement_date_until = statement_date_since + self._get_statement_date_step()
+            statement_date_until = (
+                statement_date_since + self._get_statement_date_step()
+            )
             if (statement_date_since, statement_date_until) not in grouped_periods:
                 grouped_periods[(statement_date_since, statement_date_until)] = []
 
             line.pop("transaction_datetime")
             vals_line = self._ponto_get_transaction_vals(line)
-            grouped_periods[(statement_date_since, statement_date_until)].append(vals_line)
+            grouped_periods[(statement_date_since, statement_date_until)].append(
+                vals_line
+            )
 
+        # For each period, create or update statement lines
         for period, statement_lines in grouped_periods.items():
-            (statement_date_since, statement_date_until) = period
-
+            (date_since, date_until) = period
             statement = self._create_or_update_statement(
-                (statement_lines, {}), statement_date_since, statement_date_until
+                (statement_lines, {}), date_since, date_until
             )
             for line in statement.line_ids.filtered(lambda l: not l.partner_id):
                 line.partner_id = line._retrieve_partner()
