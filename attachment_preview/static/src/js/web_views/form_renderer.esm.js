@@ -10,11 +10,6 @@ patch(FormRenderer.prototype, "attachment_preview.FormRenderer", {
 
     setup() {
         var res = this._super(...arguments);
-
-        // temporary patch to disable OCA preview on forms
-        // TODO make it configurable
-        return res;
-
         this.attachmentPreviewWidget = new AttachmentPreviewWidget(this);
         this.attachmentPreviewWidget.on(
             "hidden",
