@@ -1183,7 +1183,6 @@ msgstr "İşaretliyse, yeni mesajlar dikkatinize sunulacak."
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error
-#: model:ir.model.fields,help:contract.field_contract_contract__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "İşaretliyse,bazı mesajlar gönderi hatası içermektedir."
 
@@ -1581,8 +1580,8 @@ msgstr "Hata sayısı"
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_needaction_counter
-msgid "Number of messages which requires an action"
-msgstr "Eylem gerektiren mesaj sayısı"
+msgid "Number of messages requiring action"
+msgstr ""
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error_counter
@@ -1818,11 +1817,6 @@ msgstr "Sorumlu"
 #: model:ir.model.fields,field_description:contract.field_contract_contract__activity_user_id
 msgid "Responsible User"
 msgstr "Sorumlu Kullanıcı"
-
-#. module: contract
-#: model:ir.model.fields,field_description:contract.field_contract_contract__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "SMS Ulaştırma hatası"
 
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_res_partner__sale_contract_count
@@ -2322,6 +2316,12 @@ msgid ""
 msgstr ""
 "{{ object.company_id.name }} Sözleşme (Ref {{ object.name or 'n/a' }}) - "
 "Değişiklikler"
+
+#~ msgid "SMS Delivery error"
+#~ msgstr "SMS Ulaştırma hatası"
+
+#~ msgid "Number of messages which requires an action"
+#~ msgstr "Eylem gerektiren mesaj sayısı"
 
 #~ msgid ""
 #~ "<div style=\"font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-"

@@ -1163,7 +1163,6 @@ msgstr ""
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error
-#: model:ir.model.fields,help:contract.field_contract_contract__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -1393,14 +1392,14 @@ msgstr ""
 #: model:ir.ui.menu,name:contract.purchase_contract_manually_create_invoice_menu
 #, fuzzy
 msgid "Manually Invoice Purchase Contracts"
-msgstr "Handmatig factureren inkoop contracten"
+msgstr "Contracten"
 
 #. module: contract
 #: model:ir.actions.act_window,name:contract.sale_contract_manually_create_invoice_act_window
 #: model:ir.ui.menu,name:contract.sale_contract_manually_create_invoice_menu
 #, fuzzy
 msgid "Manually Invoice Sale Contracts"
-msgstr "Handmatig factureren verkoop contracten"
+msgstr "Contracten"
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_abstract_contract__line_recurrence
@@ -1561,7 +1560,7 @@ msgstr ""
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr ""
 
 #. module: contract
@@ -1800,11 +1799,6 @@ msgstr ""
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__activity_user_id
 msgid "Responsible User"
-msgstr ""
-
-#. module: contract
-#: model:ir.model.fields,field_description:contract.field_contract_contract__message_has_sms_error
-msgid "SMS Delivery error"
 msgstr ""
 
 #. module: contract

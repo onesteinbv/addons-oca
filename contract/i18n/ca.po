@@ -1206,7 +1206,6 @@ msgstr "Si està marcada, els nous missatges requeriran la teva atenció."
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error
-#: model:ir.model.fields,help:contract.field_contract_contract__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Si està marcada, alguns missatges tenen un error d'entrega."
 
@@ -1605,8 +1604,8 @@ msgstr "Nombre d'errors"
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_needaction_counter
-msgid "Number of messages which requires an action"
-msgstr "Nombre de missatges que requereixen una acció"
+msgid "Number of messages requiring action"
+msgstr ""
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error_counter
@@ -1842,11 +1841,6 @@ msgstr "Responsable"
 #: model:ir.model.fields,field_description:contract.field_contract_contract__activity_user_id
 msgid "Responsible User"
 msgstr "Usuari Responsable"
-
-#. module: contract
-#: model:ir.model.fields,field_description:contract.field_contract_contract__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Error d'entrega de SMS"
 
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_res_partner__sale_contract_count
@@ -2358,6 +2352,12 @@ msgid ""
 msgstr ""
 "{{ object.company_id.name }} Contracte (Ref {{ object.name or 'n/a' }}) - "
 "Modificacions"
+
+#~ msgid "SMS Delivery error"
+#~ msgstr "Error d'entrega de SMS"
+
+#~ msgid "Number of messages which requires an action"
+#~ msgstr "Nombre de missatges que requereixen una acció"
 
 #~ msgid ""
 #~ "<div style=\"font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-"
