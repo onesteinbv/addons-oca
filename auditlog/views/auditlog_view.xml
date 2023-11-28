@@ -162,9 +162,21 @@
                                 attrs="{'invisible': [('model_id', '!=', False)]}"
                                 readonly="1"
                             />
-                            <field name="res_id" readonly="1" attrs="{'invisible': [('res_id', '=', 0)]}"  />
-                            <field name="res_ids" readonly="1" attrs="{'invisible': [('res_ids', '=', False)]}" />
-                            <field name="name" readonly="1" attrs="{'invisible': [('name', '=', False)]}"  />
+                            <field
+                                name="res_id"
+                                readonly="1"
+                                attrs="{'invisible': [('res_id', '=', 0)]}"
+                            />
+                            <field
+                                name="res_ids"
+                                readonly="1"
+                                attrs="{'invisible': [('res_ids', '=', False)]}"
+                            />
+                            <field
+                                name="name"
+                                readonly="1"
+                                attrs="{'invisible': [('name', '=', False)]}"
+                            />
                         </group>
                     </group>
                     <group string="HTTP Context">

@@ -556,21 +556,14 @@ class AuditlogRule(models.Model):
         }
         vals.update(additional_log_values or {})
         if method == "export_data":
-            vals.update({
-                "res_ids": str(res_ids)
-            })
-            return log_model.create(
-                vals
-            )
+            vals.update({"res_ids": str(res_ids)})
+            return log_model.create(vals)
 
         for res_id in res_ids:
             name = model_model.browse(res_id).name_get()
             res_name = name and name[0] and name[0][1]
 
-            log_vals = {**vals, **{
-                "name": res_name,
-                "res_id": res_id
-            }}
+            log_vals = {**vals, **{"name": res_name, "res_id": res_id}}
             log = log_model.create(log_vals)
             diff = DictDiffer(
                 new_values.get(res_id, EMPTY_DICT), old_values.get(res_id, EMPTY_DICT)
