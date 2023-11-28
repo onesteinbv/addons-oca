@@ -290,8 +290,6 @@ class AuditlogRule(models.Model):
 
         def export_data(self, fields_to_export):
             res = export_data.origin(self, fields_to_export)
-            if self.env.context.get("auditlog_disabled"):
-                return res
             self = self.with_context(auditlog_disabled=True)
             rule_model = self.env["auditlog.rule"]
             if self.env.user in users_to_exclude:
