@@ -267,10 +267,11 @@ class AuditlogCommon(object):
             auditlog_log.search(
                 [
                     ("model_id", "=", self.groups_model_id),
-                    ("method", "=", "export_data")
+                    ("method", "=", "export_data"),
                 ]
             ).ensure_one()
         )
+
 
 class TestAuditlogFull(TransactionCase, AuditlogCommon):
     def setUp(self):
