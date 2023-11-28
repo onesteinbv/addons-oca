@@ -106,7 +106,7 @@ class AuditlogRule(models.Model):
         ),
         states={"subscribed": [("readonly", True)]},
     )
-    log_export = fields.Boolean(
+    log_export_data = fields.Boolean(
         "Log Exports",
         default=True,
         help=(
@@ -217,7 +217,7 @@ class AuditlogRule(models.Model):
                 updated = True
             #   -> export_data
             check_attr = "auditlog_ruled_export_data"
-            if rule.log_export and not hasattr(model_model, check_attr):
+            if rule.log_export_data and not hasattr(model_model, check_attr):
                 model_model._patch_method("export_data", rule._make_export_data())
                 setattr(type(model_model), check_attr, True)
                 updated = True

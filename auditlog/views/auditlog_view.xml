@@ -58,7 +58,7 @@
                             <field name="log_write" />
                             <field name="log_unlink" />
                             <field name="log_create" />
-                            <field name="log_export" />
+                            <field name="log_export_data" />
                         </group>
                     </group>
                 </sheet>
@@ -80,7 +80,7 @@
                 <field name="log_write" />
                 <field name="log_unlink" />
                 <field name="log_create" />
-                <field name="log_export" />
+                <field name="log_export_data" />
                 <field name="state" />
             </tree>
         </field>
