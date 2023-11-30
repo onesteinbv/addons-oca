@@ -801,7 +801,8 @@ class AccountBankStatementLine(models.Model):
                     "currency_id": self.company_id.currency_id.id,
                     "line_currency_id": self.company_id.currency_id.id,
                     "currency_amount": -total_amount,
-                    "tax_tag_ids": tax["tag_ids"]
+                    "tax_tag_ids": tax["tag_ids"],
+                    "tax_repartition_line_id": tax["tax_repartition_line_id"]
                 }
                 reconcile_auxiliary_id += 1
                 line_amount += total_amount
