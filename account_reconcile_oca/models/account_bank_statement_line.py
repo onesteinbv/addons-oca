@@ -770,11 +770,11 @@ class AccountBankStatementLine(models.Model):
         tax_lines = []
         account_account_obj = self.env['account.account']
         account_tax_obj = self.env['account.tax']
-        line_amount = -line.get('amount')
+        line_amount = line.get('amount')
         base_tag_ids = []
         for existing_line in data:
             if existing_line['kind'] == "tax" and existing_line["parent_reference"] == line["reference"]:
-                line_amount -= existing_line['amount']
+                line_amount += existing_line['amount']
         for manual_tax_id in line.get('tax_ids', []):
             manual_tax = account_tax_obj.browse(manual_tax_id)
             computed_taxes_dict = manual_tax.with_context(force_price_include=True).json_friendly_compute_all(
@@ -782,7 +782,7 @@ class AccountBankStatementLine(models.Model):
             base_tag_ids.extend(computed_taxes_dict['base_tags'])
             taxes = computed_taxes_dict.get("taxes")
             for tax in taxes:
-                total_amount = tax['amount']
+                total_amount = -tax['amount']
                 account = account_account_obj.browse(tax.get('account_id')).name_get()[0] if tax.get('account_id') else \
                 self.journal_id.suspense_account_id.name_get()[0]
                 tax_line = {
@@ -805,11 +805,10 @@ class AccountBankStatementLine(models.Model):
                     "tax_tag_ids": tax["tag_ids"]
                 }
                 reconcile_auxiliary_id += 1
-                line_amount -= total_amount
+                line_amount += total_amount
                 tax_lines.append(tax_line)
 
         base_tag_ids = list(set(base_tag_ids))
-        line_amount = -line_amount
         line.update(
             {
                 "amount": line_amount,
