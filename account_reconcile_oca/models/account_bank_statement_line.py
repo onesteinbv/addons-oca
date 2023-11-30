@@ -87,9 +87,9 @@ class AccountBankStatementLine(models.Model):
     )
     can_reconcile = fields.Boolean(sparse="reconcile_data_info")
     manual_tax_ids = fields.Many2many(
-        comodel_name='account.tax',
+        comodel_name="account.tax",
         string="Taxes",
-        context={'active_test': False},
+        context={"active_test": False},
         check_company=True,
         store=False,
         default=False,
@@ -281,8 +281,7 @@ class AccountBankStatementLine(models.Model):
                     self.manual_tax_ids = [Command.set(line.get("tax_ids"))] if line.get("tax_ids") else False
             new_data.append(line)
         if deleted_line:
-            deleted_line['tax_ids'] = []
-            new_data = self._remove_tax_lines(deleted_line, new_data,[])
+            new_data = self._remove_tax_lines(deleted_line, new_data, [])
         self.reconcile_data_info = self._recompute_suspense_line(
             new_data,
             self.reconcile_data_info["reconcile_auxiliary_id"],
@@ -308,7 +307,7 @@ class AccountBankStatementLine(models.Model):
         for line in data:
             if line["reference"] == self.manual_reference:
                 if self._check_line_changed(line):
-                    tax_updated = self.manual_tax_ids.ids != line.get("tax_ids",[])
+                    tax_updated = self.manual_tax_ids.ids != line.get("tax_ids", [])
                     line.update(
                         {
                             "name": self.manual_name,
@@ -335,7 +334,7 @@ class AccountBankStatementLine(models.Model):
                     if line["kind"] == "liquidity":
                         self._update_move_partner()
                     if tax_updated and line["kind"] not in ("liquidity", "tax"):
-                        line,tax_lines,reconcile_auxiliary_id = self._recompute_tax_lines(
+                        line, tax_lines, reconcile_auxiliary_id = self._recompute_tax_lines(
                             data,
                             line
                         )
@@ -768,23 +767,23 @@ class AccountBankStatementLine(models.Model):
     def _recompute_tax_lines(self, data, line):
         reconcile_auxiliary_id = self.reconcile_data_info["reconcile_auxiliary_id"]
         tax_lines = []
-        account_account_obj = self.env['account.account']
-        account_tax_obj = self.env['account.tax']
-        line_amount = line.get('amount')
+        account_account_obj = self.env["account.account"]
+        account_tax_obj = self.env["account.tax"]
+        line_amount = line.get("amount")
         base_tag_ids = []
         for existing_line in data:
-            if existing_line['kind'] == "tax" and existing_line["parent_reference"] == line["reference"]:
-                line_amount += existing_line['amount']
-        for manual_tax_id in line.get('tax_ids', []):
+            if existing_line["kind"] == "tax" and existing_line["parent_reference"] == line["reference"]:
+                line_amount += existing_line["amount"]
+        for manual_tax_id in line.get("tax_ids", []):
             manual_tax = account_tax_obj.browse(manual_tax_id)
             computed_taxes_dict = manual_tax.with_context(force_price_include=True).json_friendly_compute_all(
                 line_amount)
-            base_tag_ids.extend(computed_taxes_dict['base_tags'])
+            base_tag_ids.extend(computed_taxes_dict.get("base_tags", []))
             taxes = computed_taxes_dict.get("taxes")
             for tax in taxes:
-                total_amount = -tax['amount']
-                account = account_account_obj.browse(tax.get('account_id')).name_get()[0] if tax.get('account_id') else \
-                self.journal_id.suspense_account_id.name_get()[0]
+                total_amount = -tax["amount"]
+                account = account_account_obj.browse(tax.get("account_id")).name_get()[0] if tax.get("account_id") \
+                    else self.journal_id.suspense_account_id.name_get()[0]
                 tax_line = {
                     "reference": "reconcile_auxiliary;%s" % reconcile_auxiliary_id,
                     "id": False,
@@ -794,7 +793,7 @@ class AccountBankStatementLine(models.Model):
                                   and self.partner_id.name_get()[0]
                                   or (False, self.partner_name),
                     "date": fields.Date.to_string(self.date),
-                    "name": tax['name'],
+                    "name": tax["name"],
                     "amount": -total_amount,
                     "credit": total_amount if total_amount > 0 else 0.0,
                     "debit": -total_amount if total_amount < 0 else 0.0,
@@ -807,7 +806,6 @@ class AccountBankStatementLine(models.Model):
                 reconcile_auxiliary_id += 1
                 line_amount += total_amount
                 tax_lines.append(tax_line)
-
         base_tag_ids = list(set(base_tag_ids))
         line.update(
             {
@@ -820,12 +818,10 @@ class AccountBankStatementLine(models.Model):
         self.manual_amount = line_amount
         return line, tax_lines, reconcile_auxiliary_id
 
-    def _remove_tax_lines(self, line, data,tax_lines):
+    def _remove_tax_lines(self, line, data, tax_lines):
         new_data = data.copy()
         for existing_line in data:
-            if existing_line['kind'] == "tax" and existing_line["parent_reference"] == line[
-                "reference"] and existing_line not in tax_lines:
+            if (existing_line["kind"] == "tax" and existing_line["parent_reference"] == line["reference"]
+                    and existing_line not in tax_lines):
                 new_data.remove(existing_line)
         return new_data
-
-
