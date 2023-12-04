@@ -112,7 +112,7 @@ class AccountBankStatementLine(models.Model):
         if self.manual_model_id:
             data = []
             for line in self.reconcile_data_info.get("data", []):
-                if line.get("kind") != "suspense":
+                if line.get("kind") == "liquidity":
                     data.append(line)
             self.reconcile_data_info = self._recompute_suspense_line(
                 *self._reconcile_data_by_model(
