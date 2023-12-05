@@ -37,6 +37,8 @@ class AccountBankStatementLine(models.Model):
         store=False,
         default=False,
         prefetch=False,
+        domain="[('account_type', 'not in', ('asset_cash', 'off_balance')), ('company_id', '=', company_id), "
+               "('deprecated', '=', False)]",
     )
     manual_partner_id = fields.Many2one(
         "res.partner",
