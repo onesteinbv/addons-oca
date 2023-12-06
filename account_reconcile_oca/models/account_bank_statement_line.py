@@ -114,7 +114,7 @@ class AccountBankStatementLine(models.Model):
         if self.manual_model_id:
             data = []
             for line in self.reconcile_data_info.get("data", []):
-                if line.get("kind") == "liquidity":
+                if line.get("kind") != "suspense":
                     data.append(line)
             self.reconcile_data_info = self._recompute_suspense_line(
                 *self._reconcile_data_by_model(
@@ -388,15 +388,19 @@ class AccountBankStatementLine(models.Model):
     def _reconcile_data_by_model(self, data, reconcile_model, reconcile_auxiliary_id):
         new_data = []
         liquidity_amount = 0.0
+        default_name = ''
         for line_data in data:
             if line_data["kind"] == "suspense":
                 continue
             new_data.append(line_data)
             liquidity_amount += line_data["amount"]
+            if line_data["kind"] == "liquidity":
+                default_name = line_data["name"]
         for line in reconcile_model._get_write_off_move_lines_dict_oca(
                 -liquidity_amount, self._retrieve_partner()
         ):
             new_line = line.copy()
+            new_line['name'] = new_line.get('name') or default_name
             amount = line.get("balance")
             if self.foreign_currency_id:
                 amount = self.foreign_currency_id.compute(
