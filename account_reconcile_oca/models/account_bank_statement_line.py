@@ -200,7 +200,7 @@ class AccountBankStatementLine(models.Model):
                     "account_id": self.journal_id.suspense_account_id.name_get()[0],
                     "partner_id": self.partner_id
                                   and self.partner_id.name_get()[0]
-                                  or (False, self.partner_name),
+                                  or (False, ''),
                     "date": fields.Date.to_string(self.date),
                     "name": self.payment_ref or self.name,
                     "amount": -total_amount,
@@ -315,7 +315,7 @@ class AccountBankStatementLine(models.Model):
                             "name": self.manual_name,
                             "partner_id": self.manual_partner_id
                                           and self.manual_partner_id.name_get()[0]
-                                          or (False, self.partner_name),
+                                          or (False, ''),
                             "account_id": self.manual_account_id.name_get()[0]
                             if self.manual_account_id
                             else [False, _("Undefined")],
@@ -711,34 +711,14 @@ class AccountBankStatementLine(models.Model):
         reconcile_auxiliary_id = self.reconcile_data_info["reconcile_auxiliary_id"]
         for line in data:
             if line["reference"] == manual_reference and line.get("id"):
-                total_amount = -line["amount"] + line["original_amount_unsigned"]
-                original_amount = line["original_amount_unsigned"]
                 new_data.append(
                     self._get_reconcile_line(
                         self.env["account.move.line"].browse(line["id"]),
                         "other",
                         is_counterpart=True,
-                        max_amount=original_amount,
+                        max_amount=line["original_amount_unsigned"],
                     )
                 )
-                new_data.append(
-                    {
-                        "reference": "reconcile_auxiliary;%s" % reconcile_auxiliary_id,
-                        "id": False,
-                        "account_id": line["account_id"],
-                        "partner_id": line.get("partner_id"),
-                        "date": line["date"],
-                        "name": line["name"],
-                        "amount": -total_amount,
-                        "credit": total_amount if total_amount > 0 else 0.0,
-                        "debit": -total_amount if total_amount < 0 else 0.0,
-                        "kind": "other",
-                        "currency_id": line["currency_id"],
-                        "line_currency_id": line["currency_id"],
-                        "currency_amount": -total_amount,
-                    }
-                )
-                reconcile_auxiliary_id += 1
             else:
                 new_data.append(line)
         self.reconcile_data_info = self._recompute_suspense_line(
@@ -767,7 +747,7 @@ class AccountBankStatementLine(models.Model):
             from_unreconcile=from_unreconcile,
         )
         if vals["partner_id"] is False:
-            vals["partner_id"] = (False, self.partner_name)
+            vals["partner_id"] = (False, '')
         return vals
 
     def _recompute_tax_lines(self, data, line):
@@ -797,7 +777,7 @@ class AccountBankStatementLine(models.Model):
                     "account_id": account,
                     "partner_id": self.partner_id
                                   and self.partner_id.name_get()[0]
-                                  or (False, self.partner_name),
+                                  or (False, ''),
                     "date": fields.Date.to_string(self.date),
                     "name": tax["name"],
                     "amount": -total_amount,
