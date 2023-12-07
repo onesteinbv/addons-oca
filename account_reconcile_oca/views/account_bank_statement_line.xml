@@ -234,7 +234,7 @@
                                 <field
                                     name="manual_tax_ids"
                                     string="Taxes"
-                                    attrs="{'readonly': ['|','|',('manual_reference', '=', False), ('is_reconciled', '=', True),('manual_kind', '=', 'liquidity')],'invisible':[('manual_kind', '=', 'tax')]}"
+                                    attrs="{'readonly': ['|','|',('manual_reference', '=', False), ('is_reconciled', '=', True),('manual_kind', '=', 'liquidity')],'invisible':['|',('manual_kind', '=', 'tax'), ('manual_line_id', '!=', False)]}"
                                     widget="many2many_tags"
                                     />
                                 <field

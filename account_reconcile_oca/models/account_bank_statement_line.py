@@ -231,7 +231,7 @@ class AccountBankStatementLine(models.Model):
                 or self.manual_tax_ids.ids != line.get("tax_ids", [])
                 or self.manual_name != line["name"]
                 or (
-                        self.manual_partner_id and self.manual_partner_id.name_get()[0] or False
+                        self.manual_partner_id and list(self.manual_partner_id.name_get()[0]) or False
                 )
                 != line.get("partner_id")
         )
