@@ -38,5 +38,14 @@ export class ReconcileFormController extends FormController {
                 this.env.parentController.selectRecord();
             }
         }
+        else if (is_reconciled && !this.model.root.data.is_reconciled) {
+            if (this.env.parentController) {
+                // Refreshing
+                await this.env.parentController.model.root.load();
+                await this.env.parentController.render(true);
+                this.env.parentController.props.resId = this.env.parentController.state.selectedRecordId;
+                this.env.parentController.selectRecord();
+            }
+        }
     }
 }
