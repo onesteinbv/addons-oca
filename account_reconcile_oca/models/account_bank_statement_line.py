@@ -797,8 +797,8 @@ class AccountBankStatementLine(models.Model):
         line.update(
             {
                 "amount": line_amount,
-                "credit": line_amount if line_amount > 0 else 0.0,
-                "debit": -line_amount if line_amount < 0 else 0.0,
+                "credit": -line_amount if line_amount < 0 else 0.0,
+                "debit": line_amount if line_amount > 0 else 0.0,
                 "tax_tag_ids": base_tag_ids
             }
         )
