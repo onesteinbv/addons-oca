@@ -8,7 +8,7 @@
 {
     "name": "Web Responsive",
     "summary": "Responsive web client, community-supported",
-    "version": "16.0.1.1.2",
+    "version": "16.0.1.2.3",
     "category": "Website",
     "website": "https://github.com/OCA/web",
     "author": "LasLabs, Tecnativa, ITerra, Onestein, "
@@ -22,7 +22,6 @@
     "data": ["views/web.xml"],
     "assets": {
         "web.assets_backend": [
-            "/web_responsive/static/src/views/form/form_controller.esm.js",
             "/web_responsive/static/src/legacy/scss/web_responsive.scss",
             "/web_responsive/static/src/legacy/js/web_responsive.js",
             "/web_responsive/static/src/components/ui_context.esm.js",

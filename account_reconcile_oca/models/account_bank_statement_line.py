@@ -478,9 +478,24 @@ class AccountBankStatementLine(models.Model):
                 ._apply_rules(self, self._retrieve_partner())
             )
             if res and res.get("status", "") == "write_off":
+                model = res['model']
+                amount = self.amount_total_signed
+                if model and model.rule_type == 'invoice_matching' and model.allow_payment_tolerance and not model.payment_tolerance_param == 0:
+                    for line in res.get("amls", []):
+                        line_data = self._get_reconcile_line(
+                            line, "other", is_counterpart=True,
+                        )
+                        data.append(line_data)
+                else:
+                    for line in res.get("amls", []):
+                        line_data = self._get_reconcile_line(
+                            line, "other", is_counterpart=True, max_amount=amount
+                        )
+                        amount -= line_data.get("amount")
+                        data.append(line_data)
                 return self._recompute_suspense_line(
                     *self._reconcile_data_by_model(
-                        data, res["model"], reconcile_auxiliary_id
+                        data, model, reconcile_auxiliary_id
                     ),
                     self.manual_reference
                 )
@@ -677,9 +692,24 @@ class AccountBankStatementLine(models.Model):
             ]
             reconcile_auxiliary_id = 1
             if res.get("status", "") == "write_off":
+                model = res['model']
+                amount = self.amount
+                if model and model.rule_type == 'invoice_matching' and model.allow_payment_tolerance and not model.payment_tolerance_param == 0:
+                    for line in res.get("amls", []):
+                        line_data = record._get_reconcile_line(
+                            line, "other", is_counterpart=True,
+                        )
+                        data.append(line_data)
+                else:
+                    for line in res.get("amls", []):
+                        line_data = record._get_reconcile_line(
+                            line, "other", is_counterpart=True, max_amount=amount
+                        )
+                        amount -= line_data.get("amount")
+                        data.append(line_data)
                 data = record._recompute_suspense_line(
                     *record._reconcile_data_by_model(
-                        data, res["model"], reconcile_auxiliary_id
+                        data, model, reconcile_auxiliary_id
                     ),
                     self.manual_reference
                 )
