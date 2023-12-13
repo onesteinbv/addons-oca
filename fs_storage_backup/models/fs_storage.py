@@ -109,7 +109,8 @@ class FSStorage(models.Model):
 
     @api.model
     def cron_backup_db(self):
-        storages = self.search([("use_for_backup", "=", True)])
-        for storage in storages:
+        # use_for_backup is not searchable
+        storages = self.search([])
+        for storage in storages.filtered(lambda s: s.use_for_backup):
             storage.backup_db()
             storage.cleanup_old_backups()
