@@ -47,7 +47,7 @@ class FSStorage(models.Model):
 
     def _get_backup_format(self):
         self.ensure_one()
-        return self.backup_include_filestore and "dump.zip" or "dump"
+        return self.backup_include_filestore and "zip" or "dump"
 
     def _get_backup_path(self):
         self.ensure_one()
