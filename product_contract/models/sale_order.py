@@ -59,7 +59,7 @@ class SaleOrder(models.Model):
             "payment_term_id": self.payment_term_id.id,
             "fiscal_position_id": self.fiscal_position_id.id,
             "invoice_partner_id": self.partner_invoice_id.id,
-            "line_recurrence": self.partner_invoice_id.id,
+            "line_recurrence": contract_template.line_recurrence,
         }
 
     def action_create_contract(self):
