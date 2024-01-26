@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-27 01:12+0000\n"
-"PO-Revision-Date: 2023-11-17 17:35+0000\n"
+"PO-Revision-Date: 2024-01-25 15:35+0000\n"
 "Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: Italian (https://www.transifex.com/oca/teams/23907/it/)\n"
 "Language: it\n"
@@ -122,9 +122,8 @@ msgstr ""
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.report_contract_document
-#, fuzzy
 msgid "<strong class=\"mr16\">Subtotal</strong>"
-msgstr "<strong>Totale</strong>"
+msgstr "<strong class=\"mr16\">Subtotale</strong>"
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_form_view
@@ -136,9 +135,10 @@ msgid ""
 "                                    invoiced period"
 msgstr ""
 "<strong>#END#</strong>\n"
-"                                    : Data di fine\n"
+"                                    : data di fine\n"
 "                                    del\n"
-"                                    periodo fatturato"
+"                                    periodo\n"
+"                                    fatturato"
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_template_form_view
@@ -155,7 +155,7 @@ msgid ""
 "                                    invoiced period"
 msgstr ""
 "<strong>#START#</strong>\n"
-"                                    : Data\n"
+"                                    : data di\n"
 "                                    inizio\n"
 "                                    del\n"
 "                                    periodo fatturato"
@@ -292,7 +292,7 @@ msgstr ""
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__message_needaction
 msgid "Action Needed"
-msgstr "Azione necessaria"
+msgstr "Azione richiesta"
 
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__active
@@ -361,11 +361,6 @@ msgid "Analytic Precision"
 msgstr ""
 
 #. module: contract
-#: model:ir.model.fields,field_description:contract.field_contract_line__analytic_account_id
-msgid "Analytic account"
-msgstr "Conto analitico"
-
-#. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_search_view
 msgid "Archived"
 msgstr "In archivio"
@@ -378,15 +373,13 @@ msgstr "Sei sicuro di voler annullare questa riga"
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_form_view
-#, fuzzy
 msgid "Are you sure you want to re-activate this contract?"
-msgstr "Sei sicuro di voler annullare questa riga"
+msgstr "Sei sicuro di voler annullare questa riga?"
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_terminate_form_view
-#, fuzzy
 msgid "Are you sure you want to terminate this contract?"
-msgstr "Sei sicuro di voler annullare questa riga"
+msgstr "Sei sicuro di voler annullare questa riga?"
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_search_view
@@ -780,8 +773,8 @@ msgid ""
 "Contract manually invoiced: <a    href=\"#\" data-oe-model=\"%(model_name)s"
 "\"     data-oe-id=\"%(rec_id)s\">Invoice</a>"
 msgstr ""
-"Contratto fatturato manualmente: <a    href=\"#\" data-oe-model=\""
-"%(model_name)s\"     data-oe-id=\"%(rec_id)s\">Invoice</a>"
+"Contratto fatturato manualmente: <a    href=\"#\" data-oe-model="
+"\"%(model_name)s\"     data-oe-id=\"%(rec_id)s\">Invoice</a>"
 
 #. module: contract
 #: model:mail.message.subtype,name:contract.mail_message_subtype_contract_modification
@@ -1110,7 +1103,7 @@ msgstr "Generare fatture ricorrenti dai contratti"
 #: model:ir.model.fields,field_description:contract.field_contract_contract__generation_type
 #: model:ir.model.fields,field_description:contract.field_contract_template__generation_type
 msgid "Generation Type"
-msgstr "Tipo Generazione"
+msgstr "Tipo generazione"
 
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__group_id
@@ -1163,7 +1156,7 @@ msgstr ""
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione."
+msgstr "Se selezionata, nuovi messaggi richiedono attenzione."
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__message_has_error
@@ -1919,10 +1912,10 @@ msgid ""
 "Today: Activity date is today\n"
 "Planned: Future activities."
 msgstr ""
-"Stato basato sulle attività\n"
-"In ritardo: La data di scadenza è già passata\n"
-"Oggi: LA data dell'attività è oggi\n"
-"Pianificata: attività future."
+"Stato in base alle attività\n"
+"Scaduto: la data richiesta è trascorsa\n"
+"Oggi: la data attività è oggi\n"
+"Pianificato: attività future."
 
 #. module: contract
 #: model_terms:ir.ui.view,arch_db:contract.contract_contract_form_view
@@ -2006,7 +1999,7 @@ msgstr "Data inizio sospensione"
 #. module: contract
 #: model:ir.model.fields,field_description:contract.field_contract_contract__tag_ids
 msgid "Tags"
-msgstr "Tags"
+msgstr "Etichette"
 
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_abstract_contract_line__display_type
@@ -2162,7 +2155,7 @@ msgstr "Messaggi sito web"
 #. module: contract
 #: model:ir.model.fields,help:contract.field_contract_contract__website_message_ids
 msgid "Website communication history"
-msgstr "Storico comunicazione Sito Web"
+msgstr "Cronologia comunicazioni sito web"
 
 #. module: contract
 #: model:ir.model.fields.selection,name:contract.selection__contract_abstract_contract__recurring_rule_type__weekly
@@ -2296,7 +2289,8 @@ msgstr ""
 #. module: contract
 #: model:mail.template,subject:contract.email_contract_template
 msgid "{{ object.company_id.name }} Contract (Ref {{ object.name or 'n/a' }})"
-msgstr "{{ object.company_id.name }} Contratto (Rif {{ object.name or 'n/a' }})"
+msgstr ""
+"{{ object.company_id.name }} Contratto (Rif {{ object.name or 'n/a' }})"
 
 #. module: contract
 #: model:mail.template,subject:contract.mail_template_contract_modification
@@ -2306,6 +2300,9 @@ msgid ""
 msgstr ""
 "{{ object.company_id.name }} Contratto (Rif {{ object.name or 'n/a' }}) - "
 "Modifiche"
+
+#~ msgid "Analytic account"
+#~ msgstr "Conto analitico"
 
 #~ msgid "Number of messages which requires an action"
 #~ msgstr "Numero di messaggi che richiedono un'azione"
