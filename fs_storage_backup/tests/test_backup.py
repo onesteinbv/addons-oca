@@ -14,17 +14,18 @@ class TestBackup(TransactionCase):
     def test_with_filestore(self):
         self.fs_storage.backup_include_filestore = True
         old_counts = {}
-        for fs_storage in self.env["fs.storage"].search(
-            [("use_for_backup", "=", True)]
-        ):
+        storages = self.env["fs.storage"].search([])
+        back_locs = storages.filtered(lambda s: s.use_for_backup)
+        for fs_storage in back_locs:
             fs_storage.fs.makedirs(fs_storage.backup_dir, exist_ok=True)
             old_counts[fs_storage.id] = len(
                 fs_storage.fs.ls(fs_storage.backup_dir, detail=False)
             )
         self.env["fs.storage"].cron_backup_db()  # Backup all locations
-        for fs_storage in self.env["fs.storage"].search(
-            [("use_for_backup", "=", True)]
-        ):
+
+        storages = self.env["fs.storage"].search([])
+        back_locs = storages.filtered(lambda s: s.use_for_backup)
+        for fs_storage in back_locs:
             new_count = len(fs_storage.fs.ls(fs_storage.backup_dir, detail=False))
             self.assertEqual(old_counts[fs_storage.id] + 1, new_count)
 
