@@ -191,6 +191,7 @@ class AccountBankStatementLine(models.Model):
                         "amount": -total_amount,
                         "credit": total_amount if total_amount > 0 else 0.0,
                         "debit": -total_amount if total_amount < 0 else 0.0,
+                        "currency_amount": -total_amount,
                     }
                 )
             else:
@@ -218,7 +219,7 @@ class AccountBankStatementLine(models.Model):
             "counterparts": counterparts,
             "reconcile_auxiliary_id": reconcile_auxiliary_id,
             "can_reconcile": can_reconcile,
-            "manual_reference": manual_reference,
+                "manual_reference": manual_reference,
         }
 
     def _check_line_changed(self, line):
@@ -320,6 +321,7 @@ class AccountBankStatementLine(models.Model):
                             if self.manual_account_id
                             else [False, _("Undefined")],
                             "amount": self.manual_amount,
+                            "currency_amount": self.manual_amount,
                             "credit": -self.manual_amount
                             if self.manual_amount < 0
                             else 0.0,
@@ -827,6 +829,7 @@ class AccountBankStatementLine(models.Model):
         line.update(
             {
                 "amount": line_amount,
+                "currency_amount": line_amount,
                 "credit": -line_amount if line_amount < 0 else 0.0,
                 "debit": line_amount if line_amount > 0 else 0.0,
                 "tax_tag_ids": base_tag_ids

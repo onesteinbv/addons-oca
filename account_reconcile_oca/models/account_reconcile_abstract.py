@@ -34,7 +34,7 @@ class AccountReconcileAbstract(models.AbstractModel):
     )
 
     def _get_reconcile_line(
-        self, line, kind, is_counterpart=False, max_amount=False, from_unreconcile=False
+            self, line, kind, is_counterpart=False, max_amount=False, from_unreconcile=False
     ):
         account_move_line_obj = self.env['account.move.line']
         date = self.date if "date" in self._fields else line.date
@@ -97,7 +97,7 @@ class AccountReconcileAbstract(models.AbstractModel):
                 }
             )
         if not float_is_zero(
-            amount - original_amount, precision_digits=line.currency_id.decimal_places
+                amount - original_amount, precision_digits=line.currency_id.decimal_places
         ):
             vals["original_amount"] = abs(original_amount)
             vals["original_amount_unsigned"] = original_amount
