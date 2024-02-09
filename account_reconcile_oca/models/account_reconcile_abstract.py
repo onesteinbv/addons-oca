@@ -39,24 +39,18 @@ class AccountReconcileAbstract(models.AbstractModel):
         account_move_line_obj = self.env['account.move.line']
         date = self.date if "date" in self._fields else line.date
         original_amount = amount = net_amount = line.debit - line.credit
-        amount_currency = self.company_id.currency_id
         if is_counterpart:
             amount = line.amount_residual_currency or line.amount_residual
             amount_currency = line.currency_id or self.company_id.currency_id
-            original_amount = net_amount = line.amount_residual
+            original_amount = line.amount_residual
             if max_amount:
                 currency_max_amount = self.company_id.currency_id._convert(
-                    max_amount, amount_currency, self.company_id, line.date
+                    max_amount, amount_currency, self.company_id, date
                 )
-                if amount > currency_max_amount > 0:
+                if abs(amount) > abs(currency_max_amount):
                     amount = currency_max_amount
-                    net_amount = max_amount
-                if amount < currency_max_amount < 0:
-                    amount = currency_max_amount
-                    net_amount = max_amount
             amount = -amount
             original_amount = -original_amount
-            net_amount = -net_amount
         else:
             amount_currency = line.currency_id
             amount = self.company_id.currency_id._convert(
@@ -76,7 +70,7 @@ class AccountReconcileAbstract(models.AbstractModel):
             "debit": amount if amount > 0 else 0.0,
             "credit": -amount if amount < 0 else 0.0,
             "amount": amount,
-            "net_amount": amount - net_amount,
+            "net_amount": 0,
             "currency_id": self.company_id.currency_id.id,
             "line_currency_id": line.currency_id.id,
             "currency_amount": currency_amount,

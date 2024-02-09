@@ -20,7 +20,7 @@ class AccountJournal(models.Model):
         return _("Well done! Everything has been reconciled")
 
     def open_action(self):
-        # open reconcile window for bank and cash journals
+        # opem reconcile window for bank and cash journals
         if self.type in ("bank", "cash") and not self._context.get("action_name"):
             self.ensure_one()
             return self.env["ir.actions.act_window"]._for_xml_id(

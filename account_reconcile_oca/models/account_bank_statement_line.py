@@ -307,10 +307,16 @@ class AccountBankStatementLine(models.Model):
         reconcile_auxiliary_id = self.reconcile_data_info["reconcile_auxiliary_id"]
         changed_line = {}
         tax_lines = []
+        currency_obj = self.env['res.currency']
         for line in data:
             if line["reference"] == self.manual_reference:
                 if self._check_line_changed(line):
                     tax_updated = self.manual_tax_ids.ids != line.get("tax_ids", [])
+                    currency_amount = self.manual_amount
+                    if line.get("line_currency_id"):
+                        currency_amount = self.company_id.currency_id._convert(
+                            self.manual_amount, currency_obj.browse(line["line_currency_id"]), self.company_id, self.date
+                        )
                     line.update(
                         {
                             "name": self.manual_name,
@@ -321,7 +327,7 @@ class AccountBankStatementLine(models.Model):
                             if self.manual_account_id
                             else [False, _("Undefined")],
                             "amount": self.manual_amount,
-                            "currency_amount": self.manual_amount,
+                            "currency_amount": currency_amount,
                             "credit": -self.manual_amount
                             if self.manual_amount < 0
                             else 0.0,
@@ -481,7 +487,7 @@ class AccountBankStatementLine(models.Model):
             )
             if res and res.get("status", "") == "write_off":
                 model = res['model']
-                amount = self.amount_total_signed
+                amount = -self.amount_total_signed if self.amount < 0 else self.amount_total_signed
                 if model and model.rule_type == 'invoice_matching' and model.allow_payment_tolerance and not model.payment_tolerance_param == 0:
                     for line in res.get("amls", []):
                         line_data = self._get_reconcile_line(
@@ -493,7 +499,7 @@ class AccountBankStatementLine(models.Model):
                         line_data = self._get_reconcile_line(
                             line, "other", is_counterpart=True, max_amount=amount
                         )
-                        amount -= line_data.get("amount")
+                        amount += line_data.get("amount")
                         data.append(line_data)
                 return self._recompute_suspense_line(
                     *self._reconcile_data_by_model(
@@ -502,12 +508,12 @@ class AccountBankStatementLine(models.Model):
                     self.manual_reference
                 )
             elif res and res.get("amls"):
-                amount = self.amount_total_signed
+                amount = -self.amount_total_signed if self.amount < 0 else self.amount_total_signed
                 for line in res.get("amls", []):
                     line_data = self._get_reconcile_line(
                         line, "other", is_counterpart=True, max_amount=amount
                     )
-                    amount -= line_data.get("amount")
+                    amount += line_data.get("amount")
                     data.append(line_data)
                 return self._recompute_suspense_line(
                     data, reconcile_auxiliary_id, self.manual_reference
