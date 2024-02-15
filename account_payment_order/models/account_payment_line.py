@@ -66,6 +66,9 @@ class AccountPaymentLine(models.Model):
         ondelete="restrict",
         check_company=True,
     )
+    partner_bank_acc_type = fields.Selection(
+        related="partner_bank_id.acc_type", string="Bank Account Type"
+    )
     date = fields.Date(string="Payment Date")
     # communication field is required=False because we don't want to block
     # the creation of lines from move/invoices when communication is empty
@@ -195,7 +198,7 @@ class AccountPaymentLine(models.Model):
             # Put the name as the wildcard for forcing a unique name. If not, Odoo gets
             # the sequence for all the payment at the same time
             "name": "/",
-            "payment_reference": "-".join([line.communication for line in self]),
+            "payment_reference": " - ".join([line.communication for line in self]),
             "journal_id": journal.id,
             "partner_bank_id": self.partner_bank_id.id,
             "payment_order_id": self.order_id.id,

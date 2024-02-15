@@ -117,6 +117,7 @@ msgid "Cancellation Fee"
 msgstr "Annukerings boete"
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, fuzzy, python-format
 msgid "Cannot compute the field '{field_name}'."
@@ -234,12 +235,14 @@ msgid "Credit Card Payment "
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid "Creditor name"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid ""
@@ -259,6 +262,7 @@ msgid "Debit Card Payment"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid "Debtor name"
@@ -565,6 +569,7 @@ msgid "Medical Services"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid ""
@@ -600,6 +605,7 @@ msgid "Network Communication"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_method.py:0
 #, python-format
 msgid "No XSD file path found for payment method '%s'"
@@ -641,18 +647,21 @@ msgid "PAIN Version"
 msgstr "PAIN Versie"
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid "Partner name"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid "Partner's bank account is '%s'."
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, fuzzy, python-format
 msgid "Payment Line has reference '%s'."
@@ -767,6 +776,16 @@ msgid "SEPA Payment"
 msgstr "SEPA betaling"
 
 #. module: account_banking_pain_base
+#: model:ir.model.fields,field_description:account_banking_pain_base.field_account_payment_order__sepa_payment_method
+msgid "SEPA Payment Method"
+msgstr ""
+
+#. module: account_banking_pain_base
+#: model_terms:ir.ui.view,arch_db:account_banking_pain_base.account_payment_order_form
+msgid "SEPA zone"
+msgstr ""
+
+#. module: account_banking_pain_base
 #: model_terms:ir.ui.view,arch_db:account_banking_pain_base.view_account_config_settings
 msgid "SEPA/PAIN"
 msgstr "SEPA/PAIN"
@@ -797,6 +816,11 @@ msgstr "Effecten"
 #: model:ir.model.fields.selection,name:account_banking_pain_base.selection__account_payment_order__charge_bearer__shar
 msgid "Shared"
 msgstr "Gedeeld"
+
+#. module: account_banking_pain_base
+#: model:ir.model.fields,field_description:account_banking_pain_base.field_account_payment_order__show_warning_not_sepa
+msgid "Show Warning Not Sepa"
+msgstr ""
 
 #. module: account_banking_pain_base
 #: model:ir.model.fields.selection,name:account_banking_pain_base.selection__account_payment_line__category_purpose__ssbe
@@ -832,12 +856,14 @@ msgid "Telephone Bill"
 msgstr ""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid "The '%s' is empty or 0. It should have a non-null value."
 msgstr "De '%s' is leeg of 0. Deze waarde zou niet nul moeten zijn."
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/res_bank.py:0
 #, python-format
 msgid ""
@@ -852,6 +878,7 @@ msgstr ""
 "SEPA pattroon: {sepa_pattern}"
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid ""
@@ -866,6 +893,7 @@ msgstr ""
 "kunt geven over de oorzaak van het probleem: %s\""
 
 #. module: account_banking_pain_base
+#. odoo-python
 #: code:addons/account_banking_pain_base/models/account_payment_order.py:0
 #, python-format
 msgid ""
@@ -880,6 +908,14 @@ msgid ""
 msgstr ""
 "Dit veld wordt gebruikt als 'Instructie Prioriteit' in het gegeneerde PAIN "
 "bestand."
+
+#. module: account_banking_pain_base
+#: model_terms:ir.ui.view,arch_db:account_banking_pain_base.account_payment_order_form
+msgid ""
+"This payment order is <b>not SEPA</b>. If it is not intented, check that all "
+"payment lines are in € and that all bank accounts are valid IBANs with a "
+"country prefix in the"
+msgstr ""
 
 #. module: account_banking_pain_base
 #: model:ir.model.fields,help:account_banking_pain_base.field_res_company__initiating_party_identifier
@@ -998,6 +1034,11 @@ msgstr ""
 #. module: account_banking_pain_base
 #: model:ir.model.fields.selection,name:account_banking_pain_base.selection__account_payment_line__purpose__view
 msgid "Vision Care"
+msgstr ""
+
+#. module: account_banking_pain_base
+#: model:ir.model.fields,field_description:account_banking_pain_base.field_account_payment_method__warn_not_sepa
+msgid "Warn If Not SEPA"
 msgstr ""
 
 #. module: account_banking_pain_base

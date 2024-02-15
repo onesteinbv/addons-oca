@@ -215,6 +215,11 @@ msgid "Bank Account Required"
 msgstr "Compte bancari obligatori"
 
 #. module: account_payment_order
+#: model:ir.model.fields,field_description:account_payment_order.field_account_payment_line__partner_bank_acc_type
+msgid "Bank Account Type"
+msgstr ""
+
+#. module: account_payment_order
 #: model:ir.model.fields,field_description:account_payment_order.field_account_payment_order__journal_id
 #: model_terms:ir.ui.view,arch_db:account_payment_order.account_payment_order_search
 msgid "Bank Journal"
@@ -224,6 +229,12 @@ msgstr "Diari del banc"
 #: model:ir.model.fields,help:account_payment_order.field_account_move_line__partner_bank_id
 msgid "Bank account on which we should pay the supplier"
 msgstr "Compte bancari amb el qual es pagarà al proveïdor"
+
+#. module: account_payment_order
+#: model:ir.model.fields,help:account_payment_order.field_account_payment_line__partner_bank_acc_type
+msgid ""
+"Bank account type: Normal or IBAN. Inferred from the bank account number."
+msgstr ""
 
 #. module: account_payment_order
 #: model:ir.model.fields.selection,name:account_payment_order.selection__account_payment_order__state__cancel
@@ -540,7 +551,6 @@ msgstr "Si està marca, els missatges nous requereixen la vostra atenció."
 
 #. module: account_payment_order
 #: model:ir.model.fields,help:account_payment_order.field_account_payment_order__message_has_error
-#: model:ir.model.fields,help:account_payment_order.field_account_payment_order__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "Si està marcat, alguns missatges tenen un error de lliurament."
 
@@ -764,11 +774,9 @@ msgstr ""
 #: code:addons/account_payment_order/models/account_move.py:0
 #, python-format
 msgid ""
-"No Payment Line created for invoice %s because it already exists or because "
-"this invoice is already paid."
+"No Payment Line created for invoice %s because its payment mode is not "
+"intended for payment orders."
 msgstr ""
-"No s'ha creat cap línia de pagament per a la factura %s perquè ja existeix o "
-"perquè aquesta factura ja està pagada."
 
 #. module: account_payment_order
 #. odoo-python
@@ -787,6 +795,13 @@ msgid ""
 msgstr ""
 "No s'ha trobat cap gestor per a aquest mètode de pagament. Potser no heu "
 "instal·lat el mòdul Odoo relacionat."
+
+#. module: account_payment_order
+#. odoo-python
+#: code:addons/account_payment_order/models/account_move.py:0
+#, python-format
+msgid "No pending AR/AP lines to add on %s"
+msgstr ""
 
 #. module: account_payment_order
 #: model:ir.model.fields,field_description:account_payment_order.field_account_payment_order__name
@@ -815,8 +830,8 @@ msgstr "Número d'error"
 
 #. module: account_payment_order
 #: model:ir.model.fields,help:account_payment_order.field_account_payment_order__message_needaction_counter
-msgid "Number of messages which requires an action"
-msgstr "Número de missatges que requereixen una acció"
+msgid "Number of messages requiring action"
+msgstr ""
 
 #. module: account_payment_order
 #: model:ir.model.fields,help:account_payment_order.field_account_payment_order__message_has_error_counter
@@ -897,9 +912,17 @@ msgid "Payment Line"
 msgstr ""
 
 #. module: account_payment_order
+#: model:ir.model.fields,field_description:account_payment_order.field_account_bank_statement_line__payment_line_count
+#: model:ir.model.fields,field_description:account_payment_order.field_account_move__payment_line_count
+#: model:ir.model.fields,field_description:account_payment_order.field_account_payment__payment_line_count
+msgid "Payment Line Count"
+msgstr ""
+
+#. module: account_payment_order
 #: model:ir.actions.act_window,name:account_payment_order.account_payment_line_action
 #: model:ir.model,name:account_payment_order.model_account_payment_line
 #: model_terms:ir.ui.view,arch_db:account_payment_order.account_payment_line_form
+#: model_terms:ir.ui.view,arch_db:account_payment_order.view_move_form
 msgid "Payment Lines"
 msgstr "Línies de pagament"
 
@@ -942,6 +965,11 @@ msgstr "Modes de pagament"
 #: model_terms:ir.ui.view,arch_db:account_payment_order.print_account_payment_order_document
 msgid "Payment Order"
 msgstr "Ordre de pagament"
+
+#. module: account_payment_order
+#: model_terms:ir.ui.view,arch_db:account_payment_order.view_move_form
+msgid "Payment Order Lines"
+msgstr ""
 
 #. module: account_payment_order
 #: model:ir.model.fields,field_description:account_payment_order.field_account_bank_statement_line__payment_order_ok
@@ -1007,11 +1035,6 @@ msgstr "Referència lliure"
 #: model:ir.model.fields,field_description:account_payment_order.field_account_payment_order__activity_user_id
 msgid "Responsible User"
 msgstr ""
-
-#. module: account_payment_order
-#: model:ir.model.fields,field_description:account_payment_order.field_account_payment_order__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr "Error d'enviament de missatge"
 
 #. module: account_payment_order
 #: model:ir.model.fields.selection,name:account_payment_order.selection__account_payment_line_create__payment_mode__same
@@ -1108,6 +1131,14 @@ msgstr "Model tècnic per a imprimir ordre de pagament"
 #, python-format
 msgid ""
 "The amount for Partner '%(partner)s' is negative or null (%(amount).2f) !"
+msgstr ""
+
+#. module: account_payment_order
+#. odoo-python
+#: code:addons/account_payment_order/models/account_move.py:0
+#, python-format
+msgid ""
+"The invoice %(move)s is already added in the payment order(s) %(order)s."
 msgstr ""
 
 #. module: account_payment_order
@@ -1264,6 +1295,20 @@ msgid "otherwise, new payment orders will be created (one per payment mode)."
 msgstr ""
 "altrament, es crearan ordres de pagament noves (una per cada mode de "
 "pagament)."
+
+#~ msgid "SMS Delivery error"
+#~ msgstr "Error d'enviament de missatge"
+
+#~ msgid "Number of messages which requires an action"
+#~ msgstr "Número de missatges que requereixen una acció"
+
+#, python-format
+#~ msgid ""
+#~ "No Payment Line created for invoice %s because it already exists or "
+#~ "because this invoice is already paid."
+#~ msgstr ""
+#~ "No s'ha creat cap línia de pagament per a la factura %s perquè ja "
+#~ "existeix o perquè aquesta factura ja està pagada."
 
 #~ msgid "Accounting Entries Options"
 #~ msgstr "Opcions d'assentaments comptables"

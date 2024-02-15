@@ -7,6 +7,7 @@
             <form string="Payment Lines">
                 <group name="main" col="2">
                     <group name="left">
+                        <field name="state" invisible="1" />
                         <field name="company_id" invisible="1" />
                         <field
                             name="order_id"
@@ -50,6 +51,23 @@
             </form>
         </field>
     </record>
+    <record id="account_payment_line_form_readonly" model="ir.ui.view">
+        <field name="name">account.payment.line.form.readonly</field>
+        <field name="model">account.payment.line</field>
+        <field
+            name="inherit_id"
+            ref="account_payment_order.account_payment_line_form"
+        />
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="edit">0</attribute>
+                <attribute name="delete">0</attribute>
+                <attribute name="duplicate">0</attribute>
+            </form>
+        </field>
+    </record>
     <record id="account_payment_line_tree" model="ir.ui.view">
         <field name="name">account.payment.line.tree</field>
         <field name="model">account.payment.line</field>
@@ -62,6 +80,7 @@
                 <field name="partner_id" />
                 <field name="communication" />
                 <field name="partner_bank_id" />
+                <field name="partner_bank_acc_type" optional="hide" />
                 <field name="move_line_id" optional="hide" />
                 <field name="ml_maturity_date" optional="show" />
                 <field name="date" />

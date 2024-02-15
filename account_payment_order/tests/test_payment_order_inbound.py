@@ -10,6 +10,7 @@ from odoo.tests import tagged
 from odoo.tests.common import Form
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
+from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
 
 
 @tagged("-at_install", "post_install")
@@ -17,6 +18,7 @@ class TestPaymentOrderInboundBase(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls, chart_template_ref=None):
         super().setUpClass(chart_template_ref=chart_template_ref)
+        cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CONTEXT))
         cls.company = cls.company_data["company"]
         cls.env.user.company_id = cls.company.id
         cls.partner = cls.env["res.partner"].create(
@@ -91,6 +93,21 @@ class TestPaymentOrderInbound(TestPaymentOrderInboundBase):
     def test_constrains_date(self):
         with self.assertRaises(ValidationError):
             self.inbound_order.date_scheduled = date.today() - timedelta(days=1)
+
+    def test_invoice_communication_01(self):
+        self.assertEqual(
+            self.invoice.name, self.invoice._get_payment_order_communication_direct()
+        )
+        self.invoice.ref = "R1234"
+        self.assertEqual(
+            self.invoice.name, self.invoice._get_payment_order_communication_direct()
+        )
+
+    def test_invoice_communication_02(self):
+        self.invoice.payment_reference = "R1234"
+        self.assertEqual(
+            "R1234", self.invoice._get_payment_order_communication_direct()
+        )
 
     def test_creation(self):
         payment_order = self.inbound_order
