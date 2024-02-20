@@ -33,5 +33,4 @@ class MailThread(models.AbstractModel):
             if not fetchmail_server.error_notice_template_id:
                 raise ve
             fetchmail_server.error_notice_template_id.send_mail(fetchmail_server.id)
-            raise ve
         return res
