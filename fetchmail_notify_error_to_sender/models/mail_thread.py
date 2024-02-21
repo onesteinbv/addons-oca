@@ -36,4 +36,4 @@ class MailThread(models.AbstractModel):
             # because after every mail the transaction gets committed (see fetchmail.server.fetch_mail())
             fetchmail_server.error_notice_template_id.send_mail(fetchmail_server.id, force_send=True)
             raise ve
-        return res  # No routes found
+        return res
