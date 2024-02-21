@@ -5,9 +5,9 @@
         <field name="model">fetchmail.server</field>
         <field name="inherit_id" ref="mail.view_email_server_form" />
         <field name="arch" type="xml">
-            <field name="active" position="after">
+            <xpath expr="//field[@name='name']" position="after">
                 <field name="error_notice_template_id" />
-            </field>
+            </xpath>
         </field>
     </record>
 </odoo>

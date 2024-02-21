@@ -32,5 +32,8 @@ class MailThread(models.AbstractModel):
             )
             if not fetchmail_server.error_notice_template_id:
                 raise ve
-            fetchmail_server.error_notice_template_id.send_mail(fetchmail_server.id)
-        return res
+            # We can force_send here even if there are alot of emails
+            # because after every mail the transaction gets committed (see fetchmail.server.fetch_mail())
+            fetchmail_server.error_notice_template_id.send_mail(fetchmail_server.id, force_send=True)
+            raise ve
+        return res  # No routes found
