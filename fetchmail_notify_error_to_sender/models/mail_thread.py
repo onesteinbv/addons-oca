@@ -39,7 +39,7 @@ class MailThread(models.AbstractModel):
             # We can force_send here even if there are alot of emails
             # because after every mail the transaction gets committed (see fetchmail.server.fetch_mail())
             fetchmail_server.error_notice_template_id.send_mail(fetchmail_server.id)
-            _logger.info(
+            _logger.warning(
                 "No route found for from %s to %s, sending a notification to sender",
                 message_dict["email_from"], message_dict["to"]
             )
