@@ -1,8 +1,8 @@
 # Copyright 2024 Onestein
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
-
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 class FleetVehicleOdometer(models.Model):
     _inherit = "fleet.vehicle.odometer"
@@ -72,15 +72,21 @@ class FleetVehicleOdometer(models.Model):
         return super()._onchange_vehicle()
 
     def action_create_expense(self):
+        employee = self.env.user.employee_id
+        if not employee:
+            raise ValidationError(
+                _("The current user has no related employee. "
+                  "Please, create one to create expenses.")
+            )
         hr_expense_obj = self.env["hr.expense"]
         product_uom_km = self.env.ref("uom.product_uom_km")
         product_uom_mi = self.env.ref("uom.product_uom_mile")
         to_expense_odometers = self.filtered(
             lambda o: o.status == "to_expense"
-            and (
-                o.driver_employee_id == self.env.user.employee_id
-                or not o.driver_employee_id
-            )
+                      and (
+                              o.driver_employee_id == employee
+                              or not o.driver_employee_id
+                      )
         )
         products = to_expense_odometers.mapped("product_id")
         for product in products:
