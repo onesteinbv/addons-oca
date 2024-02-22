@@ -1,5 +1,6 @@
 # Copyright 2024 Onestein
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from odoo.exceptions import ValidationError
 
 from odoo.tests import common
 
@@ -18,7 +19,6 @@ class TestHrExpenseFleet(common.SingleTransactionCase):
             }
         )
         cls.env.user.groups_id += cls.env.ref("uom.group_uom")
-        cls.env.user.action_create_employee()
         brand = cls.env["fleet.vehicle.model.brand"].create(
             {
                 "name": "Audi",
@@ -108,6 +108,9 @@ class TestHrExpenseFleet(common.SingleTransactionCase):
             }
         )
         self.odometer_in_mi._onchange_vehicle()
+        with self.assertRaises(ValidationError):
+            (self.odometer_in_km + self.odometer_in_mi).action_create_expense()
+        self.env.user.action_create_employee()
         (self.odometer_in_km + self.odometer_in_mi).action_create_expense()
         self.assertEqual(self.odometer_in_mi.status, "expense_created")
         self.assertEqual(self.odometer_in_mi.expense_id.quantity, 12.43)
