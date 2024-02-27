@@ -17,3 +17,10 @@ GitPython
 email-validator
 suds
 cachetools
+equests
+jira
+oauthlib
+requests-oauthlib
+requests-toolbelt
+PyJWT
+cryptography
