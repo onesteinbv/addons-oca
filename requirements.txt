@@ -24,3 +24,6 @@ requests-oauthlib
 requests-toolbelt
 PyJWT
 cryptography
+xlsxwriter
+xlrd
+python-slugify
