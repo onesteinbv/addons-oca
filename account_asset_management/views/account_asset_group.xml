@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- pylint:oca-disable=duplicate-xml-fields -->
 <odoo>
     <record id="account_asset_group_view_form" model="ir.ui.view">
         <field name="name">account.asset.group.form</field>
@@ -27,6 +26,7 @@
         <field name="model">account.asset.group</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
+                <!-- pylint : disable=duplicate-xml-fields -->
                 <field name="company_id" invisible="1" />
                 <field name="name" />
                 <field name="code" optional="show" />
