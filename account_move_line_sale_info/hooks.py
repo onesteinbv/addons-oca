@@ -3,7 +3,6 @@
 
 
 def post_init_hook(cr, registry):
-
     """INIT sale references in account move line"""
     # FOR stock moves
     cr.execute(

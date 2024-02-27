@@ -36,7 +36,6 @@ class DateFilterForbidden(ValidationError):
 
 
 class MisReportInstancePeriodSum(models.Model):
-
     _name = "mis.report.instance.period.sum"
     _description = "MIS Report Instance Period Sum"
 

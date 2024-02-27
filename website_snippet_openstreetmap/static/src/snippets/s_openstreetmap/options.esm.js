@@ -71,6 +71,7 @@ options.registry.OpenStreetMap = options.Class.extend({
     /**
      * @see this.selectClass for parameters
      */
+    /* eslint-disable no-unused-vars */
     async selectDataAttribute(previewMode, widgetValue, params) {
         await this._super(...arguments);
         if (['mapAddress', 'mapType', 'mapZoom'].includes(params.attributeName)) {
@@ -81,6 +82,7 @@ options.registry.OpenStreetMap = options.Class.extend({
     /**
      * @see this.selectClass for parameters
      */
+    /* eslint-disable no-unused-vars */
     async showDescription(previewMode, widgetValue, params) {
         const descriptionEl = this.$target[0].querySelector('.description');
         if (widgetValue && !descriptionEl) {
@@ -102,9 +104,10 @@ options.registry.OpenStreetMap = options.Class.extend({
     /**
      * @override
      */
+    /* eslint-disable no-unused-vars */
     _computeWidgetState(methodName, params) {
         if (methodName === 'showDescription') {
-            return !!this.$target[0].querySelector('.description');
+            return Boolean(this.$target[0].querySelector('.description'));
         }
         return this._super(...arguments);
     },

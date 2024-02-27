@@ -2,7 +2,7 @@
 import LegacyControlPanel from "web.ControlPanel";
 import {ControlPanel} from "@web/search/control_panel/control_panel";
 import {findTrip} from "@web_help/helpers.esm";
-import {Component, useState, onWillStart} from "@odoo/owl";
+import {Component, onWillStart, useState} from "@odoo/owl";
 import {ActionDialog} from "@web/webclient/actions/action_dialog";
 
 export class HelpButton extends Component {

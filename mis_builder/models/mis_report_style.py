@@ -48,7 +48,6 @@ CMP_NONE = "none"
 
 
 class MisReportKpiStyle(models.Model):
-
     _name = "mis.report.style"
     _description = "MIS Report Style"
 

@@ -24,14 +24,24 @@ class AccountJournal(models.Model):
         if self.type in ("bank", "cash") and not self._context.get("action_name"):
             self.ensure_one()
             action = self.env["ir.actions.act_window"]._for_xml_id(
-                "account_reconcile_oca.action_bank_statement_line_reconcile")
+                "account_reconcile_oca.action_bank_statement_line_reconcile"
+            )
             action["context"] = self._context.copy()
-            action["context"].update({
-                "default_journal_id": self.id,
-                "view_ref": "account_reconcile_oca.bank_statement_line_form_reconcile_view"
-            })
+            action["context"].update(
+                {
+                    "default_journal_id": self.id,
+                    "view_ref": "account_reconcile_oca.bank_statement_line_form_reconcile_view",
+                }
+            )
             action["view_mode"] = "list,kanban"
-            action["views"] = [(False, "list"), (
-            self.env.ref("account_reconcile_oca.bank_statement_line_reconcile_view").id, "kanban"), ]
+            action["views"] = [
+                (False, "list"),
+                (
+                    self.env.ref(
+                        "account_reconcile_oca.bank_statement_line_reconcile_view"
+                    ).id,
+                    "kanban",
+                ),
+            ]
             return action
         return super().open_action()

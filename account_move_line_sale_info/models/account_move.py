@@ -21,7 +21,6 @@ class AccountMove(models.Model):
 
 
 class AccountMoveLine(models.Model):
-
     _inherit = "account.move.line"
 
     sale_line_id = fields.Many2one(

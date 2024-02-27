@@ -16,7 +16,6 @@ _logger = logging.getLogger(__name__)
 
 
 class KpiMatrixRow(object):
-
     # TODO: ultimately, the kpi matrix will become ignorant of KPI's and
     #       accounts and know about rows, columns, sub columns and styles only.
     #       It is already ignorant of period and only knowns about columns.

@@ -261,8 +261,9 @@ class SaleSubscriptionLine(models.Model):
 
     def _get_display_price(self, product):
         if self.sale_subscription_id.pricelist_id.discount_policy == "with_discount":
-            return self.sale_subscription_id.pricelist_id._get_product_price(product, self.product_uom_qty or 1.0,
-                                                                             uom=self.product_id.uom_id)
+            return self.sale_subscription_id.pricelist_id._get_product_price(
+                product, self.product_uom_qty or 1.0, uom=self.product_id.uom_id
+            )
         final_price, rule_id = self.sale_subscription_id.pricelist_id.with_context(
             partner_id=self.sale_subscription_id.partner_id.id,
             date=fields.Datetime.now(),
