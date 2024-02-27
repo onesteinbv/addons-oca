@@ -17,7 +17,7 @@ GitPython
 email-validator
 suds
 cachetools
-equests
+requests
 jira
 oauthlib
 requests-oauthlib
