@@ -42,8 +42,8 @@ repos:
     hooks:
       # update the NOT INSTALLABLE ADDONS section above
       - id: oca-update-pre-commit-excluded-addons
-      - id: oca-fix-manifest-website
-        args: ["https://www.onestein.nl"]
+#      - id: oca-fix-manifest-website
+#        args: ["https://www.onestein.nl"]
       # - id: oca-gen-addon-readme
       #   args:
       #     - --addons-dir=.
