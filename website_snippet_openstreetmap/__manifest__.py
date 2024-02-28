@@ -20,7 +20,7 @@
     ],
     "assets": {
         "website.assets_wysiwyg": [
-            "website_snippet_openstreetmap/static/src/snippets/s_openstreetmap/options.js",
+            "website_snippet_openstreetmap/static/src/snippets/s_openstreetmap/options.esm.js",
         ],
     },
 }

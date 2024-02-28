@@ -5,7 +5,6 @@ from odoo.tests.common import TransactionCase
 
 
 class TestProjectCaseDefault(TransactionCase):
-
     # Use case : Prepare some data for current test case
     def setUp(self):
         super(TestProjectCaseDefault, self).setUp()

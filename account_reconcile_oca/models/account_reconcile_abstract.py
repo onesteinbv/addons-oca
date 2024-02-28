@@ -34,11 +34,11 @@ class AccountReconcileAbstract(models.AbstractModel):
     )
 
     def _get_reconcile_line(
-            self, line, kind, is_counterpart=False, max_amount=False, from_unreconcile=False
+        self, line, kind, is_counterpart=False, max_amount=False, from_unreconcile=False
     ):
-        account_move_line_obj = self.env['account.move.line']
+        account_move_line_obj = self.env["account.move.line"]
         date = self.date if "date" in self._fields else line.date
-        original_amount = amount = net_amount = line.debit - line.credit
+        original_amount = amount = line.debit - line.credit
         if is_counterpart:
             amount = line.amount_residual_currency or line.amount_residual
             amount_currency = line.currency_id or self.company_id.currency_id
@@ -82,16 +82,21 @@ class AccountReconcileAbstract(models.AbstractModel):
                 {
                     "id": False,
                     "counterpart_line_id": (
-                            (line.matched_debit_ids and line.matched_debit_ids[0].mapped(
-                                "debit_move_id") or account_move_line_obj)
-                            | (line.matched_credit_ids and line.matched_credit_ids[0].mapped(
-                        "credit_move_id") or account_move_line_obj
-                               )
+                        (
+                            line.matched_debit_ids
+                            and line.matched_debit_ids[0].mapped("debit_move_id")
+                            or account_move_line_obj
+                        )
+                        | (
+                            line.matched_credit_ids
+                            and line.matched_credit_ids[0].mapped("credit_move_id")
+                            or account_move_line_obj
+                        )
                     ).id,
                 }
             )
         if not float_is_zero(
-                amount - original_amount, precision_digits=line.currency_id.decimal_places
+            amount - original_amount, precision_digits=line.currency_id.decimal_places
         ):
             vals["original_amount"] = abs(original_amount)
             vals["original_amount_unsigned"] = original_amount
