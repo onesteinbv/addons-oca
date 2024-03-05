@@ -65,7 +65,7 @@
     <record id="s_openstreetmap_000_js" model="ir.asset">
         <field name="name">OpenStreetMap 000 JS</field>
         <field name="bundle">web.assets_frontend</field>
-        <field name="path">website_snippet_openstreetmap/static/src/snippets/s_openstreetmap/000.js</field>
+        <field name="path">website_snippet_openstreetmap/static/src/snippets/s_openstreetmap/000.esm.js</field>
     </record>
 
 </odoo>
