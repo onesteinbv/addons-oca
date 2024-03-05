@@ -89,6 +89,9 @@ export class ReconcileController extends KanbanController {
             this.state.selectedRecordId = resId;
         }
         this.updateURL(resId);
+        $('.o_content').css({"min-height":"200%"});
+        $('body').animate({scrollTop: 10}, 500);
+        $('.o_content').css({"min-height":"100%"});
     }
     async openRecord(record) {
         this.selectRecord(record);

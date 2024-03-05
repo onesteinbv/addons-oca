@@ -385,6 +385,13 @@ class TestAccountBankAccountStatementImportOnline(common.TransactionCase):
         self.assertEqual(statements[1].balance_end, 200)
         self.assertEqual(len(statements[1].line_ids), 1)
 
+    def test_unlink_provider(self):
+        """Unlink provider should clear fields on journal."""
+        self.provider.unlink()
+        self.assertEqual(self.journal.bank_statements_source, "undefined")
+        self.assertEqual(self.journal.online_bank_statement_provider, False)
+        self.assertEqual(self.journal.online_bank_statement_provider_id.id, False)
+
     def _getExpectedStatements(self, expected_length):
         """Check for length of statement recordset, with helpfull logging."""
         statements = self.AccountBankStatement.search(
