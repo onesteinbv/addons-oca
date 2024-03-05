@@ -819,6 +819,8 @@ class AccountBankStatementLine(models.Model):
         )
         if vals["partner_id"] is False:
             vals["partner_id"] = (False, "")
+            if line.statement_line_id and line.statement_line_id.partner_name:
+                vals["partner_id"] = (False, line.statement_line_id.partner_name)
         return vals
 
     def _recompute_tax_lines(self, data, line):

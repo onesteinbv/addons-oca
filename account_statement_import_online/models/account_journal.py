@@ -12,10 +12,14 @@ _logger = logging.getLogger(__name__)
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
+    @api.model
+    def _selection_service(self):
+        OnlineBankStatementProvider = self.env["online.bank.statement.provider"]
+        return OnlineBankStatementProvider._selection_service()
+
     # Keep provider fields for compatibility with other modules.
     online_bank_statement_provider = fields.Selection(
-        related="online_bank_statement_provider_id.service",
-        readonly=False,
+        selection=lambda self: self._selection_service(),
     )
     online_bank_statement_provider_id = fields.Many2one(
         string="Statement Provider",
@@ -28,17 +32,18 @@ class AccountJournal(models.Model):
         result.append(("online", _("Online (OCA)")))
         return result
 
-    def _update_online_bank_statement_provider_id(self, service):
+    def _update_providers(self):
         """Automatically create service.
 
         This method exists for compatibility reasons. The preferred method
         to create an online provider is directly through the menu,
         """
         OnlineBankStatementProvider = self.env["online.bank.statement.provider"]
-        for journal in self:
+        for journal in self.filtered("online_bank_statement_provider"):
+            service = journal.online_bank_statement_provider
             if (
                 journal.online_bank_statement_provider_id
-                and journal.online_bank_statement_provider == service
+                and service == journal.online_bank_statement_provider_id.service
             ):
                 _logger.info(
                     "Journal %s already linked to service %s", journal.name, service
@@ -61,21 +66,19 @@ class AccountJournal(models.Model):
             journal.online_bank_statement_provider_id = provider
             _logger.info("Journal %s now linked to service %s", journal.name, service)
 
-    @api.model
-    def create(self, vals):
-        self._update_vals(vals)
-        service = self._get_service(vals)
-        rec = super().create(vals)
-        if service:
-            rec._update_online_bank_statement_provider_id(service)
-        return rec
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self._update_vals(vals)
+        journals = super().create(vals_list)
+        journals._update_providers()
+        return journals
 
     def write(self, vals):
         self._update_vals(vals)
-        service = self._get_service(vals)
         res = super().write(vals)
-        if service:
-            self._update_online_bank_statement_provider_id(service)
+        if vals.get("online_bank_statement_provider"):
+            self._update_providers()
         return res
 
     def _update_vals(self, vals):
@@ -84,15 +87,8 @@ class AccountJournal(models.Model):
             "bank_statements_source" in vals
             and vals.get("bank_statements_source") != "online"
         ):
+            vals["online_bank_statement_provider"] = False
             vals["online_bank_statement_provider_id"] = False
-
-    def _get_service(self, vals):
-        """Check wether user wants to create service."""
-        return (
-            vals.pop("online_bank_statement_provider")
-            if "online_bank_statement_provider" in vals
-            else False
-        )
 
     def action_online_bank_statements_pull_wizard(self):
         """This method is also kept for compatibility reasons."""

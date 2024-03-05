@@ -20,7 +20,7 @@ class AccountJournal(models.Model):
         return _("Well done! Everything has been reconciled")
 
     def open_action(self):
-        # opem reconcile window for bank and cash journals
+        # open reconcile window for bank and cash journals
         if self.type in ("bank", "cash") and not self._context.get("action_name"):
             self.ensure_one()
             action = self.env["ir.actions.act_window"]._for_xml_id(
@@ -31,6 +31,7 @@ class AccountJournal(models.Model):
                 {
                     "default_journal_id": self.id,
                     "view_ref": "account_reconcile_oca.bank_statement_line_form_reconcile_view",
+                    "search_view_ref": "account_statement_base.account_bank_statement_line_search",
                 }
             )
             action["view_mode"] = "list,kanban"

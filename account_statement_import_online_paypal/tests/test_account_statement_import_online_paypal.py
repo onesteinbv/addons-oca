@@ -92,16 +92,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
     "scope": "https://uri.paypal.com/services/reporting/search/read",
@@ -129,16 +124,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
     "scope": "openid https://uri.paypal.com/services/applications/webhooks",
@@ -167,16 +157,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
     "scope": "https://uri.paypal.com/services/reporting/search/read",
@@ -203,16 +188,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
         "scope": "https://uri.paypal.com/services/reporting/search/read",
@@ -240,16 +220,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response_1 = UrlopenRetValMock(
             """{
     "debug_id": "eec890ebd5798",
@@ -310,16 +285,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = UrlopenRetValMock(
             """{
     "message": "MESSAGE",
@@ -342,16 +312,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = UrlopenRetValMock(
             """{
     "error_description": "ERROR DESCRIPTION",
@@ -366,7 +331,10 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
             with self.assertRaises(UserError):
                 provider._paypal_retrieve("https://url", "")
 
-    def test_empty_pull(self):
+    def test_create_empty_paypal_statements(self):
+        """Test creating empty PayPal statements
+        ('Allow empty statements' field is checked).
+        """
         journal = self.AccountJournal.create(
             {
                 "name": "Bank",
@@ -374,16 +342,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response_1 = json.loads(
             """{
     "transaction_details": [],
@@ -451,16 +414,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
     "transaction_details": [],
@@ -501,16 +459,11 @@ class TestAccountBankAccountStatementImportOnlinePayPal(common.TransactionCase):
                 "code": "BANK",
                 "currency_id": self.currency_eur.id,
                 "bank_statements_source": "online",
+                "online_bank_statement_provider": "paypal",
             }
         )
 
-        provider = self.OnlineBankStatementProvider.create(
-            {
-                "name": "Paypal Provider",
-                "service": "paypal",
-                "journal_id": journal.id,
-            }
-        )
+        provider = journal.online_bank_statement_provider_id
         mocked_response = json.loads(
             """{
     "transaction_details": [{
