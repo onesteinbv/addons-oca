@@ -1,5 +1,5 @@
 /** @odoo-module */
-const {useState, useSubEnv} = owl;
+const {useState, useSubEnv, onWillStart} = owl;
 import {KanbanController} from "@web/views/kanban/kanban_controller";
 import {View} from "@web/views/view";
 import {useService} from "@web/core/utils/hooks";
@@ -9,11 +9,13 @@ export class ReconcileController extends KanbanController {
         super.setup();
         this.state = useState({
             selectedRecordId: null,
+            balance:null,
         });
         useSubEnv({
             parentController: this,
             exposeController: this.exposeController.bind(this),
         });
+        onWillStart(this.fetchBalance);
         this.effect = useService("effect");
         this.orm = useService("orm");
         this.action = useService("action");
@@ -31,6 +33,7 @@ export class ReconcileController extends KanbanController {
         this.action.doAction(action, {
             onClose: async () => {
                 await this.model.root.load();
+                await this.fetchBalance();
                 this.render(true);
             },
         });
@@ -98,6 +101,14 @@ export class ReconcileController extends KanbanController {
     }
     updateURL(resId) {
         this.router.pushState({id: resId});
+    }
+    /** Fetch the balance to display. **/
+    async fetchBalance() {
+        if(this.props.resModel == "account.bank.statement.line"){
+            this.state.balance = await this.orm.call(this.props.resModel, "get_balance", [], {
+                context: this.props.context,
+            });
+        }
     }
 }
 ReconcileController.components = {

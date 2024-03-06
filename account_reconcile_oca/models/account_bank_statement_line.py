@@ -110,6 +110,16 @@ class AccountBankStatementLine(models.Model):
         action["context"] = self.env.context
         return action
 
+    @api.model
+    def get_balance(self):
+        if self.env.context.get("default_journal_id", False):
+            journal = self.env["account.journal"].browse(
+                self.env.context["default_journal_id"]
+            )
+            currency = journal.currency_id or journal.company_id.currency_id
+            return currency.format(journal.current_statement_balance)
+        return False
+
     @api.onchange("manual_model_id")
     def _onchange_manual_model_id(self):
         if self.manual_model_id:
