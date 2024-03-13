@@ -153,10 +153,12 @@ class SaleSubscription(models.Model):
                     if subscription.date <= today:
                         subscription.action_close_subscription()
 
-            else:
-                if subscription.date_start <= today:
-                    subscription.action_start_subscription()
-                    subscription.generate_invoice()
+            elif (
+                subscription.date_start <= today
+                and subscription.stage_id.type != "post"
+            ):
+                subscription.action_start_subscription()
+                subscription.generate_invoice()
 
     @api.depends("sale_subscription_line_ids")
     def _compute_total(self):
