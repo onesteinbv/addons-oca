@@ -1,5 +1,4 @@
 # Copyright 2023 Domatix - Carlos Martínez
-# Copyright 2023 Domatix - Carlos Martínez
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 from odoo.tools.misc import get_lang
@@ -175,10 +174,9 @@ class SaleSubscriptionLine(models.Model):
                 partner_id=record.sale_subscription_id.partner_id.id,
                 date=fields.Datetime.now(),
                 uom=record.product_id.uom_id.id,
-            ).get_product_price_rule(
+            )._get_product_price_rule(
                 record.product_id,
                 record.product_uom_qty or 1.0,
-                record.sale_subscription_id.partner_id,
             )
             new_list_price, currency = record.with_context(
                 partner_id=record.sale_subscription_id.partner_id.id,
@@ -204,7 +202,7 @@ class SaleSubscriptionLine(models.Model):
 
     def _get_real_price_currency(self, product, rule_id, qty, uom):
         PricelistItem = self.env["product.pricelist.item"]
-        field_name = "lst_price"
+        product_price = product.lst_price
         currency_id = None
         product_currency = product.currency_id
         if rule_id:
@@ -218,18 +216,18 @@ class SaleSubscriptionLine(models.Model):
                 ):
                     _price, rule_id = pricelist_item.base_pricelist_id.with_context(
                         uom=uom.id
-                    ).get_product_price_rule(
-                        product, qty, self.sale_subscription_id.partner_id
-                    )
+                    )._get_product_price_rule(product, qty)
                     pricelist_item = PricelistItem.browse(rule_id)
 
             if pricelist_item.base == "standard_price":
-                field_name = "standard_price"
+                product_price = product.standard_price
                 product_currency = product.cost_currency_id
             elif (
                 pricelist_item.base == "pricelist" and pricelist_item.base_pricelist_id
             ):
-                field_name = "price"
+                product_price = pricelist_item.base_pricelist_id._get_product_price(
+                    product, self.product_uom_qty or 1.0, uom=self.product_id.uom_id
+                )
                 product = product.with_context(
                     pricelist=pricelist_item.base_pricelist_id.id
                 )
@@ -257,21 +255,21 @@ class SaleSubscriptionLine(models.Model):
         else:
             uom_factor = 1.0
 
-        return product[field_name] * uom_factor * cur_factor, currency_id
+        return product_price * uom_factor * cur_factor, currency_id
 
     def _get_display_price(self, product):
         if self.sale_subscription_id.pricelist_id.discount_policy == "with_discount":
             return self.sale_subscription_id.pricelist_id._get_product_price(
                 product, self.product_uom_qty or 1.0, uom=self.product_id.uom_id
             )
+
         final_price, rule_id = self.sale_subscription_id.pricelist_id.with_context(
             partner_id=self.sale_subscription_id.partner_id.id,
             date=fields.Datetime.now(),
             uom=self.product_id.uom_id.id,
-        ).get_product_price_rule(
+        )._get_product_price_rule(
             product or self.product_id,
             self.product_uom_qty or 1.0,
-            self.sale_subscription_id.partner_id,
         )
         base_price, currency = self.with_context(
             partner_id=self.sale_subscription_id.partner_id.id,
