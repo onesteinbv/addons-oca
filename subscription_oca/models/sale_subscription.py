@@ -142,7 +142,7 @@ class SaleSubscription(models.Model):
         for subscription in self.search([]):
             if subscription.in_progress:
                 if (
-                    subscription.recurring_next_date == today
+                    subscription.recurring_next_date <= today
                     and subscription.sale_subscription_line_ids
                 ):
                     try:
@@ -150,11 +150,11 @@ class SaleSubscription(models.Model):
                     except Exception:
                         logger.exception("Error on subscription invoice generate")
                 if not subscription.recurring_rule_boundary:
-                    if subscription.date == today:
+                    if subscription.date <= today:
                         subscription.action_close_subscription()
 
             else:
-                if subscription.date_start == today:
+                if subscription.date_start <= today:
                     subscription.action_start_subscription()
                     subscription.generate_invoice()
 
@@ -239,7 +239,6 @@ class SaleSubscription(models.Model):
         self.stage_id = in_progress_stage
 
     def action_close_subscription(self):
-        self.recurring_next_date = False
         return {
             "view_type": "form",
             "view_mode": "form",
@@ -248,6 +247,16 @@ class SaleSubscription(models.Model):
             "target": "new",
             "res_id": False,
         }
+
+    def close_subscription(self, close_reason_id=False):
+        self.ensure_one()
+        self.recurring_next_date = False
+        closed_stage = self.env["sale.subscription.stage"].search(
+            [("type", "=", "post")], limit=1
+        )
+        self.close_reason_id = close_reason_id
+        if self.stage_id != closed_stage:
+            self.stage_id = closed_stage
 
     def _prepare_sale_order(self, line_ids=False):
         self.ensure_one()
