@@ -282,6 +282,7 @@ class SaleSubscription(models.Model):
             "invoice_user_id": self.user_id.id,
             "partner_bank_id": self.company_id.partner_id.bank_ids[:1].id,
             "invoice_line_ids": line_ids,
+            "subscription_id": self.id,
         }
         if self.journal_id:
             values["journal_id"] = self.journal_id.id
@@ -305,7 +306,6 @@ class SaleSubscription(models.Model):
             .with_context(default_move_type="out_invoice", journal_type="sale")
             .create(invoice_values)
         )
-        self.write({"invoice_ids": [(4, invoice_id.id)]})
         return invoice_id
 
     def create_sale_order(self):
