@@ -154,8 +154,7 @@ class SaleSubscription(models.Model):
                         subscription.action_close_subscription()
 
             elif (
-                subscription.date_start <= today
-                and subscription.stage_id.type != "post"
+                subscription.date_start <= today and subscription.stage_id.type == "pre"
             ):
                 subscription.action_start_subscription()
                 subscription.generate_invoice()
