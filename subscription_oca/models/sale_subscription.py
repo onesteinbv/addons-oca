@@ -474,7 +474,7 @@ class SaleSubscription(models.Model):
                 values["date_start"] = values["recurring_next_date"]
             values["stage_id"] = (
                 self.env["sale.subscription.stage"]
-                .search([("type", "=", "pre")], order="sequence desc", limit=1)
+                .search([("type", "=", "draft")], order="sequence desc", limit=1)
                 .id
             )
         return super(SaleSubscription, self).create(values)
