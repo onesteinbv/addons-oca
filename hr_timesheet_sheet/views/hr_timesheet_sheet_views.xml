@@ -244,7 +244,7 @@
                             <div class="row no-gutters">
                                 <div class="col-2">
                                     <img
-                                        t-att-src="kanban_image('hr.employee', 'image_small', record.employee_id.raw_value)"
+                                        t-att-src="kanban_image('hr.employee', 'avatar_128', record.employee_id.raw_value)"
                                         t-att-title="record.employee_id.value"
                                         t-att-alt="record.employee_id.value"
                                         width="40"
@@ -458,10 +458,25 @@
             </p>
         </field>
     </record>
+
+    <menuitem
+        id="menu_hr_my_timesheets"
+        name="My Timesheets"
+        parent="hr_timesheet.timesheet_menu_root"
+        groups="hr_timesheet.group_hr_timesheet_user"
+        sequence="4"
+    />
+    <record model="ir.ui.menu" id="hr_timesheet.timesheet_menu_activity_mine">
+        <field name="parent_id" ref="hr_timesheet_sheet.menu_hr_my_timesheets" />
+    </record>
+    <record model="ir.ui.menu" id="hr_timesheet.timesheet_menu_activity_user">
+        <field name="parent_id" ref="hr_timesheet_sheet.menu_hr_my_timesheets" />
+    </record>
+
     <menuitem
         action="act_hr_timesheet_sheet_my_timesheets"
         id="menu_act_hr_timesheet_sheet_my_timesheets"
-        parent="hr_timesheet.menu_hr_time_tracking"
+        parent="hr_timesheet_sheet.menu_hr_my_timesheets"
         sequence="3"
     />
     <menuitem
