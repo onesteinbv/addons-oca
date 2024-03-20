@@ -19,6 +19,7 @@ class ProjectRole(models.Model):
     )
     parent_path = fields.Char(
         index=True,
+        unaccent=False
     )
     parent_id = fields.Many2one(
         string="Parent Role",
