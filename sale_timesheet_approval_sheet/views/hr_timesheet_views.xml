@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale_timesheet_approval.timesheet_action_not_approved" model="ir.actions.act_window">
+        <field name="domain">[('project_id', '!=', False),('is_approved', '=', False),('sheet_state', 'in', ['done'])]</field>
+    </record>
+
+</odoo>
