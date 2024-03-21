@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="invoice_hours_to_be_invoiced_report_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="show_task" t-value="bool(docs.mapped('task_id'))"/>
+                <t t-set="show_project" t-value="len(docs.mapped('project_id')) > 1"/>
+            <div class="page">
+
+                <style type="text/css">
+                    td {
+                    border: 1px solid black;
+                    }
+                </style>
+
+                <b>Invoice Annex</b>
+                <t t-if="docs[0].account_id">
+                    <div>
+                        <span><b>Customer Name</b></span>:
+                        <span t-field="docs[0].account_id.partner_id.name" />
+                    </div>
+                </t>
+                <t t-if="docs[0].so_line">
+                    <div>
+                        <span><b>Sale Order</b></span>:
+                        <span t-field="docs[0].so_line.order_id.name" />
+                    </div>
+                    <div>
+                        <span t-field="docs[0].so_line.order_id.client_order_ref" />
+                    </div>
+                </t>
+                <div>
+                    <span>Project</span>:
+                    <span t-field="docs[0].project_id.name" />
+                </div>
+                <br />
+                <t t-set="print_employee" t-value="docs[0].account_id.partner_id.print_timesheet_employee"/>
+                <table class="table table-condensed">
+                    <thead
+                        style="border-top: 1px solid black; font-weight: bold;">
+                        <tr>
+                            <td style="text-align: center;">
+                                <span>Week nr.</span>
+                            </td>
+                            <td style="min-width: 70px; text-align: center;">
+                                <span>Date</span>
+                            </td>
+                            <t t-if="print_employee">
+                                <td style="text-align: left;">
+                                    <span>Employee</span>
+                                </td>
+                            </t>
+                            <td style="text-align: left;">
+                                <span>Description</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <span>Total Hours</span>
+                            </td>
+                        </tr>
+                    </thead>
+                    <t t-set="total" t-value="0"/>
+                    <t t-set="total_to_be_invoiced" t-value="0"/>
+                    <t t-foreach="docs" t-as="time_line">
+                        <t t-set="total" t-value="total + time_line.unit_amount"/>
+                        <t t-set="total_to_be_invoiced" t-value="total_to_be_invoiced + time_line.unit_amount_2binvoiced"/>
+                        <t t-if="time_line.unit_amount_2binvoiced">
+                            <tr>
+                                <td style="text-align: center">
+                                    <span
+                                        t-esc="datetime.datetime.strptime(time_line.date,'%Y-%m-%d').isocalendar()[1]" />
+                                </td>
+                                <td style="min-width: 70px; text-align: center;">
+                                    <span t-field="time_line.date" />
+                                </td>
+                                <t t-if="print_employee">
+                                    <td style="text-align: left;">
+                                        <span t-field="time_line.user_id.name" />
+                                    </td>
+                                </t>
+                                <td style="height: 2.5em;">
+                                    <span t-field="time_line.name" />
+                                </td>
+                                <td style="text-align: right;">
+                                    <span t-esc="'{:.2f}'.format(time_line.unit_amount_2binvoiced).replace('.', ',')" />
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                    <tr>
+                        <t t-if="print_employee">
+                            <td colspan="4" style="border: none;"/>
+                        </t>
+                        <t t-if="not print_employee">
+                            <td colspan="3" style="border: none;"/>
+                        </t>
+                        <td style="text-align: right;">
+                            <span><b>Total:</b></span>
+                            <span t-esc="'{:.2f}'.format(total_to_be_invoiced).replace('.', ',')"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

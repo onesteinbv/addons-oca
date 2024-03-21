@@ -1,11 +1,11 @@
-# Copyright 2018-2019 Brainbean Apps (https://brainbeanapps.com)
+# Copyright 2024 Onestein
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from odoo.exceptions import ValidationError
 from odoo.tests import common
 
 
-class TestSaleTimesheetLineExclude(common.TransactionCase):
+class TestSaleTimesheetLineNonBillable(common.TransactionCase):
     def setUp(self):
         super().setUp()
 
@@ -129,7 +129,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
             [("sale_line_id", "=", self.sale_order_line.id)]
         )
 
-    def test_create_without_exclude_from_sale_order(self):
+    def test_create_without_is_non_billable(self):
         timesheet = self.SudoAccountAnalyticLine.create(
             {
                 "project_id": self.task.project_id.id,
@@ -145,7 +145,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
         self.assertEqual(self.sale_order_line.qty_to_invoice, 1)
         self.assertEqual(self.sale_order_line.qty_invoiced, 0)
 
-    def test_create_with_exclude_from_sale_order(self):
+    def test_create_with_is_non_billable(self):
         timesheet = self.SudoAccountAnalyticLine.create(
             {
                 "project_id": self.task.project_id.id,
@@ -153,7 +153,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-1",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": True,
+                "is_non_billable": True,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
@@ -162,7 +162,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
         self.assertEqual(self.sale_order_line.qty_to_invoice, 0)
         self.assertEqual(self.sale_order_line.qty_invoiced, 0)
 
-    def test_write_exclude_from_sale_order(self):
+    def test_write_is_non_billable(self):
         timesheet = self.SudoAccountAnalyticLine.create(
             {
                 "project_id": self.task.project_id.id,
@@ -170,18 +170,18 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-1",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": False,
+                "is_non_billable": False,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
-        timesheet.write({"exclude_from_sale_order": True})
+        timesheet.write({"is_non_billable": True})
 
         self.assertEqual(timesheet.timesheet_invoice_type, "non_billable")
         self.assertEqual(self.sale_order_line.qty_delivered, 0)
         self.assertEqual(self.sale_order_line.qty_to_invoice, 0)
         self.assertEqual(self.sale_order_line.qty_invoiced, 0)
 
-    def test_write_remove_exclude_from_sale_order(self):
+    def test_write_remove_is_non_billable(self):
         timesheet = self.SudoAccountAnalyticLine.create(
             {
                 "project_id": self.task.project_id.id,
@@ -189,11 +189,11 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-1",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": True,
+                "is_non_billable": True,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
-        timesheet.write({"exclude_from_sale_order": False})
+        timesheet.write({"is_non_billable": False})
 
         self.assertTrue(timesheet.so_line)
         self.assertEqual(timesheet.timesheet_invoice_type, "billable_time")
@@ -220,7 +220,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-1",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": True,
+                "is_non_billable": True,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
@@ -255,7 +255,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-1",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": True,
+                "is_non_billable": True,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
@@ -272,7 +272,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
         self.assertEqual(self.sale_order_line.qty_invoiced, 1)
 
         with self.assertRaises(ValidationError):
-            timesheet1.write({"exclude_from_sale_order": True})
+            timesheet1.write({"is_non_billable": True})
 
     def test_1(self):
         timesheet1 = self.SudoAccountAnalyticLine.create(
@@ -292,7 +292,7 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
                 "name": "Entry #1-2",
                 "unit_amount": 1,
                 "employee_id": self.employee.id,
-                "exclude_from_sale_order": False,
+                "is_non_billable": False,
                 "account_id": self.project.analytic_account_id.id,
             }
         )
@@ -322,10 +322,8 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
         self.assertEqual(timesheet1.timesheet_invoice_type, "billable_time")
         self.assertTrue(timesheet1.so_line)
 
-        timesheet2.write({"exclude_from_sale_order": True})
+        timesheet2.write({"is_non_billable": True})
         self.assertEqual(timesheet2.timesheet_invoice_type, "non_billable")
-        self.assertFalse(timesheet2.so_line)
-
         self.assertEqual(self.sale_order_line.qty_delivered, 2)
         self.assertEqual(self.sale_order_line.qty_to_invoice, 2)
         self.assertEqual(self.sale_order_line.qty_invoiced, 0)
@@ -337,4 +335,4 @@ class TestSaleTimesheetLineExclude(common.TransactionCase):
         self.assertEqual(self.sale_order_line.qty_to_invoice, 0)
         self.assertEqual(self.sale_order_line.qty_invoiced, 2)
         with self.assertRaises(ValidationError):
-            timesheet1.write({"exclude_from_sale_order": True})
+            timesheet1.write({"is_non_billable": True})

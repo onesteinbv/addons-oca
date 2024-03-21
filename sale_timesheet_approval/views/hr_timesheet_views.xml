@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="hr_timesheet_line_tree" model="ir.ui.view">
+        <field name="name">account.analytic.line.tree</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='unit_amount']" position="after">
+                <field name="week_number" optional="show" />
+                <field name="is_approved" readonly="1"/>
+                <field name="timesheet_invoice_id"/>
+            </xpath>
+        </field>
+    </record>
 
     <record id="timesheet_action_not_approved" model="ir.actions.act_window">
         <field name="name">Timesheets To Be Invoiced</field>
         <field name="res_model">account.analytic.line</field>
         <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
-        <field name="domain">[('project_id', '!=', False),('is_approved', '=', False)]</field>
+        <field name="domain">[('project_id', '!=', False),('is_approved', '=', False),('timesheet_invoice_id','=',False)]</field>
     </record>
 
     <record id="hr_timesheet_line_search" model="ir.ui.view">
