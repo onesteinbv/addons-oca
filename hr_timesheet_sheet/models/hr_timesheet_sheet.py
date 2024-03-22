@@ -344,6 +344,7 @@ class Sheet(models.Model):
             res |= self.env.ref("hr.group_hr_manager").users
         elif self.review_policy == "timesheet_manager":
             res |= self.env.ref("hr_timesheet.group_hr_timesheet_approver").users
+        res = res.filtered(lambda u: u.company_ids in self.company_id)
         return res
 
     def _get_timesheet_sheet_company(self):
