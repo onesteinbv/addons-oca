@@ -107,7 +107,7 @@ class OnlineBankStatementProvider(models.Model):
         ),
     ]
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         """Set provider_id on journal after creation."""
         records = super().create(vals)
