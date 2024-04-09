@@ -313,64 +313,17 @@
         <field name="model">account.bank.statement.line</field>
         <field name="inherit_id" ref="account_statement_base.account_bank_statement_line_tree" />
         <field name="arch" type="xml">
-            <tree position="attributes">
-                <attribute name="editable">top</attribute>
-                <attribute name="multi_edit">1</attribute>
-            </tree>
             <field name="journal_id" position="before">
-                <field name="suitable_journal_ids" invisible="1"/>
-                <field name="is_reconciled" invisible="1"/>
                 <field name="statement_id" domain="[('journal_id', '=', journal_id)]"
-                       attrs="{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}"/>
-                <field name="state" invisible="1"/>
+                       attrs="{'readonly': [('is_reconciled', '=', True)]}"/>
             </field>
             <field name="journal_id" position="attributes">
                 <attribute name="attrs">{'readonly': ['|',('statement_id', '!=', False),('is_reconciled', '=',
-                    True),('amount', '!=', 0)]}
+                    True)]}
                 </attribute>
-            </field>
-            <field name="date" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="payment_ref" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="ref" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="partner_id" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="amount" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="amount_currency" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="amount" position="after">
-                <field name="foreign_currency_id" position="move"/>
             </field>
             <field name="foreign_currency_id" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-                <attribute name="invisible">0</attribute>
-                <attribute name="optional">hide</attribute>
-                <attribute name="groups">base.group_multi_currency</attribute>
                 <attribute name="domain">[('id', '!=', currency_id)]</attribute>
-            </field>
-            <field name="narration" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
-            </field>
-            <field name="partner_bank_id" position="attributes">
-                <attribute name="attrs">{'readonly': [('is_reconciled', '=', True),('amount', '!=', 0)]}
-                </attribute>
             </field>
         </field>
     </record>
