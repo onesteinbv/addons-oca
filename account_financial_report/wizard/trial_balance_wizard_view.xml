@@ -26,6 +26,7 @@
                         <group name="other_filters">
                             <field name="target_move" widget="radio" />
                             <field name="hide_account_at_0" />
+                            <field name="include_inactive_accounts" />
                             <field name="show_partner_details" />
                             <field
                                 name="show_hierarchy"

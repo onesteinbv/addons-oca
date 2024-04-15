@@ -347,10 +347,13 @@ class TrialBalanceReport(models.AbstractModel):
         only_posted_moves,
         show_partner_details,
         hide_account_at_0,
+        include_inactive_accounts,
         unaffected_earnings_account,
         fy_start_date,
     ):
         accounts_domain = [("company_id", "=", company_id)]
+        if not include_inactive_accounts:
+            accounts_domain += [("deprecated", "=", False)]
         if account_ids:
             accounts_domain += [("id", "in", account_ids)]
             # If explicit list of accounts is provided,
@@ -670,6 +673,7 @@ class TrialBalanceReport(models.AbstractModel):
         date_to = data["date_to"]
         date_from = data["date_from"]
         hide_account_at_0 = data["hide_account_at_0"]
+        include_inactive_accounts = data["include_inactive_accounts"]
         show_hierarchy = data["show_hierarchy"]
         show_hierarchy_level = data["show_hierarchy_level"]
         foreign_currency = data["foreign_currency"]
@@ -687,6 +691,7 @@ class TrialBalanceReport(models.AbstractModel):
             only_posted_moves,
             show_partner_details,
             hide_account_at_0,
+            include_inactive_accounts,
             unaffected_earnings_account,
             fy_start_date,
         )
@@ -748,6 +753,7 @@ class TrialBalanceReport(models.AbstractModel):
             "date_to": data["date_to"],
             "only_posted_moves": data["only_posted_moves"],
             "hide_account_at_0": data["hide_account_at_0"],
+            "include_inactive_accounts": data["include_inactive_accounts"],
             "show_partner_details": data["show_partner_details"],
             "limit_hierarchy_level": data["limit_hierarchy_level"],
             "show_hierarchy": show_hierarchy,
