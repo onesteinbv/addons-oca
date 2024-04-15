@@ -131,7 +131,11 @@ class HelpdeskTicket(models.Model):
             if vals.get("user_id") and not vals.get("assigned_date"):
                 vals["assigned_date"] = fields.Datetime.now()
             if vals.get("team_id"):
-                vals["company_id"] = self.env["helpdesk.ticket.team"].browse([vals["team_id"]]).company_id.id
+                vals["company_id"] = (
+                    self.env["helpdesk.ticket.team"]
+                    .browse([vals["team_id"]])
+                    .company_id.id
+                )
         return super().create(vals_list)
 
     def copy(self, default=None):

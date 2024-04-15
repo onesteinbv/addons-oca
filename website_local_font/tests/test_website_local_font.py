@@ -4,7 +4,7 @@
 import base64
 
 from odoo.modules.module import get_module_resource
-from odoo.tests import common
+from odoo.tests import common, tagged
 
 
 def test_font_file_import(font_file_name):
@@ -17,6 +17,7 @@ def test_font_file_import(font_file_name):
     return font_file
 
 
+@tagged("post_install", "-at_install")
 class TestIrAttachment(common.TransactionCase):
     @classmethod
     def setUpClass(cls):
