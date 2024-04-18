@@ -5,7 +5,8 @@ from odoo import api, models
 
 
 class AccountBankStatement(models.Model):
-    _inherit = "account.bank.statement"
+    _name = "account.bank.statement"
+    _inherit = ["account.bank.statement", "mail.thread"]
 
     @api.depends("line_ids.internal_index", "line_ids.state")
     def _compute_date_index(self):
