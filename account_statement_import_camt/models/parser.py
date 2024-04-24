@@ -296,14 +296,6 @@ class CamtParser(models.AbstractModel):
         self.add_value_from_node(
             ns,
             node,
-            "./ns:AddtlNtryInf",
-            transaction,
-            "payment_ref",
-            join_str="\n",
-        )
-        self.add_value_from_node(
-            ns,
-            node,
             "./ns:RvslInd",
             transaction["narration"],
             "%s (RvslInd)" % _("Reversal Indicator"),
@@ -336,6 +328,7 @@ class CamtParser(models.AbstractModel):
 
         details_nodes = node.xpath("./ns:NtryDtls/ns:TxDtls", namespaces={"ns": ns})
         if len(details_nodes) == 0:
+            self.amend_transaction(transaction)
             self.generate_narration(transaction)
             yield transaction
             return
@@ -343,6 +336,7 @@ class CamtParser(models.AbstractModel):
         for node in details_nodes:
             transaction = transaction_base.copy()
             self.parse_transaction_details(ns, node, transaction)
+            self.amend_transaction(transaction)
             self.generate_narration(transaction)
             yield transaction
 
@@ -463,3 +457,9 @@ class CamtParser(models.AbstractModel):
                     account_number = statement.pop("account_number")
                 statements.append(statement)
         return currency, account_number, statements
+
+    def amend_transaction(self, transaction):
+        if transaction.get("payment_ref") == "/":
+            transaction["payment_ref"] = transaction["narration"].get(
+                "%s (AddtlNtryInf)" % _("Additional Entry Information"), "/"
+            )
