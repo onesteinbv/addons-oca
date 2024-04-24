@@ -6,17 +6,31 @@ class HelpdeskTicket(models.Model):
     _name = "helpdesk.ticket"
     _description = "Helpdesk Ticket"
     _rec_name = "number"
+    _rec_names_search = ["number", "name"]
     _order = "priority desc, sequence, number desc, id desc"
     _mail_post_access = "read"
     _inherit = ["mail.thread.cc", "mail.activity.mixin", "portal.mixin"]
 
-    def _get_default_stage_id(self):
-        return self.env["helpdesk.ticket.stage"].search([], limit=1).id
+    @api.depends("team_id")
+    def _compute_stage_id(self):
+        for ticket in self:
+            ticket.stage_id = ticket.team_id._get_applicable_stages()[:1]
 
     @api.model
     def _read_group_stage_ids(self, stages, domain, order):
-        stage_ids = self.env["helpdesk.ticket.stage"].search([])
-        return stage_ids
+        """Show always the stages without team, or stages of the default team."""
+        search_domain = [
+            "|",
+            ("id", "in", stages.ids),
+            ("team_ids", "=", False),
+        ]
+        default_team_id = self.default_get(["team_id"]).get("team_id")
+        if default_team_id:
+            search_domain = [
+                "|",
+                ("team_ids", "=", default_team_id),
+            ] + search_domain
+        return stages.search(search_domain, order=order)
 
     number = fields.Char(string="Ticket number", default="/", readonly=True)
     name = fields.Char(string="Title", required=True)
@@ -34,17 +48,19 @@ class HelpdeskTicket(models.Model):
     stage_id = fields.Many2one(
         comodel_name="helpdesk.ticket.stage",
         string="Stage",
-        group_expand="_read_group_stage_ids",
-        default=_get_default_stage_id,
-        tracking=True,
+        compute="_compute_stage_id",
+        store=True,
+        readonly=False,
         ondelete="restrict",
-        index=True,
+        tracking=True,
+        group_expand="_read_group_stage_ids",
         copy=False,
+        index=True,
+        domain="['|',('team_ids', '=', team_id),('team_ids','=',False)]",
     )
     partner_id = fields.Many2one(comodel_name="res.partner", string="Contact")
     partner_name = fields.Char()
     partner_email = fields.Char(string="Email")
-
     last_stage_update = fields.Datetime(default=fields.Datetime.now)
     assigned_date = fields.Datetime()
     closed_date = fields.Datetime()
@@ -70,6 +86,7 @@ class HelpdeskTicket(models.Model):
     team_id = fields.Many2one(
         comodel_name="helpdesk.ticket.team",
         string="Team",
+        index=True,
     )
     priority = fields.Selection(
         selection=[
@@ -186,6 +203,8 @@ class HelpdeskTicket(models.Model):
             res["stage_id"] = (
                 ticket.stage_id.mail_template_id,
                 {
+                    # Need to set mass_mail so that the email will always be sent
+                    "composition_mode": "mass_mail",
                     "auto_delete_message": True,
                     "subtype_id": self.env["ir.model.data"]._xmlid_to_res_id(
                         "mail.mt_note"
