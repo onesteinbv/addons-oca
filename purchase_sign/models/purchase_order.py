@@ -15,7 +15,8 @@ class PurchaseOrder(models.Model):
         readonly=False,
         precompute=True,
         states=Purchase.READONLY_STATES,
-        help="Request a online signature and/or payment to the customer in order to confirm orders automatically.",
+        help="Request a online signature and/or payment to the customer in "
+        "order to confirm orders automatically.",
     )
     signature = fields.Image(
         copy=False, attachment=True, max_width=1024, max_height=1024

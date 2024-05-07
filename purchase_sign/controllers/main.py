@@ -36,7 +36,7 @@ class PortalPurchase(CustomerPortal):
 
         if not order_sudo._has_to_be_signed():
             return {
-                "error": _("The order is not in a state requiring customer signature.")
+                "error": _("The order is not in a state requiring vendor signature.")
             }
         if not signature:
             return {"error": _("Signature is missing.")}

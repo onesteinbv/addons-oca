@@ -1,5 +1,8 @@
 # Copyright 2024 Onestein
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import json
+
+from odoo import _
 from odoo.tests import tagged
 
 from odoo.addons.base.tests.common import HttpCaseWithUserPortal
@@ -25,6 +28,7 @@ class TestPurchaseSign(HttpCaseWithUserPortal):
                 "product_id": self.env["product.product"]
                 .create({"name": "A product"})
                 .id,
+                "price_unit": 10.0,
             }
         )
 
@@ -37,15 +41,15 @@ class TestPurchaseSign(HttpCaseWithUserPortal):
 
         self.start_tour("/", "purchase_signature", login="portal")
 
-    def test_02_purchase_has_to_be_signed(self):
-        """The goal of this test is to check whether PO needs signature if Online signature is turned off for the company."""
-        self.user_portal.company_id.purchase_portal_confirmation_sign = False
+    def test_02_portal_purchase_check_errors(self):
+        """The goal of this test is to check error handling."""
+        self.user_portal.company_id.purchase_portal_confirmation_sign = True
         portal_user_partner = self.partner_portal
         purchase_order = self.env["purchase.order"].create(
             {
-                "name": "test PO",
+                "name": "test PO2",
                 "partner_id": portal_user_partner.id,
-                "state": "sent",
+                "access_token": "test_po",
             }
         )
         self.env["purchase.order.line"].create(
@@ -54,6 +58,37 @@ class TestPurchaseSign(HttpCaseWithUserPortal):
                 "product_id": self.env["product.product"]
                 .create({"name": "A product"})
                 .id,
+                "price_unit": 10.0,
             }
         )
-        self.assertFalse(purchase_order._has_to_be_signed())
+        data = json.dumps({}).encode()
+        resp = self.url_open(
+            "/my/purchase/{}/accept".format(
+                purchase_order.id,
+            ),
+            data=data,
+            allow_redirects=False,
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertIn(_("Invalid order."), resp.text)
+        resp = self.url_open(
+            "/my/purchase/{}/accept?access_token={}".format(
+                purchase_order.id, "test_po"
+            ),
+            data=data,
+            allow_redirects=False,
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertIn(
+            _("The order is not in a state requiring vendor signature."), resp.text
+        )
+        purchase_order.state = "sent"
+        resp = self.url_open(
+            "/my/purchase/{}/accept?access_token={}".format(
+                purchase_order.id, "test_po"
+            ),
+            data=data,
+            allow_redirects=False,
+            headers={"Content-Type": "application/json"},
+        )
+        self.assertIn(_("Signature is missing"), resp.text)

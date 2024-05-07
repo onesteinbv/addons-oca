@@ -7,7 +7,7 @@
     "license": "AGPL-3",
     "category": "Purchase",
     "author": "Onestein, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/vertical-association",
+    "website": "https://github.com/OCA/purchase-workflow",
     "depends": ["purchase"],
     "data": [
         "report/purchase_order_template.xml",
@@ -16,6 +16,8 @@
         "views/res_config_settings_view.xml",
     ],
     "assets": {
-        "web.assets_tests": ["purchase_sign/static/tests/tours/purchase_signature.js"],
+        "web.assets_tests": [
+            "purchase_sign/static/tests/tours/purchase_signature.esm.js"
+        ],
     },
 }
