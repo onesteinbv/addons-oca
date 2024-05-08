@@ -1,11 +1,14 @@
 # Copyright 2024 Onestein
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import binascii
 import json
+from unittest.mock import patch
 
 from odoo import _
 from odoo.tests import tagged
 
 from odoo.addons.base.tests.common import HttpCaseWithUserPortal
+from odoo.addons.purchase.models.purchase import PurchaseOrder
 
 
 @tagged("post_install", "-at_install")
@@ -92,3 +95,21 @@ class TestPurchaseSign(HttpCaseWithUserPortal):
             headers={"Content-Type": "application/json"},
         )
         self.assertIn(_("Signature is missing"), resp.text)
+
+        def write(self, vals):
+            raise binascii.Error
+
+        with patch.object(
+            PurchaseOrder,
+            "write",
+            write,
+        ):
+            resp = self.url_open(
+                "/my/purchase/{}/accept?access_token={}".format(
+                    purchase_order.id, "test_po"
+                ),
+                data=json.dumps({"params": {"signature": "Joel Willis"}}).encode(),
+                allow_redirects=False,
+                headers={"Content-Type": "application/json"},
+            )
+            self.assertIn(_("Invalid signature data"), resp.text)
