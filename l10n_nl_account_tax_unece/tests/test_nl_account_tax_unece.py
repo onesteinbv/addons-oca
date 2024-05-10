@@ -18,16 +18,19 @@ class TestNlAccountTaxUnece(TransactionCase):
         self.env.user.company_id = old_company.id
 
         self.unece_type_id = self.env.ref("account_tax_unece.tax_type_vat").id
+        # Allowed NL categories according to NLCIUS
+        # Source: forumstandaardisatie.nl/open-standaarden/nlcius
         self.unece_categ_ids = [
-            self.env.ref("account_tax_unece.tax_categ_h").id,
-            self.env.ref("account_tax_unece.tax_categ_aa").id,
             self.env.ref("account_tax_unece.tax_categ_z").id,
             self.env.ref("account_tax_unece.tax_categ_s").id,
-            self.env.ref("account_tax_unece.tax_categ_b").id,
+            self.env.ref("account_tax_unece.tax_categ_k").id,
             self.env.ref("account_tax_unece.tax_categ_e").id,
+            self.env.ref("account_tax_unece.tax_categ_g").id,
+            self.env.ref("account_tax_unece.tax_categ_ae").id,
         ]
 
     def test_load_coa(self):
+
         unece_type_id = self.unece_type_id
         unece_categ_ids = self.unece_categ_ids
 
@@ -37,10 +40,11 @@ class TestNlAccountTaxUnece(TransactionCase):
 
         # For each tax account verify that the UNECE values are set
         for tax in taxes:
-            self.assertTrue(tax.unece_type_id.id == unece_type_id)
-            self.assertTrue(tax.unece_categ_id.id in unece_categ_ids)
+            self.assertEqual(tax.unece_type_id.id, unece_type_id)
+            self.assertIn(tax.unece_categ_id.id, unece_categ_ids)
 
     def test_existing_coa_update(self):
+
         taxes = self.env["account.tax"].search(
             [("company_id", "=", self.my_company.id)]
         )
@@ -58,10 +62,11 @@ class TestNlAccountTaxUnece(TransactionCase):
 
         # For each tax account verify that the UNECE values are set
         for tax in taxes:
-            self.assertTrue(tax.unece_type_id.id == unece_type_id)
-            self.assertTrue(tax.unece_categ_id.id in unece_categ_ids)
+            self.assertEqual(tax.unece_type_id.id, unece_type_id)
+            self.assertIn(tax.unece_categ_id.id, unece_categ_ids)
 
     def test_post_init_hook(self):
+
         self.env["res.company"].create({"name": "My New Dutch Company"})
         self.env["res.company"].create(
             {"name": "My New Company", "country_id": self.env.ref("base.it").id}
