@@ -1,8 +1,9 @@
 # Copyright 2023 DEC (https://www.decgroupe.com)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo.addons.helpdesk_mgmt.tests import test_helpdesk_portal
+from odoo.tests import tagged
 
-
+@tagged("post_install", "-at_install")
 class TestHelpdeskPortal(test_helpdesk_portal.TestHelpdeskPortalBase):
     """ """
 
