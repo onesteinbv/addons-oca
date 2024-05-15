@@ -1,0 +1,53 @@
+<odoo>
+
+    <template id="report_agreement_document" inherit_id="agreement_legal.report_agreement_document">
+        <xpath expr="//table[hasclass('table-condensed')][2]" position="replace">
+            <t t-foreach="doc.review_ids" t-as="review">
+                <t t-if="review.signature">
+                    <div class="row">
+                        <div class="col-3">
+                            <div>
+                                <span>Name:</span>
+                                <span t-field="review.done_by.name"/>
+                            </div>
+                            <div class="mt-3">
+                                <span>Date:</span>
+                                <span t-esc="review.reviewed_date" t-options='{"widget": "date"}'/>
+                            </div>
+                            <t t-if="review.location">
+                                <div class="mt-3">
+                                    <span>Location:</span>
+                                    <span t-field="review.location"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-3">
+                            <t t-if="review.done_by.commercial_company_name">
+                                <div>
+                                    <span>Company:</span>
+                                    <span t-field="review.done_by.commercial_company_name"/>
+                                </div>
+                            </t>
+                            <t t-if="review.done_by.function">
+                                <div class="mt-3">
+                                    <span>Designation:</span>
+                                    <span t-field="review.done_by.function"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-5">
+                            <div class="">
+                                <img t-att-src="image_data_uri(review.signature)"
+                                     style="max-height: 4cm; max-width: 8cm;"/>
+                            </div>
+                            <div class="text-center" style="max-width: 8cm">
+                                <span>Signature</span>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
