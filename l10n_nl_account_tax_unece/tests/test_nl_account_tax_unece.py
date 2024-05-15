@@ -30,7 +30,6 @@ class TestNlAccountTaxUnece(TransactionCase):
         ]
 
     def test_load_coa(self):
-
         unece_type_id = self.unece_type_id
         unece_categ_ids = self.unece_categ_ids
 
@@ -44,7 +43,6 @@ class TestNlAccountTaxUnece(TransactionCase):
             self.assertIn(tax.unece_categ_id.id, unece_categ_ids)
 
     def test_existing_coa_update(self):
-
         taxes = self.env["account.tax"].search(
             [("company_id", "=", self.my_company.id)]
         )
@@ -66,7 +64,6 @@ class TestNlAccountTaxUnece(TransactionCase):
             self.assertIn(tax.unece_categ_id.id, unece_categ_ids)
 
     def test_post_init_hook(self):
-
         self.env["res.company"].create({"name": "My New Dutch Company"})
         self.env["res.company"].create(
             {"name": "My New Company", "country_id": self.env.ref("base.it").id}

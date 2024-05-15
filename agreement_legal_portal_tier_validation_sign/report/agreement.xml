@@ -1,0 +1,50 @@
+<odoo>
+
+    <template id="report_agreement_document" inherit_id="agreement_legal_tier_validation_sign.report_agreement_document">
+        <xpath expr="//t[@t-foreach='doc.review_ids']" position="before">
+            <t t-if="doc.signature">
+                <div class="row" style="border-bottom: 1px dashed black;">
+                    <div class="col-3">
+                        <div t-if="doc.partner_signed_user_id.name">
+                            <span>Name:</span>
+                            <span t-field="doc.partner_signed_user_id.name"/>
+                        </div>
+                        <div class="mt-3">
+                            <span>Date:</span>
+                            <span t-field="doc.partner_signed_date" t-options='{"widget": "date"}'/>
+                        </div>
+                        <t t-if="doc.partner_signed_user_id.city or doc.partner_signed_user_id.country_id">
+                            <div class="mt-3">
+                                <span>Location:</span>
+                                <span t-esc="doc.partner_signed_user_id.city or (doc.partner_signed_user_id.country_id and doc.partner_signed_user_id.country_id.name) or ''"/>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="col-3">
+                        <t t-if="doc.partner_signed_user_id.commercial_company_name">
+                            <div>
+                                <span>Company:</span>
+                                <span t-field="doc.partner_signed_user_id.commercial_company_name"/>
+                            </div>
+                        </t>
+                        <t t-if="doc.partner_signed_user_id.function">
+                            <div class="mt-3">
+                                <span>Designation:</span>
+                                <span t-field="doc.partner_signed_user_id.function"/>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="col-5">
+                        <div>
+                            <img t-att-src="image_data_uri(doc.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                        </div>
+                        <div class="text-center" style="max-width: 8cm">
+                            <span>Signature</span>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

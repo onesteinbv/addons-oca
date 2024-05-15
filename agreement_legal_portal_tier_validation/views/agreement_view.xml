@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="partner_agreement_form_view" model="ir.ui.view">
+        <field name="name">agreement form</field>
+        <field name="model">agreement</field>
+        <field name="inherit_id" ref="agreement_legal_portal.partner_agreement_form_view" />
+        <field name="arch" type="xml">
+            <button name="action_agreement_send" position="attributes">
+                <attribute name="attrs">{'invisible': ['|',('is_template', '=', True),('state','!=','active')]}</attribute>
+            </button>
+        </field>
+    </record>
+</odoo>
