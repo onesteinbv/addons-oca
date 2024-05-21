@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="partner_agreement_form_view" model="ir.ui.view">
+        <field name="name">agreement form</field>
+        <field name="model">agreement</field>
+        <field name="inherit_id" ref="agreement_legal.partner_agreement_form_view" />
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button
+                    name="action_agreement_send"
+                    type="object"
+                    string="Send By Email"
+                    attrs="{'invisible': [('is_template', '=', True)]}"
+                />
+            </header>
+        </field>
+    </record>
+</odoo>

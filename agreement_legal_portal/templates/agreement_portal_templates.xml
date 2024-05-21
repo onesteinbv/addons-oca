@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template
+        id="portal_my_home_menu_agreement"
+        name="Portal layout : Agreement menu entries"
+        inherit_id="portal.portal_breadcrumbs"
+        priority="35"
+    >
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li
+                t-if="page_name == 'agreements'"
+                t-attf-class="breadcrumb-item #{'active ' if not agreement else ''}"
+            >
+                <a
+                    t-if="agreement"
+                    t-attf-href="/my/agreements?{{ keep_query() }}"
+                >Agreements</a>
+                <t t-else="">Agreements</t>
+            </li>
+            <li t-if="agreement" class="breadcrumb-item active">
+                <t t-esc="agreement.name" />
+            </li>
+        </xpath>
+    </template>
+
+    <template
+        id="portal_my_home_agreement"
+        name="Show Agreements"
+        inherit_id="portal.portal_my_home"
+        customize_show="True"
+        priority="30"
+    >
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Agreements</t>
+                <t t-set="url" t-value="'/my/agreements'" />
+                <t t-set="placeholder_count" t-value="'agreement_count'" />
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_agreements" name="My Agreements">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Agreements</t>
+            </t>
+            <t t-if="agreements" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Agreement #</th>
+                        <th class='d-none d-md-table-cell'>Start Date</th>
+                        <th class='d-none d-md-table-cell'>End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="agreements" t-as="agreement">
+                        <tr>
+                            <td>
+                                <a
+                                    t-att-href="agreement.get_portal_url()"
+                                    t-attf-class="tr_agreement_link"
+                                    t-att-title="agreement.name"
+                                >
+                                    <t t-esc="agreement.name" />
+                                </a>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                <span t-field="agreement.start_date" />
+                            </td>
+                            <td class='text-right'>
+                                <span t-field="agreement.end_date" />
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_agreement_page" name="My Agreement">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t
+                        t-set="backend_url"
+                        t-value="'/web#return_label=Website&amp;model=agreement&amp;id=%s&amp;view_type=form' % (agreement.id)"
+                    />
+                </t>
+            </t>
+            <div class="row mt16 o_portal_agreement_sidebar">
+                    <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+                    <t t-set="title">
+                        <h2 class="mb-0"><b t-field="agreement.name"/> </h2>
+                    </t>
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item d-grid align-content-start">
+                                <a t-if="not agreement.signature" role="button" class="btn btn-primary mb8" data-bs-toggle="modal" data-bs-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/>Accept &amp; Sign
+                                </a>
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 me-1 mb-1">
+                                        <a class="btn btn-secondary o_download_btn" t-att-href="agreement.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Download</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary o_print_btn o_portal_agreement_print" t-att-href="agreement.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Print</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+                <!-- Page content -->
+                <div id="agreement_content" class="col-12 col-lg justify-content-end">
+                    <!-- modal relative to the actions sign and pay -->
+                    <div role="dialog" class="modal fade" id="modalaccept">
+                        <div class="modal-dialog" t-if="not agreement.signature">
+                            <form id="accept" method="POST" t-att-data-agreement-id="agreement.id" t-att-data-token="agreement.access_token" class="js_accept_json modal-content js_website_submit_form">
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Sign Agreement</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </header>
+                                <main class="modal-body" id="sign-dialog">
+                                    <p>
+                                        <span>By signing this proposal, I agree to the agreement:</span>
+                                        <ul>
+                                            <li>
+                                                <span>Accepted on the behalf of:</span> <b t-field="agreement.partner_id.commercial_partner_id"/>
+                                            </li>
+                                        </ul>
+                                    </p>
+                                    <t t-call="portal.signature_form">
+                                        <t t-set="call_url" t-value="agreement.get_portal_url(suffix='/accept')"/>
+                                        <t t-set="default_name" t-value="agreement.partner_contact_id and agreement.partner_contact_id.name or agreement.partner_id.name"/>
+                                    </t>
+                                </main>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- status messages -->
+                    <div t-if="message == 'sign_ok'" class="alert alert-success alert-dismissible d-print-none" role="status">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thank You!</strong><br/>
+                        Your Agreement has been signed.
+                    </div>
+
+                    <div t-attf-class="card" id="portal_agreement_content">
+                        <div t-call="agreement_legal_portal.agreement_portal_content"/>
+                    </div>
+
+                    <!-- chatter -->
+                    <div id="agreement_communication" class="mt-4">
+                        <h2>Communication</h2>
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="agreement" />
+                            <t t-set="token" t-value="agreement.access_token" />
+                            <t t-set="pid" t-value="pid" />
+                            <t t-set="hash" t-value="hash" />
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="agreement_portal_content">
+        <t t-call="portal.portal_record_layout">
+            <t t-set="card_header">
+                <h5 class="mb-0">
+                    <span>
+                        Agreement - <span t-field="agreement.name" />
+                    </span>
+                </h5>
+            </t>
+            <t t-set="card_body">
+                <div id="general_information">
+                    <div class="row" id="agreement_information">
+                        <div class="col-12 col-md-6 mb-4 mb-md-0">
+                            <div class="row mb-2 mb-sm-1">
+                                <div class="col-12 col-sm-8">
+                                    <span t-field="agreement.description"/>
+                                </div>
+                            </div>
+                            <div class="row mb-2 mb-sm-1">
+                                <div class="col-12 col-sm-4">
+                                    <strong>Start Date:</strong>
+                                </div>
+                                <div class="col-12 col-sm-8">
+                                    <span t-field="agreement.start_date" t-options='{"widget": "date"}' />
+                                </div>
+                            </div>
+                            <div
+                                t-if="agreement.end_date" class="row mb-2 mb-sm-1"
+                            >
+                                <div class="col-12 col-sm-4">
+                                    <strong>End Date:</strong>
+                                </div>
+                                <div class="col-12 col-sm-8">
+                                    <span
+                                        t-field="agreement.end_date"
+                                        t-options='{"widget": "date"}'
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt4">
+                        <div
+                            t-if="agreement.partner_id"
+                            class="col-12 col-md-6 mb-4 mb-md-0"
+                        >
+                            <h6>
+                                <strong>Partner:</strong>
+                            </h6>
+                            <div class="row">
+                                <div class="col flex-grow-0 pr-3">
+                                    <img
+                                        t-if="agreement.partner_id.image_128"
+                                        class="rounded-circle mt-1 o_portal_contact_img"
+                                        t-att-src="image_data_uri(agreement.partner_id.image_128)"
+                                        alt="Contact"
+                                    />
+                                    <img
+                                        t-else=""
+                                        class="rounded-circle mt-1 o_portal_contact_img"
+                                        src="/web/static/src/img/user_menu_avatar.png"
+                                        alt="Contact"
+                                    />
+                                </div>
+                                <div class="col pl-sm-0">
+                                    <address
+                                        t-field="agreement.partner_id"
+                                        t-options='{"widget": "contact", "fields": ["name", "email", "phone"]}'
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

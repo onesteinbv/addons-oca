@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2024 Onestein
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="view_comment_wizard" model="ir.ui.view">
+        <field name="name">Comment Wizard</field>
+        <field name="model">comment.wizard</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base_tier_validation.view_comment_wizard" />
+        <field name="arch" type="xml">
+            <field name="comment" position="attributes">
+                <attribute name="nolabel">0</attribute>
+            </field>
+            <field name="comment" position="after">
+                <field name="partner_name" invisible="1"/>
+                <field name="requires_signature" invisible="1"/>
+                <field name="validate_reject" invisible="1"/>
+                <field name="signature" attrs="{'invisible':[('validate_reject','=','reject')],'required': [('requires_signature', '=', True)]}" widget="signature" options="{'full_name': 'partner_name', 'size': ['',200]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>
