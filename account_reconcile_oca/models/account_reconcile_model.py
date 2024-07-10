@@ -4,7 +4,7 @@ from odoo import Command, models
 class AccountReconcileModel(models.Model):
     _inherit = "account.reconcile.model"
 
-    def _get_write_off_move_lines_dict_oca(self, residual_balance, partner_id):
+    def _get_write_off_move_lines_dict_oca(self, residual_balance, partner):
         """Standard odoo _get_write_off_move_lines_dict() method, but with patches"""
         self.ensure_one()
 
@@ -48,7 +48,7 @@ class AccountReconcileModel(models.Model):
                 taxes = line.tax_ids
                 detected_fiscal_position = self.env[
                     "account.fiscal.position"
-                ]._get_fiscal_position(self.env["res.partner"].browse(partner_id))
+                ]._get_fiscal_position(partner)
                 if detected_fiscal_position:
                     taxes = detected_fiscal_position.map_tax(taxes)
                 writeoff_line["tax_ids"] += [Command.set(taxes.ids)]
