@@ -343,7 +343,7 @@ class Sheet(models.Model):
         elif self.review_policy == "hr_manager":
             res |= self.env.ref("hr.group_hr_manager").users
         elif self.review_policy == "timesheet_manager":
-            res |= self.env.ref("hr_timesheet.group_hr_timesheet_approver").users
+            res |= self.env.ref("hr_timesheet.group_timesheet_manager").users
         res = res.filtered(lambda u: self.company_id in u.company_ids)
         return res
 
