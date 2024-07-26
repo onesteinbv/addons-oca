@@ -3,6 +3,7 @@ from odoo import _, fields, models
 
 class ProjectTaskMerge(models.TransientModel):
     _name = "project.task.merge"
+    _description = "Project Task Merge"
 
     task_ids = fields.Many2many("project.task", string="Tasks to Merge", required=True)
     user_ids = fields.Many2many("res.users", string="Assignees")
