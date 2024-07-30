@@ -17,6 +17,7 @@
                 <field name="name" />
                 <field name="amount_residual_currency" optional="hide" />
                 <field name="amount_residual" />
+                <field name="paid_amount" />
                 <button
                     type="object"
                     name="action_open_business_doc"

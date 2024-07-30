@@ -13,6 +13,9 @@ class AccountBankStatementLine(models.Model):
     _inherit = ["account.bank.statement.line", "account.reconcile.abstract"]
 
     reconcile_data_info = fields.Serialized(inverse="_inverse_reconcile_data_info")
+    reconciled_move_line_ids = fields.Many2many(
+        "account.move.line", compute="_compute_reconciled_move_line_ids"
+    )
     reconcile_mode = fields.Selection(
         selection=lambda self: self.env["account.journal"]
         ._fields["reconcile_mode"]
@@ -99,6 +102,13 @@ class AccountBankStatementLine(models.Model):
         help="Taxes that apply on the base amount",
     )
 
+    @api.depends("reconcile_data_info")
+    def _compute_reconciled_move_line_ids(self):
+        for rec in self:
+            rec.reconciled_move_line_ids = rec.reconcile_data_info.get(
+                "counterparts", []
+            )
+
     def save(self):
         return {"type": "ir.actions.act_window_close"}
 
@@ -144,7 +154,7 @@ class AccountBankStatementLine(models.Model):
 
     @api.onchange("add_account_move_line_id")
     def _onchange_add_account_move_line_id(self):
-        if self.add_account_move_line_id:
+        if not self._origin.is_reconciled and self.add_account_move_line_id:
             data = self.reconcile_data_info["data"]
             new_data = []
             is_new_line = True

@@ -218,8 +218,11 @@
                             name="add_account_move_line_id"
                             widget="account_reconcile_oca_match"
                             domain="[('parent_state', '=', 'posted'),('amount_residual', '!=', 0),('account_id.reconcile', '=', True), ('company_id', '=', company_id), ('statement_line_id', '!=', id)]"
-                            context="{'search_default_partner_id': partner_id, 'search_default_trade_payable': 1, 'search_default_trade_receivable': 1, 'tree_view_ref': 'account_reconcile_oca.account_move_line_tree_reconcile_view', 'search_view_ref': 'account_reconcile_oca.account_move_line_search_reconcile_view'}"
+                            context="{'search_default_partner_id': partner_id, 'search_default_trade_payable': 1, 'search_default_trade_receivable': 1, 'tree_view_ref': 'account_reconcile_oca.account_move_line_tree_reconcile_view', 'search_view_ref': 'account_reconcile_oca.account_move_line_search_reconcile_view','open_in_new_window': 1}"
                         />
+                    </page>
+                    <page name="reconciled_line" string="Reconciled" attrs="{'invisible': [('is_reconciled', '=', False)]}">
+                        <field name="reconciled_move_line_ids" widget="account_reconcile_oca_match" context="{'bank_statement_line_id':id,'search_default_partner_id': partner_id, 'search_default_trade_payable': 1, 'search_default_trade_receivable': 1, 'tree_view_ref': 'account_reconcile_oca.account_move_line_tree_reconcile_view', 'search_view_ref': 'account_reconcile_oca.account_move_line_search_reconcile_view','open_in_new_window': 1}"/>
                     </page>
                     <page name="manual" string="Manual operation">
                         <group>
