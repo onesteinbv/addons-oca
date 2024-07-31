@@ -1,7 +1,8 @@
 /** @odoo-module */
-const {useState, useSubEnv, onWillStart} = owl;
+const {onMounted, onWillStart, useState, useSubEnv} = owl;
 import {KanbanController} from "@web/views/kanban/kanban_controller";
 import {View} from "@web/views/view";
+import {formatMonetary} from "@web/views/fields/formatters";
 import {useService} from "@web/core/utils/hooks";
 
 export class ReconcileController extends KanbanController {
@@ -9,19 +10,52 @@ export class ReconcileController extends KanbanController {
         super.setup();
         this.state = useState({
             selectedRecordId: null,
-            balance:null,
+            journalBalance: 0,
+            currency: false,
         });
         useSubEnv({
             parentController: this,
             exposeController: this.exposeController.bind(this),
         });
-        onWillStart(this.fetchBalance);
         this.effect = useService("effect");
         this.orm = useService("orm");
         this.action = useService("action");
         this.router = useService("router");
         this.activeActions = this.props.archInfo.activeActions;
         this.model.addEventListener("update", () => this.selectRecord(), {once: true});
+        onWillStart(() => {
+            this.updateJournalInfo();
+        });
+        onMounted(() => {
+            this.selectRecord();
+        });
+    }
+    get journalId() {
+        if (this.props.resModel === "account.bank.statement.line") {
+            return this.props.context.active_id;
+        }
+        return false;
+    }
+    async updateJournalInfo() {
+        var journalId = this.journalId;
+        if (!journalId) {
+            return;
+        }
+        var result = await this.orm.call("account.journal", "read", [
+            [journalId],
+            ["current_statement_balance", "currency_id", "company_currency_id"],
+        ]);
+        this.state.journalBalance = result[0].current_statement_balance;
+        this.state.currency = (result[0].currency_id ||
+            result[0].company_currency_id)[0];
+    }
+    get journalBalanceStr() {
+        if (!this.state.journalBalance) {
+            return "";
+        }
+        return formatMonetary(this.state.journalBalance, {
+            currencyId: this.state.currency,
+        });
     }
     exposeController(controller) {
         this.form_controller = controller;
@@ -33,7 +67,6 @@ export class ReconcileController extends KanbanController {
         this.action.doAction(action, {
             onClose: async () => {
                 await this.model.root.load();
-                await this.fetchBalance();
                 this.render(true);
             },
         });
@@ -101,14 +134,6 @@ export class ReconcileController extends KanbanController {
     }
     updateURL(resId) {
         this.router.pushState({id: resId});
-    }
-    /** Fetch the balance to display. **/
-    async fetchBalance() {
-        if(this.props.resModel == "account.bank.statement.line"){
-            this.state.balance = await this.orm.call(this.props.resModel, "get_balance", [], {
-                context: this.props.context,
-            });
-        }
     }
 }
 ReconcileController.components = {
