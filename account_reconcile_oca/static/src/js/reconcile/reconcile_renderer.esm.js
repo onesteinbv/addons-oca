@@ -3,6 +3,7 @@
 import {KanbanRenderer} from "@web/views/kanban/kanban_renderer";
 import {ReconcileKanbanRecord} from "./reconcile_kanban_record.esm.js";
 import {formatMonetary} from "@web/views/fields/formatters";
+import {useService} from "@web/core/utils/hooks";
 
 export class ReconcileRenderer extends KanbanRenderer {
     setup() {
