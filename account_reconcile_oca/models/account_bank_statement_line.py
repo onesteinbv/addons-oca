@@ -342,6 +342,7 @@ class AccountBankStatementLine(models.Model):
                             "name": self.manual_name,
                             "partner_id": self.manual_partner_id
                             and self.manual_partner_id.name_get()[0]
+                            or line.get("partner_id")
                             or (False, ""),
                             "account_id": self.manual_account_id.name_get()[0]
                             if self.manual_account_id
