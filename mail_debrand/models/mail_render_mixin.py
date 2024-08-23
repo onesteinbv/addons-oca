@@ -8,7 +8,7 @@ import re
 from lxml import etree, html
 from markupsafe import Markup
 
-from odoo import api, models, tools
+from odoo import api, models, tools, _
 
 
 class MailRenderMixin(models.AbstractModel):
@@ -104,7 +104,7 @@ class MailRenderMixin(models.AbstractModel):
             wrapper = Markup
 
         message = re.sub(
-            r"""(Powered by\s(.*)Odoo</a>)""", "<div>&nbsp;</div>", message
+            _(r"""(Powered by\s(.*)Odoo</a>)"""), "<div>&nbsp;</div>", message
         )
 
         return wrapper(message)
