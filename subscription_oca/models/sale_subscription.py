@@ -151,7 +151,7 @@ class SaleSubscription(models.Model):
                         logger.exception("Error on subscription invoice generate")
                 if not subscription.recurring_rule_boundary:
                     if subscription.date <= today:
-                        subscription.action_close_subscription()
+                        subscription.close_subscription()
 
             elif (
                 subscription.date_start <= today and subscription.stage_id.type == "pre"
