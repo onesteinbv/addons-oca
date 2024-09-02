@@ -8,7 +8,7 @@ import re
 from lxml import etree, html
 from markupsafe import Markup
 
-from odoo import api, models, tools, _
+from odoo import _, api, models, tools
 
 
 class MailRenderMixin(models.AbstractModel):
