@@ -53,9 +53,9 @@ class ProjectTaskMerge(models.TransientModel):
 
     def merge_description(self):
         return "<br/>".join(
-            self.task_ids.mapped(
+            self.task_ids.filtered(lambda t: t.description).mapped(
                 lambda task: "Description from task <b>%s</b>:<br/>%s"
-                % (task.name, task.description or "No description")
+                % (task.name, task.description)
             )
         )
 
