@@ -11,12 +11,16 @@
             <tree js_class="reconcile_move_line">
                 <field name="date" />
                 <field name="move_id" />
+                <field name="date_maturity" optional="show" />
+                <field name="account_id" optional="show" />
                 <field name="partner_id" />
                 <field name="company_currency_id" invisible="1" />
                 <field name="currency_id" invisible="1" />
-                <field name="name" />
+                <field name="name" optional="show" />
                 <field name="amount_residual_currency" optional="hide" />
-                <field name="amount_residual" />
+                <field name="amount_residual" optional="show" />
+                <field name="debit" optional="hide" />
+                <field name="credit" optional="hide" />
                 <button
                     type="object"
                     name="action_open_business_doc"
@@ -36,7 +40,7 @@
                     <field
                     name="name"
                     string="Journal Item"
-                    filter_domain="[                         '|', '|', '|',                         ('name', 'ilike', self), ('ref', 'ilike', self), ('account_id', 'ilike', self), ('partner_id', 'ilike', self)]"
+                    filter_domain="['|','|','|','|','|',('name', 'ilike', self), ('ref', 'ilike', self), ('account_id', 'ilike', self), ('partner_id', 'ilike', self),('amount_residual', 'ilike', self),('amount_residual_currency', 'ilike', self)]"
                 />
                     <field name="name" />
                     <field name="ref" />
@@ -97,5 +101,14 @@
                 />
                 </search>
         </field>
+    </record>
+
+    <record id="action_reconcile" model="ir.actions.server">
+        <field name="name">Reconcile</field>
+        <field name="model_id" ref="account.model_account_move_line" />
+        <field name="binding_model_id" ref="account.model_account_move_line" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_reconcile_manually()</field>
     </record>
 </odoo>
