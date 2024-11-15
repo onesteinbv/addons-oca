@@ -1,5 +1,4 @@
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo import _, fields, models
 
 
 class ProjectProject(models.Model):
@@ -22,8 +21,11 @@ class ProjectProject(models.Model):
             )
 
     def _compute_sprint_count(self):
+        unassigned_sprint_count = self.env["project.sprint"].search(
+            [("project_id", "=", False)], count=True
+        )
         for project in self:
-            project.sprint_count = len(project.sprint_ids)
+            project.sprint_count = len(project.sprint_ids) + unassigned_sprint_count
 
     def action_sprints(self):
         self.ensure_one()
@@ -32,7 +34,7 @@ class ProjectProject(models.Model):
             "type": "ir.actions.act_window",
             "res_model": "project.sprint",
             "view_mode": "tree,form,timeline",
-            "domain": [("project_id", "=", self.id)],
+            "domain": ["|", ("project_id", "=", self.id), ("project_id", "=", False)],
             "context": {"default_project_id": self.id},
         }
 
@@ -61,30 +63,3 @@ class ProjectProject(models.Model):
             "domain": [("project_id", "=", self.id), ("sprint_id", "!=", False)],
             "context": {"default_project_id": self.id, "no_create": True},
         }
-
-
-class ProjectTask(models.Model):
-    _inherit = "project.task"
-
-    sprint_id = fields.Many2one(
-        comodel_name="project.sprint",
-        string="Sprint",
-        track_visibility="onchange",
-    )
-
-    sprint_state = fields.Selection(
-        related="sprint_id.state", string="Sprint State", store=True
-    )
-
-    @api.constrains("user_ids")
-    def _check_user_ids(self):
-        for task in self:
-            if task.user_ids and task.sprint_id:
-                if not task.user_ids <= task.sprint_id.user_ids:
-                    raise ValidationError(
-                        _("The assignees must be part of the sprint.")
-                    )
-
-    @api.onchange("sprint_id")
-    def _onchange_sprint_id(self):
-        self.user_ids = False

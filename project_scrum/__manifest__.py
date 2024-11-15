@@ -15,6 +15,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/project_sprint_views.xml",
+        "views/project_task_views.xml",
         "views/project_views.xml",
         "data/ir_cron_data.xml",
     ],

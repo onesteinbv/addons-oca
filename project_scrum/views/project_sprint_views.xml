@@ -59,6 +59,7 @@
                             <field
                                 name="date_end"
                                 attrs="{'readonly' : [('date_option', '!=', 'custom')]}"
+                                force_save="1"
                             />
                         </group>
                         <field name="description" />

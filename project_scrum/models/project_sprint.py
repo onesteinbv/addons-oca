@@ -39,7 +39,6 @@ class ProjectSprint(models.Model):
         comodel_name="project.project",
         string="Project",
         track_visibility="onchange",
-        required=True,
     )
     task_ids = fields.One2many(
         comodel_name="project.task",
