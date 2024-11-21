@@ -11,13 +11,18 @@ from odoo.tools.sql import column_exists, create_column
 class ProjectTask(models.Model):
     _inherit = "project.task"
 
+    date_start = fields.Datetime(
+        string="Started Date", help="Date on which the task has started being worked on"
+    )
     planned_date_start = fields.Datetime(
+        string="Planned Start Date",
         compute="_compute_planned_date_start",
         store=True,
         readonly=False,
     )
     planned_date_end = fields.Datetime(
-        compute="_compute_planned_date_end",
+        string="Planned End Date",
+        compute="_compute_planned_date_start",
         store=True,
         readonly=False,
     )
@@ -57,9 +62,27 @@ class ProjectTask(models.Model):
                         _("The end date must be after the start date.")
                     )
 
-    def update_date_end(self, stage_id):
-        res = super().update_date_end(stage_id)
-        res.pop("date_end", None)
+    @api.model_create_multi
+    def create(self, vals_list):
+        now = fields.Datetime.now()
+        for vals in vals_list:
+            if vals.get("stage_id") and not vals.get("date_start"):
+                project_task_type = self.env["project.task.type"].browse(
+                    vals["stage_id"]
+                )
+                if not project_task_type.is_start:
+                    continue
+                vals["date_start"] = now
+        return super().create(vals_list)
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("stage_id") and not vals.get("date_start"):
+            now = fields.Datetime.now()
+            for task in self.filtered(
+                lambda t: not t.date_start and t.stage_id.is_start
+            ):
+                task.date_start = now
         return res
 
     def _auto_init(self):

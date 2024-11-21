@@ -11,7 +11,7 @@
     "website": "https://github.com/OCA/project",
     "author": "Tecnativa, Onestein, Odoo Community Association (OCA)",
     "license": "AGPL-3",
-    "depends": ["project", "web_timeline"],
+    "depends": ["project", "web_timeline", "project_task_date"],
     "data": [
         "views/project_project_view.xml",
         "views/project_task_view.xml",
