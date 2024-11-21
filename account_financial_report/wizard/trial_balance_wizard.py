@@ -45,6 +45,9 @@ class TrialBalanceReportWizard(models.TransientModel):
         "not display accounts that have initial balance = "
         "debit = credit = end balance = 0",
     )
+    include_inactive_accounts = fields.Boolean(
+        help="Use this filter to include deprecated(inactive accounts)",
+    )
     receivable_accounts_only = fields.Boolean()
     payable_accounts_only = fields.Boolean()
     show_partner_details = fields.Boolean()
@@ -68,7 +71,7 @@ class TrialBalanceReportWizard(models.TransientModel):
         help="Ending account in a range",
     )
 
-    @api.onchange("account_code_from", "account_code_to")
+    @api.onchange("account_code_from", "account_code_to", "include_inactive_accounts")
     def on_change_account_range(self):
         if (
             self.account_code_from
@@ -78,9 +81,10 @@ class TrialBalanceReportWizard(models.TransientModel):
         ):
             start_range = int(self.account_code_from.code)
             end_range = int(self.account_code_to.code)
-            self.account_ids = self.env["account.account"].search(
-                [("code", ">=", start_range), ("code", "<=", end_range)]
-            )
+            accounts_domain = [("code", ">=", start_range), ("code", "<=", end_range)]
+            if not self.include_inactive_accounts:
+                accounts_domain += [("deprecated", "=", False)]
+            self.account_ids = self.env["account.account"].search(accounts_domain)
             if self.company_id:
                 self.account_ids = self.account_ids.filtered(
                     lambda a: a.company_id == self.company_id
@@ -107,7 +111,7 @@ class TrialBalanceReportWizard(models.TransientModel):
             else:
                 wiz.fy_start_date = False
 
-    @api.onchange("company_id")
+    @api.onchange("company_id", "include_inactive_accounts")
     def onchange_company_id(self):
         """Handle company change."""
         count = self.env["account.account"].search_count(
@@ -149,7 +153,10 @@ class TrialBalanceReportWizard(models.TransientModel):
         if not self.company_id:
             return res
         else:
-            res["domain"]["account_ids"] += [("company_id", "=", self.company_id.id)]
+            accounts_domain = [("company_id", "=", self.company_id.id)]
+            if not self.include_inactive_accounts:
+                accounts_domain += [("deprecated", "=", False)]
+            res["domain"]["account_ids"] += accounts_domain
             res["domain"]["partner_ids"] += self._get_partner_ids_domain()
             res["domain"]["date_range_id"] += [
                 "|",
@@ -180,11 +187,15 @@ class TrialBalanceReportWizard(models.TransientModel):
                     )
                 )
 
-    @api.onchange("receivable_accounts_only", "payable_accounts_only")
+    @api.onchange(
+        "receivable_accounts_only", "payable_accounts_only", "include_inactive_accounts"
+    )
     def onchange_type_accounts_only(self):
         """Handle receivable/payable accounts only change."""
         if self.receivable_accounts_only or self.payable_accounts_only:
             domain = [("company_id", "=", self.company_id.id)]
+            if not self.include_inactive_accounts:
+                domain += [("deprecated", "=", False)]
             if self.receivable_accounts_only and self.payable_accounts_only:
                 domain += [
                     ("account_type", "in", ("asset_receivable", "liability_payable"))
@@ -245,6 +256,7 @@ class TrialBalanceReportWizard(models.TransientModel):
             "date_to": self.date_to,
             "only_posted_moves": self.target_move == "posted",
             "hide_account_at_0": self.hide_account_at_0,
+            "include_inactive_accounts": self.include_inactive_accounts,
             "foreign_currency": self.foreign_currency,
             "company_id": self.company_id.id,
             "account_ids": self.account_ids.ids or [],

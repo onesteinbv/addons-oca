@@ -144,6 +144,10 @@ class TrialBalanceXslx(models.AbstractModel):
                 _("Hide") if report.hide_account_at_0 else _("Show"),
             ],
             [
+                _("Inactive accounts filter"),
+                _("Show") if report.include_inactive_accounts else _("Hide"),
+            ],
+            [
                 _("Show foreign currency"),
                 _("Yes") if report.foreign_currency else _("No"),
             ],

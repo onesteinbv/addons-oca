@@ -134,6 +134,7 @@
                 <div class="act_as_cell">Date range filter</div>
                 <div class="act_as_cell">Target moves filter</div>
                 <div class="act_as_cell">Account at 0 filter</div>
+                <div class="act_as_cell">Inactive accounts filter</div>
                 <div class="act_as_cell">Limit hierarchy levels</div>
             </div>
             <div class="act_as_row">
@@ -150,6 +151,10 @@
                 <div class="act_as_cell">
                     <t t-if="hide_account_at_0">Hide</t>
                     <t t-if="not hide_account_at_0">Show</t>
+                </div>
+                <div class="act_as_cell">
+                    <t t-if="include_inactive_accounts">Show</t>
+                    <t t-if="not include_inactive_accounts">Hide</t>
                 </div>
                 <div class="act_as_cell">
                     <t t-if="limit_hierarchy_level">
