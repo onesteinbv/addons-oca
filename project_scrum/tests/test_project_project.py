@@ -50,7 +50,10 @@ class TestProjectProject(TransactionCase):
     def test_action_sprints(self):
         action = self.project.action_sprints()
         self.assertEqual(action["res_model"], "project.sprint")
-        self.assertEqual(action["domain"], [("project_id", "=", self.project.id)])
+        self.assertEqual(
+            action["domain"],
+            ["|", ("project_id", "=", self.project.id), ("project_id", "=", False)],
+        )
         self.assertEqual(action["context"], {"default_project_id": self.project.id})
 
     def test_action_backlog(self):
