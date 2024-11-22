@@ -21,6 +21,6 @@
         id="project.open_view_project_all_group_stage"
         model="ir.actions.act_window"
     >
-        <field name="view_mode">kanban,tree,form,calendar,activity,timeline</field>str
+        <field name="view_mode">kanban,tree,form,calendar,activity,timeline</field>
     </record>
 </odoo>
