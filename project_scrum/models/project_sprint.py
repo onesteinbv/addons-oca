@@ -25,20 +25,20 @@ class ProjectSprint(models.Model):
         ),
     ]
 
-    name = fields.Char(required=True, track_visibility="onchange")
+    name = fields.Char(required=True, tracking=True)
     user_ids = fields.Many2many(
         comodel_name="res.users",
         string="Members",
         required=True,
         domain="[('share', '=', False), ('active', '=', True)]",
-        track_visibility="onchange",
+        tracking=True,
         relation="project_sprint_user_rel",
     )
-    description = fields.Text(track_visibility="onchange")
+    description = fields.Text(tracking=True)
     project_id = fields.Many2one(
         comodel_name="project.project",
         string="Project",
-        track_visibility="onchange",
+        tracking=True,
     )
     task_ids = fields.One2many(
         comodel_name="project.task",
