@@ -143,8 +143,8 @@ class AccountBankStatementLine(models.Model):
         reconcile_aggregate_map = self._reconcile_aggregate_map()
         for record in self:
             reconcile_aggregate = (
-                    record.journal_id.reconcile_aggregate
-                    or record.company_id.reconcile_aggregate
+                record.journal_id.reconcile_aggregate
+                or record.company_id.reconcile_aggregate
             )
             record.reconcile_aggregate = reconcile_aggregate
             record.aggregate_id, record.aggregate_name = reconcile_aggregate_map[
@@ -195,7 +195,7 @@ class AccountBankStatementLine(models.Model):
                 if line["kind"] != "suspense":
                     pending_amount += line["amount"]
                 if self.add_account_move_line_id.id in line.get(
-                        "counterpart_line_ids", []
+                    "counterpart_line_ids", []
                 ):
                     is_new_line = False
                 else:
@@ -749,7 +749,7 @@ class AccountBankStatementLine(models.Model):
             self.line_ids._all_reconciled_lines()
             .filtered(
                 lambda line: line.move_id != self.move_id
-                             and (line.matched_debit_ids or line.matched_credit_ids)
+                and (line.matched_debit_ids or line.matched_credit_ids)
             )
             .mapped("move_id")
         )
