@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_simple_modif" model="ir.ui.view">
+        <field name="name">
+            Add outgoing mail server to user preferences form
+        </field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+        <field name="arch" type="xml">
+            <field name="tz_offset" position="after">
+                <field
+                    name="ir_mail_server_id"
+                    groups="mail_server_user.group_ir_mail_server_user" options="{'no_quick_create': True}"
+                    context="{'default_from_filter': email}"
+                />
+            </field>
+        </field>
+    </record>
+</odoo>
