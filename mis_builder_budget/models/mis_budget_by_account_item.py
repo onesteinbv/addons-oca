@@ -5,7 +5,11 @@ from odoo import api, fields, models
 
 
 class MisBudgetByAccountItem(models.Model):
-    _inherit = ["mis.budget.item.abstract", "prorata.read_group.mixin"]
+    _inherit = [
+        "mis.budget.item.abstract",
+        "prorata.read_group.mixin",
+        "analytic.mixin",
+    ]
     _name = "mis.budget.by.account.item"
     _description = "MIS Budget Item (by Account)"
     _order = "budget_id, date_from, account_id"
@@ -22,13 +26,13 @@ class MisBudgetByAccountItem(models.Model):
     )
     company_id = fields.Many2one(
         "res.company",
-        related="budget_id.company_id",
+        related="account_id.company_id",
         readonly=True,
         store=True,
     )
     company_currency_id = fields.Many2one(
         "res.currency",
-        related="budget_id.company_id.currency_id",
+        related="account_id.company_id.currency_id",
         string="Company Currency",
         readonly=True,
         help="Utility field to express amount currency",
@@ -38,7 +42,6 @@ class MisBudgetByAccountItem(models.Model):
         comodel_name="account.account",
         string="Account",
         required=True,
-        # TODO domain (company_id)
     )
 
     _sql_constraints = [
