@@ -8,7 +8,7 @@ class ProjectTask(models.Model):
     sprint_id = fields.Many2one(
         comodel_name="project.sprint",
         string="Sprint",
-        track_visibility="onchange",
+        tracking=True,
         domain="['|', ('project_id', '=', False), ('project_id', '=', project_id)]",
     )
 
