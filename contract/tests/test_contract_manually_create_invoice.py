@@ -19,6 +19,7 @@ class TestContractManuallyCreateInvoice(TestContractBase):
         cls.contract2.unlink()
 
     def test_contract_manually_create_invoice(self):
+
         contracts = self.contract
         for _i in range(10):
             contracts |= self.contract.copy()
@@ -46,6 +47,7 @@ class TestContractManuallyCreateInvoice(TestContractBase):
         self.assertEqual(len(invoices), contract_to_invoice_count)
 
     def test_contract_manually_create_invoice_with_usererror(self):
+
         contracts = self.contract
 
         accounts = self.product_1.product_tmpl_id.get_product_accounts()

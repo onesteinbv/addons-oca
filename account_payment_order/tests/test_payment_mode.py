@@ -18,8 +18,8 @@ class TestPaymentMode(TransactionCase):
             AccountPaymentMethod._get_payment_method_information
         )
 
-        def _get_payment_method_information(self):
-            res = Method_get_payment_method_information(self)
+        def _get_payment_method_information(cls):
+            res = Method_get_payment_method_information(cls)
             res["IN"] = {"mode": "multi", "domain": [("type", "=", "bank")]}
             res["IN2"] = {"mode": "multi", "domain": [("type", "=", "bank")]}
             res["electronic_out"] = {"mode": "multi", "domain": [("type", "=", "bank")]}
@@ -50,6 +50,7 @@ class TestPaymentMode(TransactionCase):
             "_get_payment_method_information",
             _get_payment_method_information,
         ):
+
             cls.electronic_out = cls.env["account.payment.method"].create(
                 {
                     "name": "Electronic Out",

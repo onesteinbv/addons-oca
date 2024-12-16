@@ -5,6 +5,7 @@ from odoo import fields, models
 
 
 class ContractTerminateReason(models.Model):
+
     _name = "contract.terminate.reason"
     _description = "Contract Termination Reason"
 

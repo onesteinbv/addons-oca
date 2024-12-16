@@ -335,7 +335,7 @@ class SaleSubscription(models.Model):
                     invoice.with_context(force_send=True).message_post_with_template(
                         mail_template.id,
                         composition_mode="comment",
-                        email_layout_xmlid="mail.mail_notification_paynow",
+                        email_layout_xmlid="mail.mail_notification_layout_with_responsible_signature",
                     )
                 invoice_number = invoice.name
                 message_body = (

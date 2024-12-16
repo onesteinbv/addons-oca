@@ -75,9 +75,10 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
 msgid ""
 "<code>bal</code>, <code>crd</code>, <code>deb</code>, <code>\n"
-"                                        pbal</code>, <code>nbal</code> : "
-"balance, debit, credit,\n"
-"                                        positive balance, negative balance."
+"                                        pbal</code>, <code>nbal</code>, "
+"<code>fld</code> : balance, debit, credit,\n"
+"                                        positive balance, negative balance,\n"
+"                                        other numerical field."
 msgstr ""
 
 #. module: mis_builder
@@ -362,13 +363,6 @@ msgid "Bold"
 msgstr "Vet"
 
 #. module: mis_builder
-#. odoo-python
-#: code:addons/mis_builder/models/mis_report.py:0
-#, python-format
-msgid "Can not update a multi kpi from the kpi line"
-msgstr "Kan een multi-kpi niet bijwerken vanaf de kpi-regel"
-
-#. module: mis_builder
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_instance_add_to_dashboard_form_view
 #: model_terms:ir.ui.view,arch_db:mis_builder.wizard_mis_report_instance_view_form
 msgid "Cancel"
@@ -415,6 +409,13 @@ msgstr "Kolommen"
 
 #. module: mis_builder
 #. odoo-python
+#: code:addons/mis_builder/models/kpimatrix.py:0
+#, python-format
+msgid "Columns %(descr)s and %(base_descr)s are not comparable"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
 #: code:addons/mis_builder/models/mis_report_instance.py:0
 #, python-format
 msgid "Columns to compare must belong to the same report in %s"
@@ -424,13 +425,6 @@ msgstr "Te vergelijken kolommen moeten tot hetzelfde rapport in %s behoren"
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report_instance_period__source_sumcol_ids
 msgid "Columns to sum"
 msgstr "Op te sommen kolommen"
-
-#. module: mis_builder
-#. odoo-python
-#: code:addons/mis_builder/models/kpimatrix.py:0
-#, python-format
-msgid "Columns {} and {} are not comparable"
-msgstr "Kolommen {} en {} zijn niet vergelijkbaar"
 
 #. module: mis_builder
 #: model:ir.model.fields,help:mis_builder.field_mis_report_instance__query_company_ids
@@ -810,7 +804,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/mis_builder/report/mis_report_instance_xlsx.py:0
 #, python-format
-msgid "Generated on {} at {}"
+msgid "Generated on %(gen_date)s at %(gen_time)s"
 msgstr ""
 
 #. module: mis_builder
@@ -900,10 +894,10 @@ msgstr "KPI"
 #: code:addons/mis_builder/models/mis_report.py:0
 #, python-format
 msgid ""
-"KPI \"{}\" has type {} while a tuple was expected.\n"
+"KPI \"%(kpi)s\" has type %(type)s while a tuple was expected.\n"
 "\n"
 "This can be fixed by either:\n"
-"\t- Changing the KPI value to a tuple of length {}\n"
+"\t- Changing the KPI value to a tuple of length %(length)s\n"
 "or\n"
 "\t- Changing the KPI to `multi` mode and giving an explicit value for each "
 "sub-KPI."
@@ -914,8 +908,8 @@ msgstr ""
 #: code:addons/mis_builder/models/mis_report.py:0
 #, python-format
 msgid ""
-"KPI \"{}\" is valued as a tuple of length {} while a tuple of length {} is "
-"expected."
+"KPI \"%(kpi)s\" is valued as a tuple of length %(length)s while a tuple of "
+"length%(expected_length)s is expected."
 msgstr ""
 
 #. module: mis_builder
@@ -1684,7 +1678,7 @@ msgstr ""
 msgid ""
 "The following special elements are recognized in the expressions\n"
 "                                    to compute accounting data: <code>{bal|"
-"crd|deb|pbal|nbal}{pieu}[account\n"
+"crd|deb|pbal|nbal|fld}{pieu}(.fieldname)[account\n"
 "                                    selector][journal items domain]</code>."
 msgstr ""
 
@@ -1787,6 +1781,27 @@ msgstr "Periode %s kan niet bij zichzelf worden opgeteld."
 
 #. module: mis_builder
 #. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`%(field)s` cannot have a field name in expression %(expr)s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`fld` can only be used with mode `p` (variation) in expression %s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`fld` must have a field name in exression %s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
 #: code:addons/mis_builder/models/mis_report_instance.py:0
 #, python-format
 msgid "from %(date_from)s to %(date_to)s"
@@ -1826,6 +1841,14 @@ msgid "versus"
 msgstr "versus"
 
 #. module: mis_builder
+#: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
+msgid ""
+"when <code>fld</code> is used : a field name specifier\n"
+"                                        must be provided (e.g. <code>fldp."
+"quantity</code>"
+msgstr ""
+
+#. module: mis_builder
 #: model:ir.model.fields.selection,name:mis_builder.selection__mis_report_style__font_size__x-large
 msgid "x-large"
 msgstr "XL"
@@ -1844,6 +1867,14 @@ msgstr "XXL"
 #: model:ir.model.fields.selection,name:mis_builder.selection__mis_report_style__font_size__xx-small
 msgid "xx-small"
 msgstr "XXS"
+
+#, python-format
+#~ msgid "Columns {} and {} are not comparable"
+#~ msgstr "Kolommen {} en {} zijn niet vergelijkbaar"
+
+#, python-format
+#~ msgid "Can not update a multi kpi from the kpi line"
+#~ msgstr "Kan een multi-kpi niet bijwerken vanaf de kpi-regel"
 
 #, fuzzy
 #~ msgid "Account model"

@@ -12,6 +12,7 @@ from odoo.exceptions import (
 
 
 class ContractManuallyCreateInvoice(models.TransientModel):
+
     _name = "contract.manually.create.invoice"
     _description = "Contract Manually Create Invoice Wizard"
 

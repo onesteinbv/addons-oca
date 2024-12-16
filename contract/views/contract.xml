@@ -70,12 +70,6 @@
                 </header>
                 <sheet string="Contract">
                     <field name="active" invisible="1" />
-                    <widget
-                        name="web_ribbon"
-                        text="Archived"
-                        bg_color="bg-danger"
-                        attrs="{'invisible': [('active', '=', True)]}"
-                    />
                     <div class="oe_button_box" name="button_box">
                         <button
                             name="action_show_invoices"
@@ -91,6 +85,12 @@
                             />
                         </button>
                     </div>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}"
+                    />
                     <div class="oe_title">
                         <label for="name" string="Contract Name" class="oe_edit_only" />
                         <h3>
@@ -148,7 +148,11 @@
                         </group>
                     </group>
                     <group name="recurring_invoices">
-                        <field name="line_recurrence" class="oe_inline" />
+                        <field
+                            name="line_recurrence"
+                            class="oe_inline"
+                            attrs="{'readonly': [('line_recurrence', '=', True), ('invoice_count', '!=', 0)]}"
+                        />
                         <label for="line_recurrence" />
                         <group attrs="{'invisible': [('line_recurrence', '=', True)]}">
                             <label for="recurring_interval" />
@@ -207,6 +211,7 @@
                                             context="{'default_display_type': 'line_note'}"
                                         />
                                     </control>
+                                    <field name="company_id" invisible="1" />
                                     <field name="currency_id" invisible="1" />
                                     <field name="display_type" invisible="1" />
                                     <field name="sequence" widget="handle" />
@@ -232,7 +237,10 @@
                                         attrs="{'readonly': [('automatic_price', '=', True)]}"
                                     />
                                     <field name="specific_price" invisible="1" />
-                                    <field name="discount" groups="base.group_no_one" />
+                                    <field
+                                        name="discount"
+                                        groups="product.group_discount_per_so_line"
+                                    />
                                     <field name="price_subtotal" />
                                     <field name="recurring_interval" invisible="1" />
                                     <field name="recurring_rule_type" invisible="1" />
@@ -259,35 +267,6 @@
                                     <field name="is_cancel_allowed" invisible="1" />
                                     <field name="is_un_cancel_allowed" invisible="1" />
                                     <field name="is_canceled" invisible="1" />
-                                    <button
-                                        name="action_plan_successor"
-                                        string="Plan Start"
-                                        type="object"
-                                        icon="fa-calendar text-success"
-                                        attrs="{'invisible': [('is_plan_successor_allowed', '=', False)]}"
-                                    />
-                                    <button
-                                        name="action_stop"
-                                        string="Stop"
-                                        type="object"
-                                        icon="fa-stop text-danger"
-                                        attrs="{'invisible': [('is_stop_allowed', '=', False)]}"
-                                    />
-                                    <button
-                                        name="cancel"
-                                        string="Cancel"
-                                        type="object"
-                                        icon="fa-ban text-danger"
-                                        confirm="Are you sure you want to cancel this line"
-                                        attrs="{'invisible': [('is_cancel_allowed', '=', False)]}"
-                                    />
-                                    <button
-                                        name="action_uncancel"
-                                        string="Un-cancel"
-                                        type="object"
-                                        icon="fa-ban text-success"
-                                        attrs="{'invisible': [('is_un_cancel_allowed', '=', False)]}"
-                                    />
                                 </tree>
                             </field>
                             <field
@@ -311,6 +290,7 @@
                                             context="{'default_display_type': 'line_note'}"
                                         />
                                     </control>
+                                    <field name="company_id" invisible="1" />
                                     <field name="currency_id" invisible="1" />
                                     <field name="display_type" invisible="1" />
                                     <field name="sequence" widget="handle" />
@@ -332,7 +312,10 @@
                                         attrs="{'readonly': [('automatic_price', '=', True)]}"
                                     />
                                     <field name="specific_price" invisible="1" />
-                                    <field name="discount" groups="base.group_no_one" />
+                                    <field
+                                        name="discount"
+                                        groups="product.group_discount_per_so_line"
+                                    />
                                     <field name="price_subtotal" />
                                     <field name="recurring_interval" invisible="1" />
                                     <field name="recurring_rule_type" invisible="1" />
@@ -465,6 +448,13 @@
                                 <p colspan="2">
                                     <strong>#END#</strong>
                                     : End date
+                                    of
+                                    the
+                                    invoiced period
+                                </p>
+                                <p colspan="2">
+                                    <strong>#INVOICEMONTHNAME#</strong>
+                                    : Invoice month name
                                     of
                                     the
                                     invoiced period

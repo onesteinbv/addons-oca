@@ -5,7 +5,6 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-from odoo.fields import first
 
 
 class AccountMove(models.Model):
@@ -52,10 +51,8 @@ class AccountMove(models.Model):
         """Retrieve the communication string for this direct item."""
         communication = self.payment_reference or self.ref or self.name
         if self.is_invoice():
-            if (self.reference_type or "none") != "none":
-                communication = self.ref
-            elif self.is_purchase_document():
-                communication = self.ref or self.payment_reference
+            if self.is_purchase_document():
+                communication = self.payment_reference or self.ref
             else:
                 communication = self.payment_reference or self.name
         return communication or ""
@@ -85,11 +82,7 @@ class AccountMove(models.Model):
             invoice_partials,
             exchange_diff_moves,
         ) = self._get_reconciled_invoices_partials()
-        for (
-            _x,
-            _y,
-            payment_move_line,
-        ) in (
+        for (_x, _y, payment_move_line,) in (
             invoice_partials + exchange_diff_moves
         ):
             payment_move = payment_move_line.move_id
@@ -158,24 +151,6 @@ class AccountMove(models.Model):
                         "order": payment_lines.order_id.mapped("name"),
                     }
                 )
-
-            # Check that the bank allows out payments
-            for line in applicable_lines.filtered(
-                lambda l: l.account_id.account_type == "liability_payable"
-            ):
-                bank = line.partner_bank_id or first(line.partner_id.bank_ids)
-                if bank and not bank.allow_out_payment:
-                    raise UserError(
-                        _(
-                            'The option "Send Money" is not enabled on the bank '
-                            "account %(bank_account)s of partner %(partner)s."
-                        )
-                        % {
-                            "bank_account": bank.bank_name,
-                            "partner": line.partner_id.name,
-                        }
-                    )
-
             for payment_mode in payment_modes:
                 payorder = apoo.search(
                     move.get_account_payment_domain(payment_mode), limit=1
@@ -256,3 +231,12 @@ class AccountMove(models.Model):
             }
         )
         return action
+
+    @api.model
+    def _get_invoice_in_payment_state(self):
+        """Called from _compute_payment_state method.
+        Consider in_payment all the moves that are included in a payment order.
+        """
+        if self.line_ids.payment_line_ids:
+            return "in_payment"
+        return super()._get_invoice_in_payment_state()

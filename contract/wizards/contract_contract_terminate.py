@@ -5,6 +5,7 @@ from odoo import fields, models
 
 
 class ContractContractTerminate(models.TransientModel):
+
     _name = "contract.contract.terminate"
     _description = "Terminate Contract Wizard"
 

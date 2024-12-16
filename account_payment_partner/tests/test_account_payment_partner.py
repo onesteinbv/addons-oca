@@ -7,12 +7,14 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.fields import Date
 from odoo.tests.common import Form, TransactionCase
 
+from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
+
 
 class TestAccountPaymentPartner(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CONTEXT))
 
         cls.res_users_model = cls.env["res.users"]
         cls.move_model = cls.env["account.move"]
@@ -29,11 +31,9 @@ class TestAccountPaymentPartner(TransactionCase):
             cls.chart = charts[0]
         else:
             raise ValidationError(_("No Chart of Account Template has been defined !"))
-        old_company = cls.env.user.company_id
-        cls.env.user.company_id = cls.company_2.id
+        cls.env.user.company_ids = [(4, cls.company_2.id)]
         cls.env.ref("base.user_admin").company_ids = [(4, cls.company_2.id)]
-        cls.chart.try_loading()
-        cls.env.user.company_id = old_company.id
+        cls.chart.try_loading(cls.company_2)
 
         # refs
         cls.manual_out = cls.env.ref("account.account_payment_method_manual_out")

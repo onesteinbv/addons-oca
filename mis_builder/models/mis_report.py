@@ -16,8 +16,14 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.models import expression as osv_expression
 from odoo.tools.safe_eval import (
     datetime as safe_datetime,
+)
+from odoo.tools.safe_eval import (
     dateutil as safe_dateutil,
+)
+from odoo.tools.safe_eval import (
     safe_eval,
+)
+from odoo.tools.safe_eval import (
     time as safe_time,
 )
 
@@ -42,7 +48,7 @@ class SubKPIUnknownTypeError(UserError):
     pass
 
 
-class AutoStruct(object):
+class AutoStruct:
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -144,7 +150,7 @@ class MisReportKpi(models.Model):
     def name_get(self):
         res = []
         for rec in self:
-            name = "{} ({})".format(rec.description, rec.name)
+            name = f"{rec.description} ({rec.name})"
             res.append((rec.id, name))
         return res
 
@@ -171,9 +177,7 @@ class MisReportKpi(models.Model):
             for expression in kpi.expression_ids:
                 if expression.subkpi_id:
                     exprs.append(
-                        "{}\xa0=\xa0{}".format(
-                            expression.subkpi_id.name, expression.name
-                        )
+                        f"{expression.subkpi_id.name}\xa0=\xa0{expression.name}"
                     )
                 else:
                     exprs.append(expression.name or "AccountingNone")
@@ -182,7 +186,7 @@ class MisReportKpi(models.Model):
     def _inverse_expression(self):
         for kpi in self:
             if kpi.multi:
-                raise UserError(_("Can not update a multi kpi from " "the kpi line"))
+                continue
             if kpi.expression_ids:
                 kpi.expression_ids[0].write({"name": kpi.expression, "subkpi_id": None})
                 for expression in kpi.expression_ids[1:]:
@@ -671,7 +675,7 @@ class MisReport(models.Model):
             subkpis = self.subkpi_ids
 
         SimpleArray_cls = named_simple_array(
-            "SimpleArray_{}".format(col_key), [subkpi.name for subkpi in subkpis]
+            f"SimpleArray_{col_key}", [subkpi.name for subkpi in subkpis]
         )
         locals_dict["SimpleArray"] = SimpleArray_cls
 
@@ -720,23 +724,29 @@ class MisReport(models.Model):
                         if len(vals) != col.colspan:
                             raise SubKPITupleLengthError(
                                 _(
-                                    'KPI "{}" is valued as a tuple of '
-                                    "length {} while a tuple of length {} "
-                                    "is expected."
-                                ).format(kpi.description, len(vals), col.colspan)
+                                    'KPI "%(kpi)s" is valued as a tuple of '
+                                    "length %(length)s while a tuple of length"
+                                    "%(expected_length)s is expected.",
+                                    kpi=kpi.description,
+                                    length=len(vals),
+                                    expected_length=col.colspan,
+                                )
                             )
                     elif isinstance(vals[0], DataError):
                         vals = (vals[0],) * col.colspan
                     else:
                         raise SubKPIUnknownTypeError(
                             _(
-                                'KPI "{}" has type {} while a tuple was '
+                                'KPI "%(kpi)s" has type %(type)s while a tuple was '
                                 "expected.\n\nThis can be fixed by either:\n\t- "
                                 "Changing the KPI value to a tuple of length "
-                                "{}\nor\n\t- Changing the "
+                                "%(length)s\nor\n\t- Changing the "
                                 "KPI to `multi` mode and giving an explicit "
-                                "value for each sub-KPI."
-                            ).format(kpi.description, type(vals[0]), col.colspan)
+                                "value for each sub-KPI.",
+                                kpi=kpi.description,
+                                type=type(vals[0]),
+                                length=col.colspan,
+                            )
                         )
                 if len(drilldown_args) != col.colspan:
                     drilldown_args = [None] * col.colspan

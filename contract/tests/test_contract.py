@@ -8,6 +8,7 @@ from collections import namedtuple
 from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
+from freezegun import freeze_time
 
 from odoo import fields
 from odoo.exceptions import UserError, ValidationError
@@ -141,7 +142,7 @@ class TestContractBase(common.TransactionCase):
                         0,
                         {
                             "product_id": False,
-                            "name": "Header for Services",
+                            "name": "Header for #INVOICEMONTHNAME# Services",
                             "display_type": "line_section",
                         },
                     ),
@@ -1744,6 +1745,29 @@ class TestContract(TestContractBase):
             len(invoice_lines),
         )
 
+    def test_recurring_create_invoice(self):
+        self.acct_line.date_start = "2024-01-01"
+        self.acct_line.recurring_invoicing_type = "pre-paid"
+        self.acct_line.date_end = "2024-04-01"
+        self.contract.recurring_create_invoice()
+        self.assertEqual(self.acct_line.last_date_invoiced, to_date("2024-01-31"))
+        self.assertEqual(self.acct_line.recurring_next_date, to_date("2024-02-01"))
+        self.assertEqual(len(self.contract._get_related_invoices()), 1)
+        self.contract.recurring_create_invoice()
+        self.assertEqual(self.acct_line.last_date_invoiced, to_date("2024-02-29"))
+        self.assertEqual(self.acct_line.recurring_next_date, to_date("2024-03-01"))
+        self.assertEqual(len(self.contract._get_related_invoices()), 2)
+        self.contract.recurring_create_invoice()
+        self.assertEqual(self.acct_line.last_date_invoiced, to_date("2024-03-31"))
+        self.assertEqual(self.acct_line.recurring_next_date, to_date("2024-04-01"))
+        self.assertEqual(len(self.contract._get_related_invoices()), 3)
+        self.contract.recurring_create_invoice()
+        self.assertEqual(self.acct_line.last_date_invoiced, to_date("2024-04-01"))
+        self.assertFalse(self.acct_line.recurring_next_date)
+        self.assertEqual(len(self.contract._get_related_invoices()), 4)
+        self.contract.recurring_create_invoice()
+        self.assertEqual(len(self.contract._get_related_invoices()), 4)
+
     def test_get_period_to_invoice_monthlylastday_postpaid(self):
         self.acct_line.date_start = "2018-01-05"
         self.acct_line.recurring_invoicing_type = "post-paid"
@@ -2372,3 +2396,11 @@ class TestContract(TestContractBase):
         action = self.contract.action_preview()
         self.assertIn("/my/contracts/", action["url"])
         self.assertIn("access_token=", action["url"])
+
+    @freeze_time("2023-05-01")
+    def test_check_month_name_marker(self):
+        """Set fixed date to check test correctly."""
+        self.contract3.contract_line_ids.date_start = fields.Date.today()
+        self.contract3.contract_line_ids.recurring_next_date = fields.Date.today()
+        invoice_id = self.contract3.recurring_create_invoice()
+        self.assertEqual(invoice_id.invoice_line_ids[0].name, "Header for May Services")

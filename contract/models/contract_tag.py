@@ -5,6 +5,7 @@ from odoo import fields, models
 
 
 class ContractTag(models.Model):
+
     _name = "contract.tag"
     _description = "Contract Tag"
 
