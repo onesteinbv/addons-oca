@@ -416,7 +416,12 @@ class AgedPartnerBalanceReport(models.AbstractModel):
         aged_partner_configuration = self.env[
             "account.age.report.configuration"
         ].browse(data["age_partner_config_id"])
-        (ag_pb_data, accounts_data, partners_data, journals_data,) = self.with_context(
+        (
+            ag_pb_data,
+            accounts_data,
+            partners_data,
+            journals_data,
+        ) = self.with_context(
             age_partner_config=aged_partner_configuration
         )._get_move_lines_data(
             company_id,

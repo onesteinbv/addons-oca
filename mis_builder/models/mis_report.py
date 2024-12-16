@@ -16,14 +16,8 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.models import expression as osv_expression
 from odoo.tools.safe_eval import (
     datetime as safe_datetime,
-)
-from odoo.tools.safe_eval import (
     dateutil as safe_dateutil,
-)
-from odoo.tools.safe_eval import (
     safe_eval,
-)
-from odoo.tools.safe_eval import (
     time as safe_time,
 )
 
