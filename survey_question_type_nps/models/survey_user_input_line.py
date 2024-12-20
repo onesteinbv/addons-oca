@@ -39,7 +39,6 @@ class SurveyUserInput(models.Model):
 
 
 class SurveyUserInputLine(models.Model):
-
     _inherit = "survey.user_input.line"
 
     value_nps = fields.Integer()
