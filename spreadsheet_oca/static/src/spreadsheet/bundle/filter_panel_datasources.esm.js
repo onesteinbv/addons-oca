@@ -8,6 +8,8 @@ import {_t} from "web.core";
 import spreadsheet from "@spreadsheet/o_spreadsheet/o_spreadsheet_extended";
 import {time_to_str} from "web.time";
 import {useService} from "@web/core/utils/hooks";
+import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
+import {makeDynamicCols, makeDynamicRows} from "../utils/dynamic_generators.esm";
 
 const {sidePanelRegistry, topbarMenuRegistry} = spreadsheet.registries;
 const {createFullMenuItem} = spreadsheet.helpers;
@@ -116,6 +118,71 @@ export class PivotPanelDisplay extends Component {
             row: selectedZone.top,
             sheetId: this.env.model.getters.getActiveSheetId(),
             table: tableStructure,
+        });
+        this.env.model.dispatch("REFRESH_PIVOT", {id: this.props.pivotId});
+    }
+
+    async insertDynamicPivot() {
+        const datasourceModel = await this.env.model.getters
+            .getPivotDataSource(this.props.pivotId)
+            .copyModelWithOriginalDomain();
+        var {cols, rows, measures} = datasourceModel.getTableStructure().export();
+        const {dynamic_rows, number_of_rows, dynamic_cols, number_of_cols} =
+            await new Promise((resolve) => {
+                this.dialog.add(
+                    FormViewDialog,
+                    {
+                        title: this.env._t("Select the quantity of rows"),
+                        resModel: "spreadsheet.select.row.number",
+                        context: {
+                            default_can_have_dynamic_cols: Boolean(
+                                cols[0][0].fields.length
+                            ),
+                        },
+                        onRecordSaved: async (record) => {
+                            resolve({
+                                dynamic_rows: record.data.dynamic_rows,
+                                number_of_rows: record.data.number_of_rows,
+                                dynamic_cols: record.data.dynamic_cols,
+                                number_of_cols: record.data.number_of_cols,
+                            });
+                        },
+                    },
+                    {onClose: () => resolve(false)}
+                );
+            });
+        if (!dynamic_rows && !dynamic_cols) {
+            return;
+        }
+        if (dynamic_rows) {
+            const indentations = rows.map((r) => r.indent);
+            const max_indentation = Math.max(...indentations);
+            rows = makeDynamicRows(
+                this.props.pivotDefinition.rowGroupBys,
+                number_of_rows,
+                1,
+                max_indentation
+            );
+        }
+        if (dynamic_cols) {
+            cols = makeDynamicCols(
+                this.props.pivotDefinition.colGroupBys,
+                number_of_cols,
+                this.props.pivotDefinition.measures
+            );
+        }
+        const table = {
+            cols,
+            rows,
+            measures,
+        };
+        const selectedZone = this.env.model.getters.getSelectedZone();
+        this.env.model.dispatch("RE_INSERT_PIVOT", {
+            id: this.props.pivotId,
+            col: selectedZone.left,
+            row: selectedZone.top,
+            sheetId: this.env.model.getters.getActiveSheetId(),
+            table,
         });
         this.env.model.dispatch("REFRESH_PIVOT", {id: this.props.pivotId});
     }
