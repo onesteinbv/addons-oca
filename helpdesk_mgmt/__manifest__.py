@@ -4,7 +4,7 @@
     "name": "Helpdesk Management",
     "summary": """
         Helpdesk""",
-    "version": "16.0.2.2.2",
+    "version": "16.0.2.7.0",
     "license": "AGPL-3",
     "category": "After-Sales",
     "author": "AdaptiveCity, "
@@ -37,6 +37,7 @@
     "assets": {
         "web.assets_frontend": [
             "helpdesk_mgmt/static/src/js/new_ticket.js",
+            "helpdesk_mgmt/static/src/js/portal.js",  # TODO: push to OCA
         ],
     },
     "development_status": "Beta",

@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import {makeDynamicCols, makeDynamicRows} from "../utils/dynamic_generators.esm";
 import ListDataSource from "@spreadsheet/list/list_data_source";
 import PivotDataSource from "@spreadsheet/pivot/pivot_data_source";
 import {SpreadsheetControlPanel} from "./spreadsheet_controlpanel.esm";
@@ -27,13 +28,16 @@ export class ActionSpreadsheetOca extends Component {
             });
         });
         onWillStart(async () => {
+            // We need to load in case the data comes from an XLSX
             this.record =
-                (await this.orm.call(
-                    this.model,
-                    "get_spreadsheet_data",
-                    [[this.spreadsheetId]],
-                    {context: {bin_size: false}}
-                )) || {};
+                spreadsheet.load(
+                    await this.orm.call(
+                        this.model,
+                        "get_spreadsheet_data",
+                        [[this.spreadsheetId]],
+                        {context: {bin_size: false}}
+                    )
+                ) || {};
         });
         useSubEnv({
             saveRecord: this.saveRecord.bind(this),
@@ -51,7 +55,25 @@ export class ActionSpreadsheetOca extends Component {
             this.router.pushState({spreadsheet_id: this.spreadsheetId});
         }
     }
-
+    /**
+     * Clean SearchParams of conflictive keys.
+     *
+     * 1. Removed from context pivot conflictive keys.
+     * 2. Removed from context graph conflictive keys.
+     *
+     * @returns {Object}       Formated searchParams.
+     */
+    cleanSearchParams() {
+        const searchParams = this.import_data.searchParams;
+        const context = {};
+        for (var key of Object.keys(searchParams.context)) {
+            if (key.startsWith("pivot_") || key.startsWith("graph_")) {
+                continue;
+            }
+            context[key] = searchParams.context[key];
+        }
+        return {...searchParams, context};
+    }
     async importDataGraph(spreadsheet_model) {
         var sheetId = spreadsheet_model.getters.getActiveSheetId();
         var y = 0;
@@ -72,12 +94,12 @@ export class ActionSpreadsheetOca extends Component {
         }
         const dataSourceId = uuidGenerator.uuidv4();
         const definition = {
-            title: this.import_data.metaData.title,
+            title: this.import_data.name,
             type: "odoo_" + this.import_data.metaData.mode,
             background: "#FFFFFF",
             stacked: this.import_data.metaData.stacked,
             metaData: this.import_data.metaData,
-            searchParams: this.import_data.searchParams,
+            searchParams: this.cleanSearchParams(),
             dataSourceId: dataSourceId,
             legendPosition: "top",
             verticalAxisPosition: "left",
@@ -145,7 +167,7 @@ export class ActionSpreadsheetOca extends Component {
                 context: this.import_data.metaData.context,
                 orderBy: this.import_data.metaData.orderBy,
             },
-            name: this.import_data.metaData.name,
+            name: this.import_data.name,
         };
         const dataSource = spreadsheet_model.config.dataSources.add(
             dataSourceId,
@@ -160,7 +182,7 @@ export class ActionSpreadsheetOca extends Component {
             id: spreadsheet_model.getters.getNextListId(),
             dataSourceId,
             definition: list_info,
-            linesNumber: this.import_data.metaData.threshold,
+            linesNumber: this.import_data.dyn_number_of_rows,
             columns: this.import_data.metaData.columns,
         });
         const columns = [];
@@ -172,14 +194,22 @@ export class ActionSpreadsheetOca extends Component {
     async importDataPivot(spreadsheet_model) {
         var {sheetId, row} = this.importCreateOrReuseSheet(spreadsheet_model);
         const dataSourceId = uuidGenerator.uuidv4();
+        const colGroupBys = this.import_data.metaData.colGroupBys.concat(
+            this.import_data.metaData.expandedColGroupBys
+        );
+        const rowGroupBys = this.import_data.metaData.rowGroupBys.concat(
+            this.import_data.metaData.expandedRowGroupBys
+        );
         const pivot_info = {
             metaData: {
-                colGroupBys: this.import_data.metaData.colGroupBys,
-                rowGroupBys: this.import_data.metaData.rowGroupBys,
+                colGroupBys,
+                rowGroupBys,
                 activeMeasures: this.import_data.metaData.activeMeasures,
                 resModel: this.import_data.metaData.resModel,
+                sortedColumn: this.import_data.metaData.sortedColumn,
             },
-            searchParams: this.import_data.searchParams,
+            searchParams: this.cleanSearchParams(),
+            name: this.import_data.name,
         };
         const dataSource = spreadsheet_model.config.dataSources.add(
             dataSourceId,
@@ -187,7 +217,24 @@ export class ActionSpreadsheetOca extends Component {
             pivot_info
         );
         await dataSource.load();
-        const {cols, rows, measures} = dataSource.getTableStructure().export();
+        var {cols, rows, measures} = dataSource.getTableStructure().export();
+        if (this.import_data.dyn_number_of_rows) {
+            const indentations = rows.map((r) => r.indent);
+            const max_indentation = Math.max(...indentations);
+            rows = makeDynamicRows(
+                rowGroupBys,
+                this.import_data.dyn_number_of_rows,
+                1,
+                max_indentation
+            );
+        }
+        if (this.import_data.dyn_number_of_cols) {
+            cols = makeDynamicCols(
+                colGroupBys,
+                this.import_data.dyn_number_of_cols,
+                this.import_data.metaData.activeMeasures
+            );
+        }
         const table = {
             cols,
             rows,
@@ -202,6 +249,11 @@ export class ActionSpreadsheetOca extends Component {
             dataSourceId,
             definition: pivot_info,
         });
+        const columns = [];
+        for (let col = 0; col < table.cols[table.cols.length - 1].length; col++) {
+            columns.push(col);
+        }
+        spreadsheet_model.dispatch("AUTORESIZE_COLUMNS", {sheetId, cols: columns});
     }
     async importData(spreadsheet_model) {
         if (this.import_data.mode === "pivot") {

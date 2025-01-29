@@ -607,6 +607,11 @@ class TestSubscriptionOCA(TransactionCase):
             stage.display_name, "Updated Test Stage", "display_name not computed"
         )
 
+    def test_open_subscription(self):
+        invoice = self.sub1.create_invoice()
+        action = invoice.action_open_subscription()
+        self.assertEqual(action["domain"], [("id", "=", self.sub1.id)])
+
     def _collect_all_sub_test_results(self, subscription):
         test_res = []
         sale_order = subscription.create_sale_order()
@@ -630,7 +635,6 @@ class TestSubscriptionOCA(TransactionCase):
         test_res.append(res["type"])
         test_res.append(subscription.sale_order_ids_count)
         subscription.action_view_sale_order_ids()
-        # self.assertIn(str(subscription.sale_order_ids.id), str(res["domain"]))
         test_res.append(subscription.sale_order_ids.id)
         subscription.calculate_recurring_next_date(fields.Datetime.now())
         # self.assertEqual(
