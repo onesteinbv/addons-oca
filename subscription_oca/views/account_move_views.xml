@@ -1,16 +1,31 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <odoo>
+
     <record id="view_move_form" model="ir.ui.view">
         <field name="model">account.move</field>
-        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="inherit_id" ref="account.view_move_form" />
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
                 <field name="subscription_id" invisible="1" />
                 <button name="action_open_subscription" type="object"
-                        class="oe_stat_button" icon="fa-calendar"
-                        string="Subscription"
-                        attrs="{'invisible': [('subscription_id', '=', False)]}" />
+                    class="oe_stat_button" icon="fa-calendar"
+                    string="Subscription"
+                    attrs="{'invisible': [('subscription_id', '=', False)]}" />
             </xpath>
+
+            <group id="header_right_group" position="inside">
+                <label for="subscription_start_date" string="Subscription"
+                    attrs="{'invisible': ['|', ('subscription_start_date', '=', False), ('subscription_end_date', '=', False)]}" />
+                <div name="dates" class="o_row"
+                    attrs="{'invisible': ['|', ('subscription_start_date', '=', False), ('subscription_end_date', '=', False)]}">
+                    <field name="subscription_start_date" widget="daterange"
+                        options='{"related_end_date": "subscription_end_date"}' />
+                    <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow" />
+                    <field name="subscription_end_date" widget="daterange"
+                        options='{"related_start_date": "subscription_start_date"}' />
+                </div>
+            </group>
         </field>
     </record>
+
 </odoo>

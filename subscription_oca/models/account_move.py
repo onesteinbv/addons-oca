@@ -10,6 +10,8 @@ class AccountMove(models.Model):
     subscription_id = fields.Many2one(
         comodel_name="sale.subscription", string="Subscription"
     )
+    subscription_start_date = fields.Date(readonly=True)
+    subscription_end_date = fields.Date(readonly=True)
 
     def action_open_subscription(self):
         self.ensure_one()
