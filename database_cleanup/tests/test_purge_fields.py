@@ -13,7 +13,6 @@ class TestCleanupPurgeFields(Common):
     def setUp(self):
         super().setUp()
         with environment() as env:
-
             # create a nonexistent model
             self.model_name = "x_database.cleanup.test.field.model"
             self.model_values = {

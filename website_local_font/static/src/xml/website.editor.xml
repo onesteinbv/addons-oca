@@ -34,9 +34,7 @@
             t-att-aria-label="delete_font_title"
             t-att-title="delete_font_title"
             t-att-data-font-index="index"
-        >
-            Delete this font
-        </i>
+        />
     </t>
 
     <t t-name="website.add_local_font_btn">
