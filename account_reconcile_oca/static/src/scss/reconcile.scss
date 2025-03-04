@@ -5,6 +5,7 @@
     -webkit-flex-flow: row wrap;
     flex-flow: row wrap;
     height: 100%;
+    min-height: 108%;
     .o_kanban_renderer.o_kanban_ungrouped .o_kanban_record {
         &:hover {
             .o_reconcile_create_statement {
@@ -48,6 +49,7 @@
         width: 70%;
         height: 100%;
         overflow: auto;
+        min-height: 108%;
     }
     .o_form_view {
         .btn-info:not(.dropdown-toggle):not(.dropdown-item) {
