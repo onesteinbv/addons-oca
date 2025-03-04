@@ -149,9 +149,11 @@ class SaleSubscription(models.Model):
                         subscription.generate_invoice()
                     except Exception:
                         logger.exception("Error on subscription invoice generate")
-                if not subscription.recurring_rule_boundary:
-                    if subscription.date <= today:
-                        subscription.close_subscription()
+                if (
+                    not subscription.recurring_rule_boundary
+                    and subscription.date <= today
+                ):
+                    subscription.close_subscription()
 
             elif (
                 subscription.date_start <= today and subscription.stage_id.type == "pre"
@@ -256,8 +258,7 @@ class SaleSubscription(models.Model):
             [("type", "=", "post")], limit=1
         )
         self.close_reason_id = close_reason_id
-        if self.stage_id != closed_stage:
-            self.stage_id = closed_stage
+        self.stage_id = closed_stage
 
     def _prepare_sale_order(self, line_ids=False):
         self.ensure_one()
