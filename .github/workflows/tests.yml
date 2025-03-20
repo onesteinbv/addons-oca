@@ -3,7 +3,7 @@ name: tests
 on:
   pull_request:
     branches:
-      - "16.0*"
+      - "16.0"
   push:
     branches:
       - "16.0"
@@ -11,11 +11,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    container: docker.io/onestein/odoo-ci:16.0
+    container: ghcr.io/oca/oca-ci/py3.10-odoo16.0:latest
     name: Odoo
     services:
       postgres:
-        image: postgres:12.0
+        image: postgres:13.0
         env:
           POSTGRES_USER: odoo
           POSTGRES_PASSWORD: odoo
@@ -38,11 +38,3 @@ jobs:
         env:
           ADDONS_DIR: .
           ODOO_VERSION: "16.0"
-      - name: Prepare report
-        run: coverage xml -o coverage.xml --data-file .coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage.xml
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
