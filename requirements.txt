@@ -28,3 +28,4 @@ xlsxwriter
 xlrd
 python-slugify
 vcrpy
+bokeh==3.1.1
