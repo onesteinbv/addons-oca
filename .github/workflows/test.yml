@@ -30,11 +30,5 @@ jobs:
           pip3 install odoo_test_helper
       - name: Initialize test db
         run: oca_init_test_database
-        env:
-          ADDONS_DIR: .
-          ODOO_VERSION: "16.0"
       - name: Run tests
         run: oca_run_tests
-        env:
-          ADDONS_DIR: .
-          ODOO_VERSION: "16.0"
