@@ -4,4 +4,6 @@
 * Yannick Vaucher
 * Cristian Salamea <cs@prisehub.com>
 * Andrea Stirpe <a.stirpe@onestein.nl>
-* Mark Schuit <mark@gig.solutions>
+* `Tecnativa <https://www.tecnativa.com>`_:
+
+  * Pilar Vargas
