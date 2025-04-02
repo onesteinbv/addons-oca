@@ -1,3 +1,19 @@
+16.0.1.2.0 (2024-02-06)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**Features**
+
+- Invalidate FS filesystem object cache when the connection fails, forcing a reconnection. (`#320 <https://github.com/OCA/storage/issues/320>`_)
+
+
+16.0.1.1.0 (2023-12-22)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**Features**
+
+- Add parameter on storage backend to resolve protocol options values starting with $ from environment variables (`#303 <https://github.com/OCA/storage/issues/303>`_)
+
+
 16.0.1.0.3 (2023-10-17)
 ~~~~~~~~~~~~~~~~~~~~~~~
 

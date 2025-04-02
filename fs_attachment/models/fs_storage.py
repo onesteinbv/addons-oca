@@ -11,6 +11,7 @@ from .ir_attachment import IrAttachment
 
 
 class FsStorage(models.Model):
+
     _inherit = "fs.storage"
 
     optimizes_directory_path = fields.Boolean(
@@ -265,19 +266,43 @@ class FsStorage(models.Model):
         for vals in vals_list:
             if not vals.get("use_as_default_for_attachments"):
                 vals["force_db_for_default_attachment_rules"] = None
-        return super().create(vals_list)
+        res = super().create(vals_list)
+        res._create_write_check_constraints(vals)
+        return res
 
     def write(self, vals):
         if "use_as_default_for_attachments" in vals:
             if not vals["use_as_default_for_attachments"]:
                 vals["force_db_for_default_attachment_rules"] = None
-            return super().write(vals)
-        return super().write(vals)
+        res = super().write(vals)
+        self._create_write_check_constraints(vals)
+        return res
 
-    @api.constrains(
-        "force_db_for_default_attachment_rules", "use_as_default_for_attachments"
-    )
+    def _create_write_check_constraints(self, vals):
+        """
+        Container for all checks performed during creation/writing.
+
+        Args:
+            vals (dict): Dictionary of values being written.
+
+        This method is meant to contain checks executed during the creation
+        or writing of records.
+        """
+        if (
+            "use_as_default_for_attachments" in vals
+            or "force_db_for_default_attachment_rules" in vals
+        ):
+            self._check_force_db_for_default_attachment_rules()
+
     def _check_force_db_for_default_attachment_rules(self):
+        """
+        Validate 'force_db_for_default_attachment_rules' field.
+
+        This method doesn't work properly with a constraints() decorator because
+        the field use_as_default_for_attachments is a computed field, not stored
+        in the database. The presence of computed fields in this method is a
+        result of inheriting this model from "server.env.mixin".
+        """
         for rec in self:
             if not rec.force_db_for_default_attachment_rules:
                 continue
@@ -356,7 +381,7 @@ class FsStorage(models.Model):
         and the value is the limit in size below which attachments are kept in DB.
         0 means no limit.
         """
-        storage = self.get_by_code(code)
+        storage = self.sudo().get_by_code(code)
         if (
             storage
             and storage.use_as_default_for_attachments
@@ -368,17 +393,17 @@ class FsStorage(models.Model):
     @api.model
     @tools.ormcache("code")
     def _must_optimize_directory_path(self, code):
-        return self.get_by_code(code).optimizes_directory_path
+        return self.sudo().get_by_code(code).optimizes_directory_path
 
     @api.model
     @tools.ormcache("code")
     def _must_autovacuum_gc(self, code):
-        return self.get_by_code(code).autovacuum_gc
+        return self.sudo().get_by_code(code).autovacuum_gc
 
     @api.model
     @tools.ormcache("code")
     def _must_use_filename_obfuscation(self, code):
-        return self.get_by_code(code).use_filename_obfuscation
+        return self.sudo().get_by_code(code).use_filename_obfuscation
 
     @api.depends("base_url", "is_directory_path_in_url")
     def _compute_base_url_for_files(self):
@@ -400,7 +425,7 @@ class FsStorage(models.Model):
         :param attachment: an attachment record
         :return: the URL to access the attachment
         """
-        fs_storage = self.get_by_code(attachment.fs_storage_code)
+        fs_storage = self.sudo().get_by_code(attachment.fs_storage_code)
         if not fs_storage:
             return None
         base_url = fs_storage.base_url_for_files
@@ -411,9 +436,18 @@ class FsStorage(models.Model):
         # always remove the directory_path from the fs_filename
         # only if it's at the start of the filename
         fs_filename = attachment.fs_filename
-        if fs_filename.startswith(fs_storage.directory_path):
+        if fs_storage.directory_path and fs_filename.startswith(
+            fs_storage.directory_path
+        ):
             fs_filename = fs_filename.replace(fs_storage.directory_path, "")
         parts = [base_url, fs_filename]
+        if attachment.fs_storage_id:
+            if (
+                fs_storage.optimizes_directory_path
+                and not fs_storage.use_filename_obfuscation
+            ):
+                checksum = attachment.checksum
+                parts = [base_url, checksum[:2], checksum[2:4], fs_filename]
         return self._normalize_url("/".join(parts))
 
     @api.model
@@ -452,8 +486,18 @@ class FsStorage(models.Model):
         in staging are done in a different directory and will  not impact the
         production.
         """
-        attachments = self.env["ir.attachment"].search(
-            [("fs_storage_id", "in", self.ids)]
-        )
+        # The weird "res_field = False OR res_field != False" domain
+        # is required! It's because of an override of _search in ir.attachment
+        # which adds ('res_field', '=', False) when the domain does not
+        # contain 'res_field'.
+        # https://github.com/odoo/odoo/blob/9032617120138848c63b3cfa5d1913c5e5ad76db/
+        # odoo/addons/base/ir/ir_attachment.py#L344-L347
+        domain = [
+            ("fs_storage_id", "in", self.ids),
+            "|",
+            ("res_field", "=", False),
+            ("res_field", "!=", False),
+        ]
+        attachments = self.env["ir.attachment"].search(domain)
         attachments._compute_fs_url()
         attachments._compute_fs_url_path()

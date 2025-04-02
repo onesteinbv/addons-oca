@@ -38,6 +38,7 @@ def deprecated(reason):
     """
 
     def decorator(func1):
+
         if inspect.isclass(func1):
             fmt1 = "Call to deprecated class {name} ({reason})."
         else:
@@ -83,7 +84,6 @@ class FSStorage(models.Model):
     protocol = fields.Selection(
         selection="_get_protocols",
         required=True,
-        default="odoofs",
         help="The protocol used to access the content of filesystem.\n"
         "This list is the one supported by the fsspec library (see "
         "https://filesystem-spec.readthedocs.io/en/latest). A filesystem protocol"
@@ -115,6 +115,16 @@ class FSStorage(models.Model):
         compute="_compute_json_options",
         inverse="_inverse_json_options",
     )
+
+    eval_options_from_env = fields.Boolean(
+        string="Resolve env vars",
+        help="""Resolve options values starting with $ from environment variables. e.g
+            {
+                "endpoint_url": "$AWS_ENDPOINT_URL",
+            }
+            """,
+    )
+
     directory_path = fields.Char(
         help="Relative path to the directory to store the file"
     )
@@ -124,19 +134,27 @@ class FSStorage(models.Model):
     options_protocol = fields.Selection(
         string="Describes Protocol",
         selection="_get_options_protocol",
-        default="odoofs",
+        compute="_compute_protocol_descr",
         help="The protocol used to access the content of filesystem.\n"
         "This list is the one supported by the fsspec library (see "
         "https://filesystem-spec.readthedocs.io/en/latest). A filesystem protocol"
         "is added by default and refers to the odoo local filesystem.\n"
         "Pay attention that according to the protocol, some options must be"
         "provided through the options field.",
-        store=False,
     )
     options_properties = fields.Text(
         string="Available properties",
         compute="_compute_options_properties",
         store=False,
+    )
+    check_connection_method = fields.Selection(
+        selection="_get_check_connection_method_selection",
+        default="marker_file",
+        help="Set a method if you want the connection to remote to be checked every "
+        "time the storage is used, in order to remove the obsolete connection from"
+        " the cache.\n"
+        "* Create Marker file : Create a file on remote and check it exists\n"
+        "* List File : List all files from root directory",
     )
 
     _sql_constraints = [
@@ -149,9 +167,21 @@ class FSStorage(models.Model):
 
     _server_env_section_name_field = "code"
 
+    @api.model
+    def _get_check_connection_method_selection(self):
+        return [
+            ("marker_file", _("Create Marker file")),
+            ("ls", _("List File")),
+        ]
+
     @property
     def _server_env_fields(self):
-        return {"protocol": {}, "options": {}, "directory_path": {}}
+        return {
+            "protocol": {},
+            "options": {},
+            "directory_path": {},
+            "eval_options_from_env": {},
+        }
 
     def write(self, vals):
         self.__fs = None
@@ -210,7 +240,7 @@ class FSStorage(models.Model):
             try:
                 cls = fsspec.get_filesystem_class(p)
                 protocol.append((p, f"{p} ({cls.__name__})"))
-            except ImportError as e:
+            except Exception as e:
                 _logger.debug("Cannot load the protocol %s. Reason: %s", p, e)
         return protocol
 
@@ -235,6 +265,7 @@ class FSStorage(models.Model):
     def _compute_protocol_descr(self) -> None:
         for rec in self:
             rec.protocol_descr = fsspec.get_filesystem_class(rec.protocol).__doc__
+            rec.options_protocol = rec.protocol
 
     @api.model
     def _get_options_protocol(self) -> list[tuple[str, str]]:
@@ -243,7 +274,7 @@ class FSStorage(models.Model):
             try:
                 fsspec.get_filesystem_class(p)
                 protocol.append((p, p))
-            except ImportError as e:
+            except Exception as e:
                 _logger.debug("Cannot load the protocol %s. Reason: %s", p, e)
         return protocol
 
@@ -255,12 +286,41 @@ class FSStorage(models.Model):
             doc = inspect.getdoc(cls.__init__)
             rec.options_properties = f"__init__{signature}\n{doc}"
 
+    def _get_marker_file_name(self):
+        return ".odoo_fs_storage_%s.marker" % self.id
+
+    def _marker_file_check_connection(self, fs):
+        marker_file_name = self._get_marker_file_name()
+        try:
+            fs.info(marker_file_name)
+        except FileNotFoundError:
+            fs.touch(marker_file_name)
+
+    def _ls_check_connection(self, fs):
+        fs.ls("", detail=False)
+
+    def _check_connection(self, fs, check_connection_method):
+        if check_connection_method == "marker_file":
+            self._marker_file_check_connection(fs)
+        elif check_connection_method == "ls":
+            self._ls_check_connection(fs)
+        return True
+
     @property
     def fs(self) -> fsspec.AbstractFileSystem:
         """Get the fsspec filesystem for this backend."""
         self.ensure_one()
         if not self.__fs:
-            self.__fs = self._get_filesystem()
+            self.__fs = self.sudo()._get_filesystem()
+        if not tools.config["test_enable"]:
+            # Check whether we need to invalidate FS cache or not.
+            # Use a marker file to limit the scope of the LS command for performance.
+            try:
+                self._check_connection(self.__fs, self.check_connection_method)
+            except Exception as e:
+                self.__fs.clear_instance_cache()
+                self.__fs = None
+                raise e
         return self.__fs
 
     def _get_filesystem_storage_path(self) -> str:
@@ -301,6 +361,33 @@ class FSStorage(models.Model):
             self._recursive_add_odoo_storage_path(target_options)
         return options
 
+    def _eval_options_from_env(self, options):
+        values = {}
+        for key, value in options.items():
+            if isinstance(value, dict):
+                values[key] = self._eval_options_from_env(value)
+            elif isinstance(value, str) and value.startswith("$"):
+                env_variable_name = value[1:]
+                env_variable_value = os.getenv(env_variable_name)
+                if env_variable_value is not None:
+                    values[key] = env_variable_value
+                else:
+                    values[key] = value
+                    _logger.warning(
+                        "Environment variable %s is not set for fs_storage %s.",
+                        env_variable_name,
+                        self.display_name,
+                    )
+            else:
+                values[key] = value
+        return values
+
+    def _get_fs_options(self):
+        options = self.json_options
+        if not self.eval_options_from_env:
+            return options
+        return self._eval_options_from_env(self.json_options)
+
     def _get_filesystem(self) -> fsspec.AbstractFileSystem:
         """Get the fsspec filesystem for this backend.
 
@@ -310,7 +397,7 @@ class FSStorage(models.Model):
         :return: fsspec.AbstractFileSystem
         """
         self.ensure_one()
-        options = self.json_options
+        options = self._get_fs_options()
         if self.protocol == "odoofs":
             options["odoo_storage_path"] = self._odoo_storage_path
         # Webdav protocol handler does need the auth to be a tuple not a list !
@@ -370,7 +457,8 @@ class FSStorage(models.Model):
             return []
         regex = re.compile(pattern)
         for file_path in self.fs.ls(relative_path, detail=False):
-            if regex.match(file_path):
+            # fs.ls returns a relative path
+            if regex.match(os.path.basename(file_path)):
                 result.append(file_path)
         return result
 
@@ -393,9 +481,20 @@ class FSStorage(models.Model):
     def delete(self, relative_path) -> None:
         self.fs.rm_file(relative_path)
 
-    def action_test_config(self) -> None:
+    def action_test_config(self):
+        self.ensure_one()
+        if self.check_connection_method:
+            return self._test_config(self.check_connection_method)
+        else:
+            action = self.env["ir.actions.actions"]._for_xml_id(
+                "fs_storage.act_open_fs_test_connection_view"
+            )
+            action["context"] = {"active_model": "fs.storage", "active_id": self.id}
+            return action
+
+    def _test_config(self, connection_method):
         try:
-            self.fs.ls("", detail=False)
+            self._check_connection(self.fs, connection_method)
             title = _("Connection Test Succeeded!")
             message = _("Everything seems properly set up!")
             msg_type = "success"
