@@ -14,7 +14,6 @@ _logger = logging.getLogger(__name__)
 
 
 class IrBinary(models.AbstractModel):
-
     _inherit = "ir.binary"
 
     def _get_fs_attachment_for_field(self, record, field_name):
