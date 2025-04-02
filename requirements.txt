@@ -29,3 +29,4 @@ xlrd
 python-slugify
 vcrpy
 bokeh==3.1.1
+sentry_sdk==2.22.0
