@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class FsFileGC(models.Model):
+
     _name = "fs.file.gc"
     _description = "Filesystem storage file garbage collector"
 

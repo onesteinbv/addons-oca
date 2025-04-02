@@ -11,3 +11,5 @@ Stephane Mangin <stephane.mangin@camptocamp.com>
 Laurent Mignon <laurent.mignon@acsone.eu>
 Marie Lejeune <marie.lejeune@acsone.eu>
 Wolfgang Pichler <wpichler@callino.at>
+Nans Lefebvre <len@lambdao.dev>
+Mohamed Alkobrosli <alkobroslymohamed@gmail.com>
