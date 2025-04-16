@@ -9,33 +9,30 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.model
-    def _default_operating_unit(self):
-        team = self.env["crm.team"]._get_default_team_id()
-        if team.operating_unit_id:
-            return team.operating_unit_id
-        return self.env.user.default_operating_unit_id
-
     operating_unit_id = fields.Many2one(
         comodel_name="operating.unit",
         string="Operating Unit",
-        default=_default_operating_unit,
+        compute="_compute_operating_unit_id",
+        inverse="_inverse_operating_unit_id",
+        store=True,
         readonly=True,
         states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
 
     @api.onchange("team_id")
-    def onchange_team_id(self):
-        if self.team_id:
-            self.operating_unit_id = self.team_id.operating_unit_id
+    @api.depends("team_id", "team_id.operating_unit_id")
+    def _compute_operating_unit_id(self):
+        for sale in self.filtered(lambda s: s.state in ("draft", "sent")):
+            sale.operating_unit_id = sale.team_id.operating_unit_id
 
     @api.onchange("operating_unit_id")
-    def onchange_operating_unit_id(self):
-        if self.team_id and self.team_id.operating_unit_id != self.operating_unit_id:
-            self.team_id = False
-        if self.operating_unit_id:
-            self.team_id = self.env["crm.team"].search(
-                [("operating_unit_id", "=", self.operating_unit_id.id)], limit=1
+    def _inverse_operating_unit_id(self):
+        for sale in self.filtered(
+            lambda s: s.state in ("draft", "sent")
+            and s.operating_unit_id != s.team_id.operating_unit_id
+        ):
+            sale.team_id = self.env["crm.team"].search(
+                [("operating_unit_id", "=", sale.operating_unit_id.id)], limit=1
             )
 
     @api.constrains("team_id", "operating_unit_id")
