@@ -34,4 +34,6 @@ class IrHttp(models.AbstractModel):
         if not website.shop_enabled:
             path = request.httprequest.path
             if path == "/shop" or Path("/shop") in Path(path).parents:
+                if path == "/shop/cart/quantity":
+                    return 0.0
                 raise werkzeug.exceptions.NotFound()
