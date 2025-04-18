@@ -2,6 +2,8 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0).
 from pathlib import Path
 
+import werkzeug
+
 from odoo import models
 from odoo.http import request
 
@@ -32,6 +34,4 @@ class IrHttp(models.AbstractModel):
         if not website.shop_enabled:
             path = request.httprequest.path
             if path == "/shop" or Path("/shop") in Path(path).parents:
-                if path == "/shop/cart" and request.params.get("type") == "popover":
-                    return None
-                return request.redirect("/")
+                raise werkzeug.exceptions.NotFound()
