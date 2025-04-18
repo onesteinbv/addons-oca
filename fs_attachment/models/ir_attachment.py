@@ -112,9 +112,14 @@ class IrAttachment(models.Model):
     @api.depends("fs_filename")
     def _compute_fs_url(self) -> None:
         for rec in self:
-            rec.fs_url = None
+            new_url = None
+            actual_url = rec.fs_url or None
             if rec.fs_filename:
-                rec.fs_url = self.env["fs.storage"]._get_url_for_attachment(rec)
+                new_url = self.env["fs.storage"]._get_url_for_attachment(rec)
+            # ensure we compare value of same type and not None with False
+            new_url = new_url or None
+            if new_url != actual_url:
+                rec.fs_url = new_url
 
     @api.depends("fs_filename")
     def _compute_fs_url_path(self) -> None:
@@ -130,7 +135,7 @@ class IrAttachment(models.Model):
         for rec in self:
             if rec.store_fname:
                 code = rec.store_fname.partition("://")[0]
-                fs_storage = self.env["fs.storage"].get_by_code(code)
+                fs_storage = self.env["fs.storage"].sudo().get_by_code(code)
                 if fs_storage != rec.fs_storage_id:
                     rec.fs_storage_id = fs_storage
             elif rec.fs_storage_id:
@@ -237,7 +242,9 @@ class IrAttachment(models.Model):
                     "db_datas": data,
                 }
                 return values
-        return super()._get_datas_related_values(data, mimetype)
+        return super(
+            IrAttachment, self.with_context(mimetype=mimetype)
+        )._get_datas_related_values(data, mimetype)
 
     ###########################################################
     # Odoo methods that we override to use the object storage #
@@ -281,29 +288,33 @@ class IrAttachment(models.Model):
 
     def write(self, vals):
         if not self:
-            return self
+            return super().write(vals)
         if ("datas" in vals or "raw" in vals) and not (
             "name" in vals or "mimetype" in vals
         ):
-            # When we write on an attachment, if the mimetype is not provided, it
-            # will be computed from the name. The problem is that if you assign a
-            # value to the field ``datas`` or ``raw``, the name is not provided
-            # nor the mimetype, so the mimetype will be set to ``application/octet-
-            # stream``.
-            # We want to avoid this, so we take the mimetype of the first attachment
-            # and we set it on all the attachments if they all have the same mimetype.
-            # If they don't have the same mimetype, we raise an error.
-            # OPW-3277070
-            mimetypes = self.mapped("mimetype")
-            if len(set(mimetypes)) == 1:
-                vals["mimetype"] = mimetypes[0]
+            mimetype = self._compute_mimetype(vals)
+            if mimetype and mimetype != "application/octet-stream":
+                vals["mimetype"] = mimetype
             else:
-                raise UserError(
-                    _(
-                        "You can't write on multiple attachments with different "
-                        "mimetypes at the same time."
+                # When we write on an attachment, if the mimetype is not provided, it
+                # will be computed from the name. The problem is that if you assign a
+                # value to the field ``datas`` or ``raw``, the name is not provided
+                # nor the mimetype, so the mimetype will be set to ``application/octet-
+                # stream``.
+                # We want to avoid this, so we take the mimetype of the first attachment
+                # and we set it on all the attachments if they all have the same mimetype.
+                # If they don't have the same mimetype, we raise an error.
+                # OPW-3277070
+                mimetypes = self.mapped("mimetype")
+                if len(set(mimetypes)) == 1:
+                    vals["mimetype"] = mimetypes[0]
+                else:
+                    raise UserError(
+                        _(
+                            "You can't write on multiple attachments with different "
+                            "mimetypes at the same time."
+                        )
                     )
-                )
         for rec in self:
             # As when creating a new attachment, we must pass the res_field
             # and res_model into the context hence sadly we must perform 1 call
@@ -315,6 +326,9 @@ class IrAttachment(models.Model):
                     attachment_res_field=vals.get("res_field") or rec.res_field,
                 ),
             ).write(vals)
+
+        if "name" in vals:
+            self._enforce_meaningful_storage_filename()
 
         return True
 
@@ -360,8 +374,24 @@ class IrAttachment(models.Model):
     def _storage_file_read(self, fname: str) -> bytes | None:
         """Read the file from the filesystem storage"""
         fs, _storage, fname = self._fs_parse_store_fname(fname)
-        with fs.open(fname, "rb") as fs:
-            return fs.read()
+        try:
+            with fs.open(fname, "rb") as f:
+                return f.read()
+        except IOError:
+            _logger.info(
+                "Error reading %s on storage %s", fname, _storage, exc_info=True
+            )
+        return b""
+
+    def _storage_write_option(self, fs):
+        _fs = fs
+        mimetype = self.env.context.get("mimetype")
+        if mimetype:
+            while _fs:
+                if hasattr(_fs, "s3"):
+                    return {"ContentType": mimetype}
+                _fs = getattr(_fs, "fs", None)
+        return {}
 
     @api.model
     def _storage_file_write(self, bin_data: bytes) -> str:
@@ -373,8 +403,9 @@ class IrAttachment(models.Model):
         if not fs.exists(dirname):
             fs.makedirs(dirname)
         fname = f"{storage}://{path}"
-        with fs.open(path, "wb") as fs:
-            fs.write(bin_data)
+        kwargs = self._storage_write_option(fs)
+        with fs.open(path, "wb", **kwargs) as f:
+            f.write(bin_data)
         self._fs_mark_for_gc(fname)
         return fname
 
@@ -458,7 +489,7 @@ class IrAttachment(models.Model):
             # we need to update the store_fname with the new filename by
             # calling the write method of the field since the write method
             # of ir_attachment prevent normal write on store_fname
-            attachment._force_write_store_fname(f"{storage}://{new_filename}")
+            attachment._force_write_store_fname(f"{storage}://{new_filename_with_path}")
             self._fs_mark_for_gc(attachment.store_fname)
 
     def _force_write_store_fname(self, store_fname):

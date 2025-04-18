@@ -1,0 +1,1 @@
+Allows users to add their own outgoing mail server from the user preferences.

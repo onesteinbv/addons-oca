@@ -26,7 +26,8 @@ odoo.define("website_local_font.editor.snippets.options", function (require) {
          */
         start: async function () {
             await this._super(...arguments);
-            const style = window.getComputedStyle(document.documentElement);
+            this.menuEl.replaceChildren();
+            const style = window.getComputedStyle(this.$target[0].ownerDocument.documentElement);
             const nbFonts =
                 parseInt(weUtils.getCSSVariableValue("number-of-fonts", style)) || [];
             const localFontsProperty = weUtils.getCSSVariableValue(
@@ -39,16 +40,34 @@ odoo.define("website_local_font.editor.snippets.options", function (require) {
             const fontEls = [];
             const methodName = this.el.dataset.methodName || "customizeWebsiteVariable";
             const variable = this.el.dataset.variable;
+            const themeFontsNb = nbFonts - (this.googleLocalFonts.length + this.googleFonts.length + this.localFonts.length);
             _.times(nbFonts, (fontNb) => {
                 const realFontNb = fontNb + 1;
+                const fontKey = weUtils.getCSSVariableValue(`font-number-${realFontNb}`, style);
+                this.allFonts.push(fontKey);
+                let fontName = fontKey.slice(1, -1); // Unquote
+                let fontFamily = fontName;
+                const isSystemFonts = fontName === "SYSTEM_FONTS";
+                if (isSystemFonts) {
+                    fontName = _t("System Fonts");
+                    fontFamily = "var(--o-system-fonts)";
+                }
                 const fontEl = document.createElement("we-button");
                 fontEl.classList.add(`o_we_option_font_${realFontNb}`);
+                fontEl.setAttribute("string", fontName);
                 fontEl.dataset.variable = variable;
-                fontEl.dataset[methodName] = weUtils.getCSSVariableValue(
-                    `font-number-${realFontNb}`,
-                    style
-                );
+                fontEl.dataset[methodName] = fontKey
                 fontEl.dataset.font = realFontNb;
+                fontEl.dataset.fontFamily = fontFamily;
+                if ((realFontNb <= themeFontsNb) && !isSystemFonts) {
+                // Add the "cloud" icon next to the theme's default fonts
+                // because they are served by Google.
+                fontEl.appendChild(Object.assign(document.createElement("i"), {
+                    role: "button",
+                    className: "text-info me-2 fa fa-cloud",
+                    title: _t("This font is hosted and served to your visitors by Google servers"),
+                }));
+                }
                 fontEls.push(fontEl);
                 this.menuEl.appendChild(fontEl);
             });
@@ -61,6 +80,7 @@ odoo.define("website_local_font.editor.snippets.options", function (require) {
                             index: index,
                         })
                     );
+
                 });
             }
 
@@ -88,13 +108,10 @@ odoo.define("website_local_font.editor.snippets.options", function (require) {
                     );
                 });
             }
-            $(this.menuEl).append(
-                $(
-                    core.qweb.render("website.add_google_font_btn", {
-                        variable: variable,
-                    })
-                )
-            );
+            $(this.menuEl).append($(core.qweb.render("website.add_google_font_btn", {
+            variable: variable,
+            })));
+
             $(this.menuEl).append(
                 $(
                     qweb.render("website.add_local_font_btn", {

@@ -59,10 +59,8 @@ class AccountMove(models.Model):
 
     def write(self, vals):
         if set(vals).intersection(FIELDS_AFFECTS_ASSET_MOVE):
-            deprs = (
-                self.env["account.asset.line"]
-                .sudo()
-                .search([("move_id", "in", self.ids), ("type", "=", "depreciate")])
+            deprs = self.env["account.asset.line"].search(
+                [("move_id", "in", self.ids), ("type", "=", "depreciate")]
             )
             if deprs:
                 raise UserError(

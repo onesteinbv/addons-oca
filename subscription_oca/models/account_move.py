@@ -13,7 +13,8 @@ class AccountMove(models.Model):
 
     def action_open_subscription(self):
         self.ensure_one()
-        action = self.env.ref("subscription_oca.sale_subscription_action")
-        action = action.read()[0]
+        action = self.env["ir.actions.act_window"]._for_xml_id(
+            "subscription_oca.sale_subscription_action"
+        )
         action["domain"] = [("id", "=", self.subscription_id.id)]
         return action

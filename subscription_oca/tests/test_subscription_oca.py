@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import uuid
+from unittest.mock import patch
 
 from dateutil.relativedelta import relativedelta
 
@@ -173,6 +174,14 @@ class TestSubscriptionOCA(TransactionCase):
                 "journal_id": cls.cash_journal.id,
             }
         )
+        cls.sub9 = cls.create_sub(
+            {
+                "template_id": cls.tmpl3.id,
+                "date_start": fields.Date.today() - relativedelta(days=100),
+                "in_progress": True,
+                "recurring_rule_boundary": True,
+            }
+        )
 
         cls.sub_line = cls.create_sub_line(cls.sub1)
         cls.sub_line2 = cls.env["sale.subscription.line"].create(
@@ -324,6 +333,18 @@ class TestSubscriptionOCA(TransactionCase):
         self.assertIsInstance(sol_res, dict)
         move_res = self.sub_line._prepare_account_move_line()
         self.assertIsInstance(move_res, dict)
+
+    @patch(
+        "odoo.addons.subscription_oca.models.sale_subscription."
+        "SaleSubscription.generate_invoice"
+    )
+    def test_subscription_oca_sub_cron_error(self, generate_invoice_patch):
+        # Simulate something failing in generating an invoice,
+        # we expect something being logged instead of the entire cron failing
+        generate_invoice_patch.side_effect = exceptions.UserError("Error")
+        with self.assertLogs(level="ERROR"):
+            with self.assertRaises(exceptions.UserError):
+                self.sub1.cron_subscription_management()
 
     def test_subscription_oca_sub_cron(self):
         # sale.subscription
@@ -509,7 +530,7 @@ class TestSubscriptionOCA(TransactionCase):
 
     def test_x_subscription_oca_pricelist_related(self):
         res = self.partner.read(["subscription_count", "subscription_ids"])
-        self.assertEqual(res[0]["subscription_count"], 8)
+        self.assertEqual(res[0]["subscription_count"], 9)
         res = self.partner.action_view_subscription_ids()
         self.assertIsInstance(res, dict)
         sale_order = self.sub1.create_sale_order()
@@ -607,6 +628,11 @@ class TestSubscriptionOCA(TransactionCase):
             stage.display_name, "Updated Test Stage", "display_name not computed"
         )
 
+    def test_open_subscription(self):
+        invoice = self.sub1.create_invoice()
+        action = invoice.action_open_subscription()
+        self.assertEqual(action["domain"], [("id", "=", self.sub1.id)])
+
     def _collect_all_sub_test_results(self, subscription):
         test_res = []
         sale_order = subscription.create_sale_order()
@@ -630,7 +656,6 @@ class TestSubscriptionOCA(TransactionCase):
         test_res.append(res["type"])
         test_res.append(subscription.sale_order_ids_count)
         subscription.action_view_sale_order_ids()
-        # self.assertIn(str(subscription.sale_order_ids.id), str(res["domain"]))
         test_res.append(subscription.sale_order_ids.id)
         subscription.calculate_recurring_next_date(fields.Datetime.now())
         # self.assertEqual(

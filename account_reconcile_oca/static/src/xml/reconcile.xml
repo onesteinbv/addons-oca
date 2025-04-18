@@ -6,6 +6,37 @@
         t-inherit-mode="primary"
         owl="1"
     >
+        <xpath expr="//t[@t-as='groupOrRecord']" position="before">
+            <div class="m-2 d-flex w-100" t-if="env.parentController.journalId">
+                <span
+                    class="flex-fill text-900 text-start ps-0 fw-bold fs-4 align-self-center"
+                >Global Balance</span>
+                <span
+                    class="pe-0 fw-bold fs-4 align-self-center"
+                    t-esc="env.parentController.journalBalanceStr"
+                />
+            </div>
+            <t t-set="aggregates" t-value="getAggregates()" />
+        </xpath>
+        <xpath expr="//t[@t-else='']/KanbanRecord" position="before">
+            <t
+                t-if="aggregates.length and groupOrRecord.record.data.aggregate_id and aggregates[0].id == groupOrRecord.record.data.aggregate_id"
+            >
+                <t t-set="aggregate" t-value="aggregates.shift()" />
+                <div class="m-2 d-flex w-100">
+                    <span
+                        class="flex-fill text-900 text-start ps-0 fw-bold fs-4 align-self-center"
+                        t-esc="aggregate.name"
+                    />
+                    <span
+                        t-if="groupOrRecord.record.data.reconcile_aggregate == 'statement'"
+                        t-on-click="() => this.onClickStatement(aggregate.id)"
+                        class="pe-0 fw-bold fs-4 align-self-center btn btn-link"
+                        t-esc="aggregate.balanceStr"
+                    />
+                </div>
+            </t>
+        </xpath>
         <xpath expr="div[hasclass('o_kanban_renderer')]" position="attributes">
             <attribute
                 name="class"
@@ -48,10 +79,6 @@
             class="btn btn-primary"
             t-if="activeActions.create"
         >Create</button>
-        <div t-if="state.balance" class="m-1">
-            <span style="font-size: 16px;font-weight:500">Balance:</span>
-            <span style="font-size: 16px;color: #564b79;" t-esc="state.balance"/>
-        </div>
     </t>
     <t t-name="account_reconcile_oca.ReconcileMatchWidget" owl="1">
         <View t-props="listViewProperties" />
@@ -87,7 +114,7 @@
                         <td>
                             <span
                                 t-esc="reconcile_line.partner_id[1]"
-                                t-if="reconcile_line.partner_id"
+                                t-if="reconcile_line.partner_id and reconcile_line.partner_id[1]"
                             />
                         </td>
                         <td t-esc="reconcile_line.date_format" />

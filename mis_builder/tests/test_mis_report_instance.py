@@ -383,15 +383,14 @@ class TestMisReportInstance(common.HttpCase):
                 account = self.env["account.account"].browse(row.account_id)
                 self.assertEqual(
                     row.label,
-                    "%s %s [%s]"
-                    % (account.code, account.name, account.company_id.name),
+                    f"{account.code} {account.name} [{account.company_id.name}]",
                 )
         self.report_instance.write({"multi_company": False})
         matrix = self.report_instance._compute_matrix()
         for row in matrix.iter_rows():
             if row.account_id:
                 account = self.env["account.account"].browse(row.account_id)
-                self.assertEqual(row.label, "{} {}".format(account.code, account.name))
+                self.assertEqual(row.label, f"{account.code} {account.name}")
 
     def test_evaluate(self):
         company = self.env.ref("base.main_company")
@@ -444,11 +443,54 @@ class TestMisReportInstance(common.HttpCase):
             "kpi_id": self.kpi1.id,
         }
         action_name = self.report_instance._get_drilldown_action_name(args)
-        expected_name = "{kpi} - {period}".format(
-            kpi=self.kpi1.description,
-            period=period.display_name,
-        )
+        expected_name = f"{self.kpi1.description} - {period.display_name}"
         assert action_name == expected_name
+
+    def test_drilldown_views(self):
+        IrUiView = self.env["ir.ui.view"]
+        model_name = "account.move.line"
+        IrUiView.search([("model", "=", model_name)]).unlink()
+        IrUiView.create(
+            [
+                {
+                    "name": "mis_report_test_drilldown_views_chart",
+                    "model": model_name,
+                    "arch": "<graph><field name='name'/></graph>",
+                },
+                {
+                    "name": "mis_report_test_drilldown_views_tree",
+                    "model": model_name,
+                    "arch": "<pivot><field name='name'/></pivot>",
+                },
+            ]
+        )
+        action = self.report_instance.drilldown(
+            dict(expr="balp[200%]", period_id=self.report_instance.period_ids[0].id)
+        )
+        self.assertEqual(action["view_mode"], "pivot,graph")
+        self.assertEqual(action["views"], [[False, "pivot"], [False, "graph"]])
+        IrUiView.create(
+            [
+                {
+                    "name": "mis_report_test_drilldown_views_form",
+                    "model": model_name,
+                    "arch": "<form><field name='name'/></form>",
+                },
+                {
+                    "name": "mis_report_test_drilldown_views_tree",
+                    "model": model_name,
+                    "arch": "<tree><field name='name'/></tree>",
+                },
+            ]
+        )
+        action = self.report_instance.drilldown(
+            dict(expr="balp[200%]", period_id=self.report_instance.period_ids[0].id)
+        )
+        self.assertEqual(action["view_mode"], "tree,form,pivot,graph")
+        self.assertEqual(
+            action["views"],
+            [[False, "tree"], [False, "form"], [False, "pivot"], [False, "graph"]],
+        )
 
     def test_qweb(self):
         self.report_instance.print_pdf()  # get action

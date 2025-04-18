@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_users_form_simple_modif" model="ir.ui.view">
+        <field name="name">
+            Add outgoing mail server to user preferences form
+        </field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+        <field name="arch" type="xml">
+            <group name="signature" position="after">
+              <group
+                    string="Outgoing Mail Server"
+                    groups="mail_server_user.group_ir_mail_server_user,!base.group_system"
+                >
+                <div class="text-muted" colspan="4">
+                        Make sure the From Filtering and Username(if applicable) is set to your email
+                    </div>
+                <div
+                        colspan="4"
+                        groups="mail_server_user.group_ir_mail_server_user,!base.group_system"
+                    >
+                    <button
+                            name="setup_outgoing_mail_server"
+                            type="object"
+                            string="Setup Outgoing Mail Server"
+                            class="btn btn-primary"
+                        />
+                </div>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>

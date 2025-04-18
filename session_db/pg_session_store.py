@@ -102,7 +102,8 @@ class PGSessionStore(sessions.SessionStore):
                     write_date timestamp without time zone NOT NULL,
                     payload text NOT NULL
                 )
-            """
+            """,
+            log_exceptions=False,
         )
 
     @with_lock
@@ -118,17 +119,26 @@ class PGSessionStore(sessions.SessionStore):
                               write_date = now() at time zone 'UTC'
             """,
             dict(sid=session.sid, payload=payload),
+            log_exceptions=False,
         )
 
     @with_lock
     @with_cursor
     def delete(self, session):
-        self._cr.execute("DELETE FROM http_sessions WHERE sid=%s", (session.sid,))
+        self._cr.execute(
+            "DELETE FROM http_sessions WHERE sid=%s",
+            (session.sid,),
+            log_exceptions=False,
+        )
 
     @with_lock
     @with_cursor
     def get(self, sid):
-        self._cr.execute("SELECT payload FROM http_sessions WHERE sid=%s", (sid,))
+        self._cr.execute(
+            "SELECT payload FROM http_sessions WHERE sid=%s",
+            (sid,),
+            log_exceptions=False,
+        )
         try:
             data = json.loads(self._cr.fetchone()[0])
         except Exception:
@@ -147,6 +157,7 @@ class PGSessionStore(sessions.SessionStore):
             "DELETE FROM http_sessions "
             "WHERE now() at time zone 'UTC' - write_date > %s",
             (f"{max_lifetime} seconds",),
+            log_exceptions=False,
         )
 
 

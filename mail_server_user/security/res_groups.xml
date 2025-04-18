@@ -1,0 +1,49 @@
+<odoo>
+    <record model="res.groups" id="group_ir_mail_server_user">
+        <field name="name">Access Outgoing Mail Server</field>
+        <field name="category_id" ref="base.module_category_hidden" />
+    </record>
+
+    <record id="base.group_system" model="res.groups">
+        <field
+            name="implied_ids"
+            eval="[(4, ref('mail_server_user.group_ir_mail_server_user'))]"
+        />
+    </record>
+
+    <record id="ir_mail_server_user_rule" model="ir.rule">
+        <field name="name">ir.mail.server.user.rule</field>
+        <field name="model_id" ref="base.model_ir_mail_server" />
+        <field name="domain_force">
+            ['|','|',('from_filter', '=', user.email),('create_uid','=',user.id),('smtp_user', '=', user.email)]
+        </field>
+        <field
+            name="groups"
+            eval="[
+                Command.link(ref('mail_server_user.group_ir_mail_server_user'))
+            ]"
+        />
+        <field name="perm_read" eval="True" />
+        <field name="perm_write" eval="True" />
+        <field name="perm_create" eval="True" />
+        <field name="perm_unlink" eval="True" />
+    </record>
+
+    <record id="ir_mail_server_group_system_rule" model="ir.rule">
+        <field name="name">ir.mail.server.group_system.rule</field>
+        <field name="model_id" ref="base.model_ir_mail_server" />
+        <field name="domain_force">
+            [(1,'=',1)]
+        </field>
+        <field
+            name="groups"
+            eval="[
+                Command.link(ref('base.group_system'))
+            ]"
+        />
+        <field name="perm_read" eval="True" />
+        <field name="perm_write" eval="True" />
+        <field name="perm_create" eval="True" />
+        <field name="perm_unlink" eval="True" />
+    </record>
+</odoo>

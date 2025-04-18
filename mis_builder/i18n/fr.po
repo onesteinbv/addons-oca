@@ -10,15 +10,15 @@ msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-10 07:59+0000\n"
-"PO-Revision-Date: 2023-05-25 15:10+0000\n"
-"Last-Translator: \"Sandrine (ACSONE)\" <sandrine.ravet@acsone.eu>\n"
+"PO-Revision-Date: 2024-11-06 17:06+0000\n"
+"Last-Translator: samibc2c <sami.bouzidi@camptocamp.com>\n"
 "Language-Team: French (https://www.transifex.com/oca/teams/23907/fr/)\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #. module: mis_builder
 #. odoo-python
@@ -103,14 +103,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
 msgid ""
 "<code>bal</code>, <code>crd</code>, <code>deb</code>, <code>\n"
-"                                        pbal</code>, <code>nbal</code> : "
-"balance, debit, credit,\n"
-"                                        positive balance, negative balance."
+"                                        pbal</code>, <code>nbal</code>, "
+"<code>fld</code> : balance, debit, credit,\n"
+"                                        positive balance, negative balance,\n"
+"                                        other numerical field."
 msgstr ""
-"<code>bal</code>, <code>crd</code>, <code>deb</code>, <code>\n"
-"                                        pbal</code>, <code>nbal</code> : "
-"balance, débit, crédit,\n"
-"                                        balance positive, balance négative."
 
 #. module: mis_builder
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
@@ -431,13 +428,6 @@ msgid "Bold"
 msgstr "Gras"
 
 #. module: mis_builder
-#. odoo-python
-#: code:addons/mis_builder/models/mis_report.py:0
-#, python-format
-msgid "Can not update a multi kpi from the kpi line"
-msgstr "Vous ne pouvez pas mettre à  jour un kpi multi depuis la ligne de kpi"
-
-#. module: mis_builder
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_instance_add_to_dashboard_form_view
 #: model_terms:ir.ui.view,arch_db:mis_builder.wizard_mis_report_instance_view_form
 msgid "Cancel"
@@ -486,6 +476,13 @@ msgstr "Colonnes"
 
 #. module: mis_builder
 #. odoo-python
+#: code:addons/mis_builder/models/kpimatrix.py:0
+#, python-format
+msgid "Columns %(descr)s and %(base_descr)s are not comparable"
+msgstr "les colonnes %(descr)s et %(base_descr)s ne sont pas comparables"
+
+#. module: mis_builder
+#. odoo-python
 #: code:addons/mis_builder/models/mis_report_instance.py:0
 #, python-format
 msgid "Columns to compare must belong to the same report in %s"
@@ -495,13 +492,6 @@ msgstr "Les colonnes à  comparer doivent appartenir au même rapport %s"
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report_instance_period__source_sumcol_ids
 msgid "Columns to sum"
 msgstr "Colonnes à additionner"
-
-#. module: mis_builder
-#. odoo-python
-#: code:addons/mis_builder/models/kpimatrix.py:0
-#, python-format
-msgid "Columns {} and {} are not comparable"
-msgstr "Les colonnes {} et {} ne sont pas comparables"
 
 #. module: mis_builder
 #: model:ir.model.fields,help:mis_builder.field_mis_report_instance__query_company_ids
@@ -886,8 +876,8 @@ msgstr "Du (calculé)"
 #. odoo-python
 #: code:addons/mis_builder/report/mis_report_instance_xlsx.py:0
 #, python-format
-msgid "Generated on {} at {}"
-msgstr "Généré le {} à {}"
+msgid "Generated on %(gen_date)s at %(gen_time)s"
+msgstr "Généré le %(gen_date)s à %(gen_time)s"
 
 #. module: mis_builder
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
@@ -976,31 +966,23 @@ msgstr "KPI"
 #: code:addons/mis_builder/models/mis_report.py:0
 #, python-format
 msgid ""
-"KPI \"{}\" has type {} while a tuple was expected.\n"
+"KPI \"%(kpi)s\" has type %(type)s while a tuple was expected.\n"
 "\n"
 "This can be fixed by either:\n"
-"\t- Changing the KPI value to a tuple of length {}\n"
+"\t- Changing the KPI value to a tuple of length %(length)s\n"
 "or\n"
 "\t- Changing the KPI to `multi` mode and giving an explicit value for each "
 "sub-KPI."
 msgstr ""
-"Le KPI \"{}\" a le type {} alors qu'une liste de valeurs est attendue.\n"
-"\n"
-"Ceci peut être corrigé par soit :\n"
-"\t- Changer la valeur du KPI pour une liste de valeurs de longueur {}\n"
-"ou\n"
-"\t- Changer le KPI en mode 'multi' et donner une valeur pour chaque sous-KPI."
 
 #. module: mis_builder
 #. odoo-python
 #: code:addons/mis_builder/models/mis_report.py:0
 #, python-format
 msgid ""
-"KPI \"{}\" is valued as a tuple of length {} while a tuple of length {} is "
-"expected."
+"KPI \"%(kpi)s\" is valued as a tuple of length %(length)s while a tuple of "
+"length%(expected_length)s is expected."
 msgstr ""
-"Le KPI \"{}\" est une liste de valeurs de longueur {} alors qu'une liste de "
-"valeurs de longueur {} est attendue."
 
 #. module: mis_builder
 #: model:ir.model.fields,field_description:mis_builder.field_mis_kpi_data__seq1
@@ -1018,7 +1000,7 @@ msgstr "Le nom du KPI ({}) doit être un identifiant python valide"
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report__kpi_ids
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_form
 msgid "KPI's"
-msgstr "KPI's"
+msgstr "KPIs"
 
 #. module: mis_builder
 #: model:ir.model.fields,help:mis_builder.field_mis_report__all_kpi_ids
@@ -1749,8 +1731,8 @@ msgstr ""
 "Le  <b>sélecteur de comptes</b> est une expression sur le\n"
 "                                        code du compte (eg <code>70%</code>, "
 "etc), ou un domaine sur les comptes\n"
-"                                        (eg <code>[('code', 'like', "
-"'60%')]</code>)."
+"                                        (eg <code>[('code', 'like', '60%')]</"
+"code>)."
 
 #. module: mis_builder
 #: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
@@ -1767,20 +1749,16 @@ msgstr ""
 msgid ""
 "The following special elements are recognized in the expressions\n"
 "                                    to compute accounting data: <code>{bal|"
-"crd|deb|pbal|nbal}{pieu}[account\n"
+"crd|deb|pbal|nbal|fld}{pieu}(.fieldname)[account\n"
 "                                    selector][journal items domain]</code>."
 msgstr ""
-"Les éléments spéciaux suivants sont reconnus dans les expressions\n"
-"                                    pour calculer les données comptables : "
-"<code>{bal|crd|deb|pbal|nbal}{pieu}[account\n"
-"                                    selector][journal items domain]</code>."
 
 #. module: mis_builder
 #: model:ir.model.fields,field_description:mis_builder.field_mis_kpi_data__date_to
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report_instance__date_to
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report_instance_period__manual_date_to
 msgid "To"
-msgstr "à "
+msgstr "à"
 
 #. module: mis_builder
 #: model:ir.model.fields,field_description:mis_builder.field_mis_report_instance_period__date_to
@@ -1874,6 +1852,27 @@ msgstr "Vous ne pouvez pas additionner la période %s avec elle-meme."
 
 #. module: mis_builder
 #. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`%(field)s` cannot have a field name in expression %(expr)s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`fld` can only be used with mode `p` (variation) in expression %s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
+#: code:addons/mis_builder/models/aep.py:0
+#, python-format
+msgid "`fld` must have a field name in exression %s"
+msgstr ""
+
+#. module: mis_builder
+#. odoo-python
 #: code:addons/mis_builder/models/mis_report_instance.py:0
 #, python-format
 msgid "from %(date_from)s to %(date_to)s"
@@ -1913,6 +1912,14 @@ msgid "versus"
 msgstr "versus"
 
 #. module: mis_builder
+#: model_terms:ir.ui.view,arch_db:mis_builder.mis_report_view_kpi_form
+msgid ""
+"when <code>fld</code> is used : a field name specifier\n"
+"                                        must be provided (e.g. <code>fldp."
+"quantity</code>"
+msgstr ""
+
+#. module: mis_builder
 #: model:ir.model.fields.selection,name:mis_builder.selection__mis_report_style__font_size__x-large
 msgid "x-large"
 msgstr "x-grand"
@@ -1931,6 +1938,66 @@ msgstr "xx-grand"
 #: model:ir.model.fields.selection,name:mis_builder.selection__mis_report_style__font_size__xx-small
 msgid "xx-small"
 msgstr "xx-petit"
+
+#~ msgid ""
+#~ "<code>bal</code>, <code>crd</code>, <code>deb</code>, <code>\n"
+#~ "                                        pbal</code>, <code>nbal</code> : "
+#~ "balance, debit, credit,\n"
+#~ "                                        positive balance, negative "
+#~ "balance."
+#~ msgstr ""
+#~ "<code>bal</code>, <code>crd</code>, <code>deb</code>, <code>\n"
+#~ "                                        pbal</code>, <code>nbal</code> : "
+#~ "balance, débit, crédit,\n"
+#~ "                                        balance positive, balance "
+#~ "négative."
+
+#~ msgid ""
+#~ "The following special elements are recognized in the expressions\n"
+#~ "                                    to compute accounting data: "
+#~ "<code>{bal|crd|deb|pbal|nbal}{pieu}[account\n"
+#~ "                                    selector][journal items domain]</"
+#~ "code>."
+#~ msgstr ""
+#~ "Les éléments spéciaux suivants sont reconnus dans les expressions\n"
+#~ "                                    pour calculer les données "
+#~ "comptables : <code>{bal|crd|deb|pbal|nbal}{pieu}[account\n"
+#~ "                                    selector][journal items domain]</"
+#~ "code>."
+
+#~ msgid "Columns {} and {} are not comparable"
+#~ msgstr "Les colonnes {} et {} ne sont pas comparables"
+
+#~ msgid "Generated on {} at {}"
+#~ msgstr "Généré le {} à {}"
+
+#~ msgid ""
+#~ "KPI \"{}\" has type {} while a tuple was expected.\n"
+#~ "\n"
+#~ "This can be fixed by either:\n"
+#~ "\t- Changing the KPI value to a tuple of length {}\n"
+#~ "or\n"
+#~ "\t- Changing the KPI to `multi` mode and giving an explicit value for "
+#~ "each sub-KPI."
+#~ msgstr ""
+#~ "Le KPI \"{}\" a le type {} alors qu'une liste de valeurs est attendue.\n"
+#~ "\n"
+#~ "Ceci peut être corrigé par soit :\n"
+#~ "\t- Changer la valeur du KPI pour une liste de valeurs de longueur {}\n"
+#~ "ou\n"
+#~ "\t- Changer le KPI en mode 'multi' et donner une valeur pour chaque sous-"
+#~ "KPI."
+
+#~ msgid ""
+#~ "KPI \"{}\" is valued as a tuple of length {} while a tuple of length {} "
+#~ "is expected."
+#~ msgstr ""
+#~ "Le KPI \"{}\" est une liste de valeurs de longueur {} alors qu'une liste "
+#~ "de valeurs de longueur {} est attendue."
+
+#~ msgid "Can not update a multi kpi from the kpi line"
+#~ msgstr ""
+#~ "Vous ne pouvez pas mettre à  jour un kpi multi depuis la ligne de kpi"
 
 #~ msgid "Account model"
 #~ msgstr "Additionne le détail des comptes"
@@ -1953,11 +2020,9 @@ msgstr "xx-petit"
 #~ msgid "Style expression"
 #~ msgstr "Expression du style"
 
-#, python-format
 #~ msgid "Unexpected accumulation method %s for %s."
 #~ msgstr "Méthode d'accumulation inattendue %s pour %s."
 
-#, python-format
 #~ msgid "from %s to %s"
 #~ msgstr "de %s à  %s"
 

@@ -44,11 +44,8 @@ class SignupVerifyEmail(AuthSignupHome):
             values["email"] = values.get("login")
 
         # remove values that could raise "Invalid field '*' on model 'res.users'"
-        values.pop("redirect", "")
-        values.pop("token", "")
+        values = request.env["res.users"]._auth_signup_prepare_values(values)
 
-        # Remove password
-        values["password"] = ""
         sudo_users = request.env["res.users"].with_context(create_user=True).sudo()
 
         try:

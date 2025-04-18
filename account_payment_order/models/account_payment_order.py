@@ -27,6 +27,9 @@ class AccountPaymentOrder(models.Model):
         states={"draft": [("readonly", False)]},
         check_company=True,
     )
+    partner_banks_archive_msg = fields.Html(
+        compute="_compute_partner_banks_archive_msg",
+    )
     payment_type = fields.Selection(
         selection=[("inbound", "Inbound"), ("outbound", "Outbound")],
         readonly=True,
@@ -144,6 +147,28 @@ class AccountPaymentOrder(models.Model):
     )
     description = fields.Char()
 
+    @api.depends(
+        "payment_line_ids.partner_bank_id", "payment_line_ids.partner_bank_id.active"
+    )
+    def _compute_partner_banks_archive_msg(self):
+        """Information message to show archived bank accounts and to be able
+        to act on them before confirmation (avoid duplicates)."""
+        for item in self:
+            msg_lines = []
+            for partner_bank in item.payment_line_ids.filtered(
+                lambda x: x.partner_bank_id and not x.partner_bank_id.active
+            ).mapped("partner_bank_id"):
+                msg_line = _(
+                    "<b>Account Number</b>: %(number)s - <b>Partner</b>: %(name)s"
+                ) % {
+                    "number": partner_bank.acc_number,
+                    "name": partner_bank.partner_id.display_name,
+                }
+                msg_lines.append(msg_line)
+            item.partner_banks_archive_msg = (
+                "<br/>".join(msg_lines) if len(msg_lines) > 0 else False
+            )
+
     @api.depends("payment_mode_id")
     def _compute_allowed_journal_ids(self):
         for record in self:
@@ -195,6 +220,22 @@ class AccountPaymentOrder(models.Model):
                             exedate=order.date_scheduled,
                         )
                     )
+
+    @api.constrains("payment_line_ids")
+    def _check_payment_lines(self):
+        for order in self:
+            move_line_ids = [
+                x.move_line_id.id for x in order.payment_line_ids if x.move_line_id
+            ]
+            if len(move_line_ids) != len(set(move_line_ids)):
+                raise ValidationError(
+                    _(
+                        "There are several lines pointing to the same pending "
+                        "balance. This is probably caused by a manual line creation. "
+                        "Please remove this duplication for being able to save the "
+                        "order."
+                    )
+                )
 
     @api.depends("payment_line_ids", "payment_line_ids.amount_company_currency")
     def _compute_total(self):
@@ -376,17 +417,13 @@ class AccountPaymentOrder(models.Model):
         return True
 
     def generate_payment_file(self):
-        """Returns (payment file as string, filename)"""
+        """Returns (payment file as string, filename).
+
+        By default, any method not specifically intercepted by extra modules will do
+        nothing, including the existing manual one.
+        """
         self.ensure_one()
-        if self.payment_method_id.code == "manual":
-            return (False, False)
-        else:
-            raise UserError(
-                _(
-                    "No handler for this payment method. Maybe you haven't "
-                    "installed the related Odoo module."
-                )
-            )
+        return (False, False)
 
     def open2generated(self):
         self.ensure_one()

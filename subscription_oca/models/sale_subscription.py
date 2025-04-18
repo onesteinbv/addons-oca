@@ -149,9 +149,11 @@ class SaleSubscription(models.Model):
                         subscription.generate_invoice()
                     except Exception:
                         logger.exception("Error on subscription invoice generate")
-                if not subscription.recurring_rule_boundary:
-                    if subscription.date <= today:
-                        subscription.action_close_subscription()
+                if (
+                    not subscription.recurring_rule_boundary
+                    and subscription.date <= today
+                ):
+                    subscription.close_subscription()
 
             elif (
                 subscription.date_start <= today and subscription.stage_id.type == "pre"
@@ -256,8 +258,7 @@ class SaleSubscription(models.Model):
             [("type", "=", "post")], limit=1
         )
         self.close_reason_id = close_reason_id
-        if self.stage_id != closed_stage:
-            self.stage_id = closed_stage
+        self.stage_id = closed_stage
 
     def _prepare_sale_order(self, line_ids=False):
         self.ensure_one()
@@ -335,7 +336,7 @@ class SaleSubscription(models.Model):
                     invoice.with_context(force_send=True).message_post_with_template(
                         mail_template.id,
                         composition_mode="comment",
-                        email_layout_xmlid="mail.mail_notification_paynow",
+                        email_layout_xmlid="mail.mail_notification_layout_with_responsible_signature",
                     )
                 invoice_number = invoice.name
                 message_body = (
@@ -448,7 +449,9 @@ class SaleSubscription(models.Model):
                 if record.stage_id:
                     if record.stage_id.type == "in_progress":
                         record.in_progress = True
-                        record.date_start = date.today()
+                        today = date.today()
+                        record.date_start = today
+                        record.calculate_recurring_next_date(today)
                     elif record.stage_id.type == "post":
                         record.close_reason_id = False
                         record.in_progress = False
@@ -457,24 +460,25 @@ class SaleSubscription(models.Model):
 
         return res
 
-    @api.model
-    def create(self, values):
-        if "recurring_rule_boundary" in values:
-            if not values["recurring_rule_boundary"]:
-                template_id = self.env["sale.subscription.template"].browse(
-                    values["template_id"]
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if "recurring_rule_boundary" in vals:
+                if not vals["recurring_rule_boundary"]:
+                    template_id = self.env["sale.subscription.template"].browse(
+                        vals["template_id"]
+                    )
+                    date_start = vals["date_start"]
+                    if not isinstance(vals["date_start"], date):
+                        date_start = fields.Date.to_date(vals["date_start"])
+                    vals["date"] = template_id._get_date(date_start)
+            if "date_start" in vals and "recurring_next_date" in vals:
+                res = self._check_dates(vals["date_start"], vals["recurring_next_date"])
+                if res:
+                    vals["date_start"] = vals["recurring_next_date"]
+                vals["stage_id"] = (
+                    self.env["sale.subscription.stage"]
+                    .search([("type", "=", "draft")], order="sequence desc", limit=1)
+                    .id
                 )
-                date_start = values["date_start"]
-                if not isinstance(values["date_start"], date):
-                    date_start = fields.Date.to_date(values["date_start"])
-                values["date"] = template_id._get_date(date_start)
-        if "date_start" in values and "recurring_next_date" in values:
-            res = self._check_dates(values["date_start"], values["recurring_next_date"])
-            if res:
-                values["date_start"] = values["recurring_next_date"]
-            values["stage_id"] = (
-                self.env["sale.subscription.stage"]
-                .search([("type", "=", "draft")], order="sequence desc", limit=1)
-                .id
-            )
-        return super(SaleSubscription, self).create(values)
+        return super(SaleSubscription, self).create(vals_list)

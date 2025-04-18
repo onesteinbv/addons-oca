@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 
 from odoo import fields
 from odoo.exceptions import UserError, ValidationError
+from odoo.fields import Command
 from odoo.tests import Form, tagged
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
@@ -24,6 +25,15 @@ class TestPaymentOrderOutboundBase(AccountTestInvoicingCommon):
         cls.partner = cls.env["res.partner"].create(
             {
                 "name": "Test Partner",
+                "bank_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "acc_number": "TEST-NUMBER",
+                        },
+                    )
+                ],
             }
         )
         cls.invoice_line_account = cls.env["account.account"].create(
@@ -205,11 +215,27 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         line_created_due.populate()
         line_created_due.create_payment_lines()
         self.assertGreater(len(order.payment_line_ids), 0)
+        self.assertFalse(order.partner_banks_archive_msg)
+        order.payment_line_ids.partner_bank_id.action_archive()
+        self.assertTrue(order.partner_banks_archive_msg)
+        order.payment_line_ids.partner_bank_id.action_unarchive()
+        self.assertFalse(order.partner_banks_archive_msg)
         order.draft2open()
+        self.assertEqual(order.payment_ids[0].partner_bank_id, self.partner.bank_ids)
         order.open2generated()
         order.generated2uploaded()
         self.assertEqual(order.move_ids[0].date, order.payment_ids[0].date)
         self.assertEqual(order.state, "uploaded")
+
+    def _line_creation(self, outbound_order):
+        vals = {
+            "order_id": outbound_order.id,
+            "partner_id": self.partner.id,
+            "currency_id": outbound_order.payment_mode_id.company_id.currency_id.id,
+            "amount_currency": 200.38,
+            "move_line_id": self.invoice.invoice_line_ids[0].id,
+        }
+        return self.env["account.payment.line"].create(vals)
 
     def test_account_payment_line_creation_without_payment_mode(self):
         self.invoice.payment_mode_id = False
@@ -262,6 +288,13 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         )
         with self.assertRaises(ValidationError):
             outbound_order.date_scheduled = date.today() - timedelta(days=2)
+        # Create two payment lines with the same
+        # move line id and try to assign them to outbound order
+        payment_line_1 = self._line_creation(outbound_order)
+        outbound_order.payment_line_ids |= payment_line_1
+        with self.assertRaises(ValidationError):
+            payment_line_2 = self._line_creation(outbound_order)
+            outbound_order.payment_line_ids |= payment_line_2
 
     def test_invoice_communication_01(self):
         self.assertEqual(
@@ -273,9 +306,12 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         )
 
     def test_invoice_communication_02(self):
-        self.invoice.payment_reference = "R1234"
         self.assertEqual(
             "F1242", self.invoice._get_payment_order_communication_direct()
+        )
+        self.invoice.payment_reference = "R1234"
+        self.assertEqual(
+            "R1234", self.invoice._get_payment_order_communication_direct()
         )
 
     def test_invoice_communication_03(self):
@@ -298,6 +334,13 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         self.assertEqual(
             "ref %s" % reverse_move.ref,
             self.invoice._get_payment_order_communication_full(),
+        )
+
+    def test_supplier_invoice_payment_reference(self):
+        self.invoice.payment_reference = "+++F1234+++"
+        self.invoice.action_post()
+        self.assertEqual(
+            "+++F1234+++", self.invoice._get_payment_order_communication_full()
         )
 
     def test_manual_line_and_manual_date(self):
@@ -342,8 +385,7 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         outbound_order.draft2open()
         self.assertEqual(outbound_order.payment_count, 2)
         self.assertEqual(
-            outbound_order.payment_line_ids[0].date,
-            outbound_order.payment_line_ids[0].payment_ids.date,
+            outbound_order.payment_line_ids[0].payment_ids.date, fields.Date.today()
         )
         self.assertEqual(outbound_order.payment_line_ids[1].date, date.today())
         self.assertEqual(
@@ -403,7 +445,7 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         self.invoice.payment_reference = "F/1234"
         self.invoice.action_post()
         self.assertEqual(
-            "F1242", self.invoice._get_payment_order_communication_direct()
+            "F/1234", self.invoice._get_payment_order_communication_direct()
         )
         self.refund = self._create_supplier_refund(self.invoice)
         with Form(self.refund) as refund_form:
@@ -413,7 +455,9 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
                 line_form.price_unit = 75.0
 
         self.refund.action_post()
-        self.assertEqual("R1234", self.refund._get_payment_order_communication_direct())
+        self.assertEqual(
+            "FR/1234", self.refund._get_payment_order_communication_direct()
+        )
 
         # The user add the outstanding payment to the invoice
         invoice_line = self.invoice.line_ids.filtered(
@@ -435,8 +479,34 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
 
         self.assertEqual(len(payment_order.payment_line_ids), 1)
 
-        self.assertEqual("F1242 R1234", payment_order.payment_line_ids.communication)
-        self.assertNotIn("FR/1234", payment_order.payment_line_ids.communication)
+        self.assertEqual("F/1234 FR/1234", payment_order.payment_line_ids.communication)
+
+    def test_multiple_lines_without_move_line(self):
+        """Test that a payment order with multiple lines without related
+        journal items can be created"""
+        self.env["account.payment.order"].create(
+            {
+                "date_prefered": "due",
+                "payment_type": "outbound",
+                "payment_mode_id": self.mode.id,
+                "journal_id": self.bank_journal.id,
+                "description": "order with manual line",
+                "payment_line_ids": [
+                    Command.create(
+                        {
+                            "partner_id": self.partner.id,
+                            "amount_currency": 101.00,
+                        }
+                    ),
+                    Command.create(
+                        {
+                            "partner_id": self.partner.id,
+                            "amount_currency": 101.00,
+                        }
+                    ),
+                ],
+            }
+        )
 
     def test_supplier_manual_refund(self):
         """
@@ -475,3 +545,25 @@ class TestPaymentOrderOutbound(TestPaymentOrderOutboundBase):
         self.assertEqual(len(payment_order.payment_line_ids), 1)
 
         self.assertEqual("F1242 R1234", payment_order.payment_line_ids.communication)
+
+    def test_action_open_business_document(self):
+        # Open invoice
+        self.invoice.action_post()
+        # Add to payment order using the wizard
+        self.env["account.invoice.payment.line.multi"].with_context(
+            active_model="account.move", active_ids=self.invoice.ids
+        ).create({}).run()
+        order = self.env["account.payment.order"].search(self.domain)
+        # Create payment line without move line
+        vals = {
+            "order_id": order.id,
+            "partner_id": self.partner.id,
+            "currency_id": order.payment_mode_id.company_id.currency_id.id,
+            "amount_currency": 200.38,
+        }
+        self.env["account.payment.line"].create(vals)
+        invoice_action = order.payment_line_ids[0].action_open_business_doc()
+        self.assertEqual(invoice_action["res_model"], "account.move")
+        self.assertEqual(invoice_action["res_id"], self.invoice.id)
+        manual_line_action = order.payment_line_ids[1].action_open_business_doc()
+        self.assertFalse(manual_line_action)

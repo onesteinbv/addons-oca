@@ -30,9 +30,7 @@ class AccountReconcileAbstract(models.AbstractModel):
     currency_id = fields.Many2one("res.currency", readonly=True)
     foreign_currency_id = fields.Many2one("res.currency")
     company_currency_id = fields.Many2one(
-        string="Company Currency",
-        comodel_name="res.currency",
-        related="company_id.currency_id",
+        related="company_id.currency_id", string="Company Currency"
     )
 
     def _get_reconcile_line(
@@ -83,7 +81,7 @@ class AccountReconcileAbstract(models.AbstractModel):
             vals.update(
                 {
                     "id": False,
-                    "counterpart_line_id": (
+                    "counterpart_line_ids": (
                         (
                             line.matched_debit_ids
                             and line.matched_debit_ids[0].mapped("debit_move_id")
@@ -94,7 +92,7 @@ class AccountReconcileAbstract(models.AbstractModel):
                             and line.matched_credit_ids[0].mapped("credit_move_id")
                             or account_move_line_obj
                         )
-                    ).id,
+                    ).ids,
                 }
             )
         if not float_is_zero(
@@ -103,5 +101,5 @@ class AccountReconcileAbstract(models.AbstractModel):
             vals["original_amount"] = abs(original_amount)
             vals["original_amount_unsigned"] = original_amount
         if is_counterpart:
-            vals["counterpart_line_id"] = line.id
+            vals["counterpart_line_ids"] = line.ids
         return vals

@@ -6,15 +6,10 @@
 
 // Complete the base website values palette with the first defined font
 $-first-font-name: nth(map-keys($o-theme-font-configs), 1);
-@each $alias, $key in $o-font-aliases-to-keys {
-    @if map-get($o-base-website-values-palette, $key) == null {
-        $o-base-website-values-palette: map-merge(
-            $o-base-website-values-palette,
-            (
-                $key: $-first-font-name,
-            )
-        );
-    }
+@if map-get($o-base-website-values-palette, "font") == null {
+    $o-base-website-values-palette: map-merge($o-base-website-values-palette, (
+        "font": $-first-font-name,
+    ));
 }
 
 @function o-add-font-config($values) {
@@ -40,6 +35,7 @@ $o-fonts-similar: (
     "Luminari": "Eagle Lake",
     "Fecske": "Marcellus",
     "Din Alternate": "Roboto",
+    "Muli": "Mulish",
 );
 
 @function o-map-font-aliases($values) {
@@ -47,16 +43,13 @@ $o-fonts-similar: (
     @each $key in map-values($o-font-aliases-to-keys) {
         $value: map-get($values, $key);
         @if ($value and map-has-key($o-fonts-similar, $value)) {
-            $-values: map-merge(
-                $-values,
-                (
-                    $key: map-get($o-fonts-similar, $value),
-                )
-            );
+            $-values: map-merge($-values, (
+                $key: map-get($o-fonts-similar, $value),
+            ));
         }
     }
     @return $-values;
-}
+};
 
 // By default, most website palette values are null. Each null value is
 // automatically replaced with corresponsing values in chosen default values
@@ -285,7 +278,7 @@ $o-we-auto-contrast-exclusions: join(
 //------------------------------------------------------------------------------
 // Fonts
 //------------------------------------------------------------------------------
-
+$o-theme-font-configs: map-merge($o-base-theme-font-configs, $o-theme-font-configs);
 // Merge base fonts with user-added google fonts
 @each $font-name in (o-website-value("google-fonts") or ()) {
     $o-theme-font-configs: map-merge(
@@ -304,6 +297,9 @@ $o-we-auto-contrast-exclusions: join(
 
 // Add locally hosted google fonts
 @each $font-name, $font-attach-id in (o-website-value("google-local-fonts") or ()) {
+    // If a font exists both remotely and locally, we remove the remote font to
+    // prioritize the local font.
+    $o-theme-font-configs: map-remove($o-theme-font-configs, $font-name);
     $o-theme-font-configs: map-merge(
         $o-theme-font-configs,
         (
@@ -354,7 +350,7 @@ $o-we-auto-contrast-exclusions: join(
 }
 
 // Function which allows to retrieve a base info (family, url, properties) about
-// a component (base, navbar, ...)'s font. The font name is retrievable via a
+// a component (base, navbar, ...)"s font. The font name is retrievable via a
 // simple o-website-value call.
 @function o-get-font-info($alias: "base", $config-key: "family") {
     $key: map-get($o-font-aliases-to-keys, $alias);
@@ -362,7 +358,8 @@ $o-we-auto-contrast-exclusions: join(
     $-font-config: o-safe-get($o-theme-font-configs, $font-name, ());
     @return map-get($-font-config, $config-key);
 }
-$o-theme-font: o-get-font-info("base") or (sans-serif) !default;
+$o-theme-font: o-get-font-info("base") !default;
+$o-theme-font: $o-theme-font or o-add-unicode-support-font($o-system-fonts);
 $o-theme-headings-font: o-get-font-info("headings") or $o-theme-font !default;
 $o-theme-navbar-font: o-get-font-info("navbar") or $o-theme-font !default;
 $o-theme-buttons-font: o-get-font-info("buttons") or $o-theme-font !default;

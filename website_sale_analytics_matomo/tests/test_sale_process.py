@@ -1,6 +1,7 @@
 # Copyright 2023 Onestein (<https://www.onestein.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from odoo import Command
 from odoo.tests import tagged
 
 from odoo.addons.base.tests.common import HttpCaseWithUserDemo
@@ -34,7 +35,53 @@ class TestWebsiteSaleMatomo(HttpCaseWithUserDemo):
     def test_01_matomo_tours_analytics(self):
         """get_combination_info is adapted for Matomo Analytics"""
         # Re-use the same tour defined for Google Analytics
+        # Data for google_analytics_view_item
+        attribute = self.env["product.attribute"].create(
+            {
+                "name": "Color",
+                "sequence": 10,
+                "display_type": "color",
+                "value_ids": [
+                    Command.create(
+                        {
+                            "name": "Red",
+                        }
+                    ),
+                    Command.create(
+                        {
+                            "name": "Pink",
+                        }
+                    ),
+                ],
+            }
+        )
+        self.env["product.template"].create(
+            {
+                "name": "Colored T-Shirt",
+                "standard_price": 500,
+                "list_price": 750,
+                "detailed_type": "consu",
+                "website_published": True,
+                "attribute_line_ids": [
+                    Command.create(
+                        {
+                            "attribute_id": attribute.id,
+                            "value_ids": attribute.value_ids,
+                        }
+                    )
+                ],
+            }
+        )
         self.start_tour("/shop", "google_analytics_view_item")
+        # Data for google_analytics_add_to_cart
+        self.env["product.template"].create(
+            {
+                "name": "Basic Shirt",
+                "standard_price": 500,
+                "detailed_type": "consu",
+                "website_published": True,
+            }
+        )
         self.start_tour("/shop", "google_analytics_add_to_cart")
 
     def test_02_matomo_order_tracking_info(self):

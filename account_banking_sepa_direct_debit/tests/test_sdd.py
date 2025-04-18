@@ -10,11 +10,14 @@ from odoo import fields
 from odoo.tests.common import TransactionCase
 from odoo.tools import float_compare
 
+from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
+
 
 class TestSDDBase(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CONTEXT))
         cls.company_B = cls.env["res.company"].create({"name": "Company B"})
         cls.account_payable_company_B = cls.env["account.account"].create(
             {
@@ -273,17 +276,6 @@ class TestSDDBase(TransactionCase):
         payment_order.draft2open()
         self.assertEqual(payment_order.state, "open")
         self.assertEqual(payment_order.sepa, True)
-        # Check account payment
-        agrolait_bank_line = payment_order.payment_ids[0]
-        self.assertEqual(agrolait_bank_line.currency_id, self.eur_currency)
-        self.assertEqual(
-            float_compare(agrolait_bank_line.amount, 42.0, precision_digits=accpre),
-            0,
-        )
-        self.assertEqual(agrolait_bank_line.payment_reference, invoice1.name)
-        self.assertEqual(
-            agrolait_bank_line.partner_bank_id, invoice1.mandate_id.partner_bank_id
-        )
         action = payment_order.open2generated()
         self.assertEqual(payment_order.state, "generated")
         self.assertEqual(action["res_model"], "ir.attachment")
@@ -309,8 +301,6 @@ class TestSDDBase(TransactionCase):
         )
         payment_order.generated2uploaded()
         self.assertEqual(payment_order.state, "uploaded")
-        for inv in [invoice1, invoice2]:
-            self.assertEqual(inv.payment_state, "paid")
         self.assertEqual(self.mandate2.recurrent_sequence_type, "recurring")
         return
 

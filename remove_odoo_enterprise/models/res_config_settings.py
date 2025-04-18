@@ -16,7 +16,12 @@ class ResConfigSettings(models.TransientModel):
         ret_val = super().get_views(views, options)
 
         form_view = self.env["ir.ui.view"].browse(ret_val["views"]["form"]["id"])
-        if not form_view.xml_id == "base.res_config_settings_view_form":
+
+        view_xml_ids = (
+            form_view.xml_id,
+            form_view.inherit_id.xml_id,
+        )
+        if "base.res_config_settings_view_form" not in view_xml_ids:
             return ret_val
 
         doc = etree.XML(ret_val["views"]["form"]["arch"])
@@ -24,6 +29,13 @@ class ResConfigSettings(models.TransientModel):
         query = "//div[div[field[@widget='upgrade_boolean']]]"
         for item in doc.xpath(query):
             item.attrib["class"] = "d-none"
+
+        for container in doc.xpath("//div[contains(@class, 'o_settings_container')]"):
+            if len(container.xpath("div[not(contains(@class, 'd-none'))]")) == 0:
+                prev_el = container.getprevious()
+                if len(prev_el) and prev_el.tag == "h2":
+                    prev_el.attrib["class"] = "d-none"
+                container.attrib["class"] = "d-none"
 
         ret_val["views"]["form"]["arch"] = etree.tostring(doc)
         return ret_val
