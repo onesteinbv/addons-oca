@@ -9,11 +9,18 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    @api.model
+    def _default_operating_unit(self):
+        team = self.env["crm.team"]._get_default_team_id()
+        if team.operating_unit_id:
+            return team.operating_unit_id
+        return self.env.user.default_operating_unit_id
+
     operating_unit_id = fields.Many2one(
         comodel_name="operating.unit",
         string="Operating Unit",
         compute="_compute_operating_unit_id",
-        inverse="_inverse_operating_unit_id",
+        default=_default_operating_unit,
         store=True,
         readonly=True,
         states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
@@ -22,11 +29,13 @@ class SaleOrder(models.Model):
     @api.onchange("team_id")
     @api.depends("team_id", "team_id.operating_unit_id")
     def _compute_operating_unit_id(self):
-        for sale in self.filtered(lambda s: s.state in ("draft", "sent")):
+        for sale in self.filtered(
+            lambda s: s.state in ("draft", "sent") and s.team_id.operating_unit_id
+        ):
             sale.operating_unit_id = sale.team_id.operating_unit_id
 
     @api.onchange("operating_unit_id")
-    def _inverse_operating_unit_id(self):
+    def _onchange_operating_unit_id(self):
         for sale in self.filtered(
             lambda s: s.state in ("draft", "sent")
             and s.operating_unit_id != s.team_id.operating_unit_id
