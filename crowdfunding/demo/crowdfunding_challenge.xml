@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2025 Hunki Enterprises BV
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl-3.0) -->
+<data>
+    <record id="demo_challenge" model="crowdfunding.challenge">
+        <field name="name">A very challenging challenge</field>
+        <field name="description">This challenge is very challenging because if the challenging challenges it involves</field>
+        <field name="state">open</field>
+        <field name="website_published" eval="True" />
+    </record>
+</data>
