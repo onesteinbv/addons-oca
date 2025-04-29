@@ -8,7 +8,7 @@
             <div
                 t-if="product.resource_booking_type_id"
                 role="alert"
-                class="alert alert-info mt8 mb0"
+                class="alert alert-info mt8 mb0 mr8"
             >
                 <i class="fa fa-calendar-check-o" />
                 From the cart, you will be able to make a pre-reservation, which will expire

@@ -8,7 +8,6 @@ from dateutil.parser import isoparse
 from odoo import _
 from odoo.exceptions import ValidationError
 from odoo.http import request, route
-from odoo.tests.common import Form
 
 from ...website_sale.controllers import main
 
