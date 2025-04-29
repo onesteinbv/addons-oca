@@ -257,7 +257,8 @@ class TestClientSetup(TransactionCase):
     def test_ignore_regex(self):
         level, msg = (
             logging.ERROR,
-            "ERROR: SerializationFailure('could not serialize access due to concurrent update')",
+            "ERROR: SerializationFailure('could not "
+            "serialize access due to concurrent update')",
         )
         self.log(level, msg)
         self.assertEventCaptured(self.client, "error", msg)
