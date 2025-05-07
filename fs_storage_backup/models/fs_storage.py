@@ -81,6 +81,7 @@ class FSStorage(models.Model):
             self.message_post(
                 subject=_("Database backup failed"),
                 body=f"<pre>{tools.html_escape(traceback.format_exc())}</pre>",
+                body_is_html=True,
                 subtype_id=self.env.ref(
                     "fs_storage_backup.message_subtype_backup_failed"
                 ).id,
@@ -102,6 +103,7 @@ class FSStorage(models.Model):
             self.message_post(
                 subject=_("Failed to clean up old backups"),
                 body=f"<pre>{tools.html_escape(traceback.format_exc())}</pre>",
+                body_is_html=True,
                 subtype_id=self.env.ref(
                     "fs_storage_backup.message_subtype_cleanup_failed"
                 ).id,
