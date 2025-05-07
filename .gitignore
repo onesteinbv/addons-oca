@@ -158,3 +158,4 @@ etc
 upgrade.py
 *.run
 local.cfg
+.ruff_cache
