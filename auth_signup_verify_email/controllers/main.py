@@ -40,10 +40,15 @@ class SignupVerifyEmail(AuthSignupHome):
         except Exception as error:
             qcontext["error"] = str(error)
             return request.render("auth_signup.signup", qcontext)
-        if not values.get("email"):
-            values["email"] = values.get("login")
 
         # remove values that could raise "Invalid field '*' on model 'res.users'"
+        try:
+            values = self._prepare_signup_values(qcontext)        
+        except Exception as error:
+            qcontext["error"] = str(error)
+            return request.render("auth_signup.signup", qcontext)
+        if not values.get("email"):
+            values["email"] = values.get("login")        
         values.pop("redirect", "")
         values.pop("token", "")
 
