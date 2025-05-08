@@ -9,8 +9,8 @@
                 <field name="positive_rate_percentage" />
                 <field name="rating_status" />
             </field>
-            <xpath expr="//footer" position="inside">
-                <div t-if="record.rating_status != 'no_rate'" class="mt8 text-primary">
+            <xpath expr="//footer/div" position="inside">
+                <div t-if="record.rating_status != 'no_rate'" class="text-primary ms-1 me-1">
                     <b>
                         <t t-if="record.positive_rate_percentage.value != -1">
                             <a name="action_view_ticket_rating" type="object">
