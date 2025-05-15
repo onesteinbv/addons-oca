@@ -54,5 +54,5 @@ class Account(models.Model):
         groups = self.mapped("group_id")
         res = super().write(vals)
         if "code" in vals:
-            groups.invalidate_recordset()
+            (self.mapped("group_id") | groups).invalidate_recordset()
         return res
