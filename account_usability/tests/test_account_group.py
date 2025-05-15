@@ -28,6 +28,7 @@ class AccountGroupTest(TransactionCase):
 
         account_3.write({"code": "2001"})
         self.assertNotIn(account_3.id, group.account_ids.ids)
+        self.assertIn(account.id, group.account_ids.ids)
 
     def test_search_accounts_on_group(self):
         group = self.env["account.group"].create(
