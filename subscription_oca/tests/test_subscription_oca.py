@@ -627,7 +627,7 @@ class TestSubscriptionOCA(BaseCommon):
     def test_open_subscription(self):
         invoice = self.sub1.create_invoice()
         action = invoice.action_open_subscription()
-        self.assertEqual(action["domain"], [("id", "=", self.sub1.id)])
+        self.assertEqual(action["res_id"], self.sub1.id)
 
     def _collect_all_sub_test_results(self, subscription):
         """Creates the invoice of a subscription and returns its data
