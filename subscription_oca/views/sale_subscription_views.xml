@@ -27,6 +27,7 @@
                         widget="statusbar"
                         options="{'fold_field': 'fold', 'clickable': '1'}"
                     />
+                    <field name="stage_type" invisible="1" />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -77,7 +78,7 @@
                                 readonly="not active or in_progress"
                             />
                             <field name="date" invisible="recurring_rule_boundary" />
-                            <field name="close_reason_id" invisible="active" />
+                            <field name="close_reason_id" invisible="stage_type != 'post'" />
                         </group>
                         <group name="right_group">
                             <field name="template_id" />

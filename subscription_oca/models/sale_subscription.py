@@ -116,6 +116,9 @@ class SaleSubscription(models.Model):
         group_expand="_read_group_stage_ids",
         store=True,
     )
+    stage_type = fields.Selection(
+        related="stage_id.type",
+    )
     sale_subscription_line_ids = fields.One2many(
         comodel_name="sale.subscription.line",
         inverse_name="sale_subscription_id",
@@ -451,7 +454,7 @@ class SaleSubscription(models.Model):
                         record.date_start = today
                         record.calculate_recurring_next_date(today)
                     elif record.stage_id.type == "post":
-                        record.close_reason_id = False
+                        record.close_reason_id = values.get("close_reason_id", False)
                         record.in_progress = False
                     else:
                         record.in_progress = False
