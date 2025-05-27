@@ -252,8 +252,12 @@ class SaleSubscription(models.Model):
         closed_stage = self.env["sale.subscription.stage"].search(
             [("type", "=", "post")], limit=1
         )
-        self.close_reason_id = close_reason_id
-        self.stage_id = closed_stage
+        self.write(
+            {
+                "close_reason_id": close_reason_id,
+                "stage_id": closed_stage,
+            }
+        )
 
     def _prepare_sale_order(self, line_ids=False):
         self.ensure_one()
