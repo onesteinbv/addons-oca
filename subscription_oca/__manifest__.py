@@ -8,7 +8,7 @@
     "category": "Subscription Management",
     "website": "https://github.com/OCA/contract",
     "license": "AGPL-3",
-    "author": "Domatix, Odoo Community Association (OCA)",
+    "author": "Domatix, Onestein, Odoo Community Association (OCA)",
     "depends": ["sale_management", "account"],
     "data": [
         "views/product_template_views.xml",

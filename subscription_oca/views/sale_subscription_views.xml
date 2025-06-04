@@ -78,7 +78,10 @@
                                 readonly="not active or in_progress"
                             />
                             <field name="date" invisible="recurring_rule_boundary" />
-                            <field name="close_reason_id" invisible="stage_type != 'post'" />
+                            <field
+                                name="close_reason_id"
+                                invisible="stage_type != 'post'"
+                            />
                         </group>
                         <group name="right_group">
                             <field name="template_id" />
