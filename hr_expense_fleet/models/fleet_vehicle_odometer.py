@@ -91,7 +91,7 @@ class FleetVehicleOdometer(models.Model):
         products = to_expense_odometers.mapped("product_id")
         for product in products:
             odometers = to_expense_odometers.filtered(
-                lambda o, product: o.product_id == product
+                lambda o, current_product=product: o.product_id == current_product
             )
             product_uom = product.uom_id
             if product_uom == product_uom_km:
