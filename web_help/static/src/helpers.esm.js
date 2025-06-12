@@ -34,8 +34,5 @@ export async function waitUntilAvailable(selector, ms = 50) {
 }
 
 export async function doAction(xmlId, options = {}) {
-    Component.env.bus.trigger("do-action", {
-        action: xmlId,
-        options: options,
-    });
+    Component.env.services.action.doAction(xmlId,options);
 }
