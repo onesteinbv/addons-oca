@@ -95,17 +95,21 @@ class FleetVehicleOdometer(models.Model):
             )
             product_uom = product.uom_id
             if product_uom == product_uom_km:
+                product_unit = "kilometers"
                 odometer_uom_to_convert = product_uom_mi
             else:
                 odometer_uom_to_convert = product_uom_km
+                product_unit = "miles"
             total_distance = sum(
                 line.total_distance
                 for line in odometers.filtered(
-                    lambda ol, product_unit: ol.unit == product_unit
+                    lambda ol, current_product_unit=product_unit: ol.unit
+                    == current_product_unit
                 )
             )
             for odometer in odometers.filtered(
-                lambda ol, product_unit: ol.unit != product_unit
+                lambda ol, current_product_unit=product_unit: ol.unit
+                != current_product_unit
             ):
                 total_distance += odometer_uom_to_convert._compute_quantity(
                     odometer.total_distance, product_uom
