@@ -2,8 +2,8 @@
 import {formatDate, parseDate} from "@web/core/l10n/dates";
 import {formatMonetary} from "@web/views/fields/formatters";
 import {registry} from "@web/core/registry";
-import {useService} from "@web/core/utils/hooks";
 import {standardFieldProps} from "@web/views/fields/standard_field_props";
+import {useService} from "@web/core/utils/hooks";
 
 const {Component} = owl;
 
