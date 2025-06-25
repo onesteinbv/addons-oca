@@ -71,14 +71,11 @@ class OverdueReminderAction(models.Model):
             rec.reminder_count = mapped_data.get(rec.id, 0)
 
     @api.depends("commercial_partner_id", "date")
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
         for action in self:
-            name = self.env._("%(partner_name)s, Reminder %(date)s") % (
+            action.display_name = self.env._("%(partner_name)s, Reminder %(date)s") % (
                 {
                     "partner_name": action.commercial_partner_id.display_name,
                     "date": action.date,
                 }
             )
-            res.append((action.id, name))
-        return res

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
   Copyright 2020-2021 Akretion France (http://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
@@ -18,14 +19,15 @@
                     />
                     <group name="main">
                         <field name="name" />
+                        <field name="active" invisible="1" />
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <record id="overdue_reminder_result_list" model="ir.ui.view">
-        <field name="name">overdue.reminder.result.list</field>
+    <record id="overdue_reminder_result_tree" model="ir.ui.view">
+        <field name="name">overdue.reminder.result.tree</field>
         <field name="model">overdue.reminder.result</field>
         <field name="arch" type="xml">
             <list>

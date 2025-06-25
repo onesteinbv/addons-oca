@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
   Copyright 2020-2021 Akretion France (http://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
@@ -59,8 +60,8 @@
         </field>
     </record>
 
-    <record id="account_invoice_overdue_reminder_list" model="ir.ui.view">
-        <field name="name">account.invoice.overdue.reminder.list</field>
+    <record id="account_invoice_overdue_reminder_tree" model="ir.ui.view">
+        <field name="name">account.invoice.overdue.reminder.tree</field>
         <field name="model">account.invoice.overdue.reminder</field>
         <field name="arch" type="xml">
             <list>
@@ -88,8 +89,8 @@
         </field>
     </record>
 
-    <record id="account_invoice_overdue_reminder_norelated_list" model="ir.ui.view">
-        <field name="name">account.invoice.overdue.reminder.norelated.list</field>
+    <record id="account_invoice_overdue_reminder_norelated_tree" model="ir.ui.view">
+        <field name="name">account.invoice.overdue.reminder.norelated.tree</field>
         <field name="model">account.invoice.overdue.reminder</field>
         <field name="priority">100</field>
         <field name="arch" type="xml">

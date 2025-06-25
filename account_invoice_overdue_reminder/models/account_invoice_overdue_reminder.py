@@ -48,20 +48,20 @@ class AccountInvoiceOverdueReminder(models.Model):
     @api.constrains("invoice_id")
     def invoice_id_check(self):
         for action in self:
-            if action.invoice_id and action.invoice_id.move_type != "out_invoice":
+            if action.invoice_id and action.invoice_id.move_type not in [
+                "out_invoice",
+                "out_refund",
+            ]:
                 raise ValidationError(
                     self.env._(
                         "An overdue reminder can only be attached "
-                        "to a customer invoice"
+                        "to a customer invoice or credit note"
                     )
                 )
 
     @api.depends("invoice_id", "counter")
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
         for rec in self:
-            name = self.env._("%(invoice_name)s Reminder %(counter)d") % (
+            rec.display_name = self.env._("%(invoice_name)s Reminder %(counter)d") % (
                 {"invoice_name": rec.invoice_id.name, "counter": rec.counter}
             )
-            res.append((rec.id, name))
-        return res

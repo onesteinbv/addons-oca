@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
   Copyright 2020-2021 Akretion France (http://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
@@ -9,34 +10,36 @@
         <field name="model">overdue.reminder.action</field>
         <field name="arch" type="xml">
             <form>
-                <group name="main">
-                    <field name="commercial_partner_id" />
-                    <field name="partner_id" context="{'show_email': True}" />
-                    <field name="date" />
-                    <field name="user_id" />
-                    <field name="reminder_type" />
-                    <field name="mail_id" invisible="reminder_type != 'mail'" />
-                    <field name="mail_cc" invisible="reminder_type != 'mail'" />
-                    <field name="mail_state" invisible="reminder_type != 'mail'" />
-                </group>
-                <group name="result" string="Info/Result">
-                    <field name="result_id" widget="selection" />
-                    <field name="result_notes" string="Notes" />
-                </group>
-                <group name="invoices" string="Invoices">
-                    <field
-                        name="reminder_ids"
-                        nolabel="1"
-                        colspan="2"
-                        context="{'form_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_form', 'list_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_list'}"
-                    />
-                </group>
+                <sheet>
+                    <group name="main">
+                        <field name="commercial_partner_id" />
+                        <field name="partner_id" context="{'show_email': True}" />
+                        <field name="date" />
+                        <field name="user_id" />
+                        <field name="reminder_type" />
+                        <field name="mail_id" invisible="reminder_type != 'mail'" />
+                        <field name="mail_cc" invisible="reminder_type != 'mail'" />
+                        <field name="mail_state" invisible="reminder_type != 'mail'" />
+                    </group>
+                    <group name="result" string="Info/Result">
+                        <field name="result_id" widget="selection" />
+                        <field name="result_notes" string="Notes" />
+                    </group>
+                    <group name="invoices" string="Invoices">
+                        <field
+                            name="reminder_ids"
+                            nolabel="1"
+                            colspan="2"
+                            context="{'form_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_form', 'tree_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_tree'}"
+                        />
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>
 
-    <record id="overdue_reminder_action_list" model="ir.ui.view">
-        <field name="name">overdue.reminder.action.list</field>
+    <record id="overdue_reminder_action_tree" model="ir.ui.view">
+        <field name="name">overdue.reminder.action.tree</field>
         <field name="model">overdue.reminder.action</field>
         <field name="arch" type="xml">
             <list>
