@@ -19,6 +19,7 @@ export class WebEnvironmentRibbon extends Component {
         if (strToTest === "transparent") {
             return true;
         }
+        // eslint-disable-next-line no-undef
         const image = document.createElement("img");
         image.style.color = "rgb(0, 0, 0)";
         image.style.color = strToTest;
@@ -31,6 +32,7 @@ export class WebEnvironmentRibbon extends Component {
     }
 
     async showRibbon() {
+        // eslint-disable-next-line no-undef
         const ribbon = document.getElementsByClassName("test-ribbon")[0];
         ribbon.style.display = "none";
         // Get ribbon data from backend

@@ -3,7 +3,7 @@ import {makeView, setupViewRegistries} from "@web/../tests/views/helpers";
 
 let serverData = {};
 let target = getFixture();
-
+// eslint-disable-next-line no-undef
 QUnit.module("web_widget_dropdown_dynamic", (hooks) => {
     hooks.beforeEach(() => {
         target = getFixture();
@@ -35,6 +35,7 @@ QUnit.module("web_widget_dropdown_dynamic", (hooks) => {
         };
         setupViewRegistries();
     });
+    // eslint-disable-next-line no-undef
     QUnit.test("values are fetched with changing context", async function (assert) {
         assert.expect(13);
 
@@ -88,6 +89,7 @@ QUnit.module("web_widget_dropdown_dynamic", (hooks) => {
             "method_name",
         ]);
     });
+    // eslint-disable-next-line no-undef
     QUnit.test("values are fetched w/o context (char)", async (assert) => {
         assert.expect(6);
         await makeView({
@@ -118,7 +120,7 @@ QUnit.module("web_widget_dropdown_dynamic", (hooks) => {
             "got `value b` "
         );
     });
-
+    // eslint-disable-next-line no-undef
     QUnit.test("values are fetched w/o context (integer)", async (assert) => {
         assert.expect(6);
         await makeView({
@@ -145,7 +147,7 @@ QUnit.module("web_widget_dropdown_dynamic", (hooks) => {
         assert.containsN(field_target, "option", 2);
         assert.containsOnce(field_target, 'option[value="\\"10\\""]');
     });
-
+    // eslint-disable-next-line no-undef
     QUnit.test("values are fetched w/o context (selection)", async (assert) => {
         assert.expect(6);
         await makeView({

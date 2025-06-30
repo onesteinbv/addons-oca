@@ -15,6 +15,7 @@ export class TimelineCanvas {
      */
     clear() {
         if (this.canvas_ref) {
+            // eslint-disable-next-line no-undef
             const tempElement = document.createElement("div");
             tempElement.innerHTML = this.canvas_ref;
             Array.from(tempElement.children).forEach((child) => {
@@ -125,7 +126,9 @@ export class TimelineCanvas {
         breakLineAt
     ) {
         const fromElement =
+        // eslint-disable-next-line no-undef
             typeof from === "string" ? document.querySelector(from) : from;
+        // eslint-disable-next-line no-undef
         const toElement = typeof to === "string" ? document.querySelector(to) : to;
         if (!fromElement || !toElement) return;
         const childPosFrom = fromElement.getBoundingClientRect();
@@ -150,6 +153,7 @@ export class TimelineCanvas {
             widthMarker,
             breakLineAt
         );
+        // eslint-disable-next-line no-undef
         const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
         line.setAttribute("points", points.flat().join(","));
         line.setAttribute("stroke", color);
@@ -158,6 +162,7 @@ export class TimelineCanvas {
         if (markerStart) {
             line.setAttribute("marker-start", `url(${markerStart})`);
         }
+        // eslint-disable-next-line no-undef
         if (this.canvas_ref instanceof HTMLElement) {
             this.canvas_ref.appendChild(line);
         }
