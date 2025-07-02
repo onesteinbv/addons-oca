@@ -41,8 +41,8 @@
         <field name="inherit_id" ref="product.product_product_tree_view"/>
         <field name="arch" type="xml">
             <field name="standard_price" position="before">
-                <field name="can_be_used_for_fleet" invisible="1"/>
-                <field name="uom_id_domain" invisible="1"/>
+                <field name="can_be_used_for_fleet" column_invisible="1"/>
+                <field name="uom_id_domain" column_invisible="1"/>
             </field>
             <field name="uom_id" position="attributes">
                 <attribute name="domain">uom_id_domain</attribute>

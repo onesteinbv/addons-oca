@@ -72,10 +72,10 @@
                 <attribute name="editable"/>
             </xpath>
             <field name="value" position="attributes">
-                <attribute name="invisible">True</attribute>
+                <attribute name="column_invisible">True</attribute>
             </field>
             <field name="unit" position="attributes">
-                <attribute name="invisible">True</attribute>
+                <attribute name="column_invisible">True</attribute>
             </field>
             <field name="date" position="after">
               <field name="partner_id"/>
