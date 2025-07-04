@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-09-18 12:06+0000\n"
-"Last-Translator: Bastian Günther <mail@bastian-guenther.de>\n"
+"PO-Revision-Date: 2025-04-22 12:24+0000\n"
+"Last-Translator: Anna Martínez <anna080678@gmail.com>\n"
 "Language-Team: none\n"
-"Language: de\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.6.2\n"
+"X-Generator: Weblate 5.10.4\n"
 
 #. module: operating_unit
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_users_form
@@ -29,48 +29,48 @@ msgstr ""
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__active
 msgid "Active"
-msgstr "Aktiv"
+msgstr "Activo"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_res_users__operating_unit_ids
 msgid "Allowed Operating Units"
-msgstr "Zulässige Filialen"
+msgstr "Unidades operativas permitidas"
 
 #. module: operating_unit
 #: model_terms:ir.actions.act_window,help:operating_unit.action_operating_unit_tree
 msgid "Click to start a new Operating Unit."
-msgstr "Klicken, um eine neue Filiale anzulegen."
+msgstr "Haga clic para crear una nueva Unidad Operativa."
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__code
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_operating_unit_search
 msgid "Code"
-msgstr "Filialnummer"
+msgstr "Código"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__company_id
 msgid "Company"
-msgstr "Unternehmen"
+msgstr "Compañía"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__create_uid
 msgid "Created by"
-msgstr "Erstellt von"
+msgstr "Creado por"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__create_date
 msgid "Created on"
-msgstr "Erstellt am"
+msgstr "Creado en"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_res_users__default_operating_unit_id
 msgid "Default Operating Unit"
-msgstr "Standard-Filiale"
+msgstr "Unidad operativa por defecto"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__display_name
 msgid "Display Name"
-msgstr "Anzeigename"
+msgstr "Nombre mostrado"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__id
@@ -80,39 +80,39 @@ msgstr "ID"
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit____last_update
 msgid "Last Modified on"
-msgstr "Zuletzt geändert am"
+msgstr "Última modificación en"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__write_uid
 msgid "Last Updated by"
-msgstr "Zuletzt aktualisiert von"
+msgstr "Última actualización por"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__write_date
 msgid "Last Updated on"
-msgstr "Zuletzt aktualisiert am"
+msgstr "Última actualización en"
 
 #. module: operating_unit
 #: model:res.groups,name:operating_unit.group_manager_operating_unit
 msgid "Manager of Operating Units"
-msgstr "Manager von Filialen"
+msgstr "Responsable de las unidades operativas"
 
 #. module: operating_unit
 #: model:res.groups,name:operating_unit.group_multi_operating_unit
 msgid "Multiple Operating Unit"
-msgstr "Mehrere Filialen"
+msgstr "Múltiples unidades operativas"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__name
 msgid "Name"
-msgstr "Name"
+msgstr "Nombre"
 
 #. module: operating_unit
 #: model:ir.model,name:operating_unit.model_operating_unit
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_operating_unit_form
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_operating_unit_search
 msgid "Operating Unit"
-msgstr "Filiale"
+msgstr "Unidad Operativa"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_res_users__operating_unit_readonly
@@ -125,22 +125,22 @@ msgstr ""
 #: model:ir.ui.menu,name:operating_unit.menu_action_operating_unit_tree
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_users_form
 msgid "Operating Units"
-msgstr "Filialen"
+msgstr "Unidades operativas"
 
 #. module: operating_unit
 #: model:ir.module.category,name:operating_unit.module_operating_units
 msgid "Operating Units Group"
-msgstr "Filialen"
+msgstr "Grupo unidades operativas"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__partner_id
 msgid "Partner"
-msgstr "Kontakt"
+msgstr "Empresa"
 
 #. module: operating_unit
 #: model_terms:ir.ui.view,arch_db:operating_unit.view_operating_unit_search
 msgid "Search Operating Unit"
-msgstr "Suche Filialen"
+msgstr ""
 
 #. module: operating_unit
 #: model:ir.model.fields,help:operating_unit.field_res_users__assigned_operating_unit_ids
@@ -152,19 +152,19 @@ msgstr ""
 #. module: operating_unit
 #: model:ir.model.constraint,message:operating_unit.constraint_operating_unit_code_company_uniq
 msgid "The code of the operating unit must be unique per company!"
-msgstr "Die Filialnummer einer Filiale muss pro Unternehmen eindeutig sein!"
+msgstr "¡El código de unidad operativa debe ser único por compañía!"
 
 #. module: operating_unit
 #: model:ir.model.constraint,message:operating_unit.constraint_operating_unit_name_company_uniq
 msgid "The name of the operating unit must be unique per company!"
-msgstr "Der Name einer Filiale muss pro Unternehmen eindeutig sein!"
+msgstr "¡El nombre de la unidad operativa debe ser único por compañía!"
 
 #. module: operating_unit
 #: model:ir.model,name:operating_unit.model_res_users
 msgid "User"
-msgstr "Benutzer"
+msgstr "Usuario"
 
 #. module: operating_unit
 #: model:ir.model.fields,field_description:operating_unit.field_operating_unit__user_ids
 msgid "Users Allowed"
-msgstr "Zulässige Benutzer"
+msgstr "Usuarios permitidos"
