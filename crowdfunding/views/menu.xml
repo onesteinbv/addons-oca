@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2025 Hunki Enterprises BV
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl-3.0) -->
+<data>
+    <menuitem
+        id="menu_crowdfunding_root"
+        name="Crowdfunding"
+    />
+    <menuitem
+        id="menu_crowdfunding_challenge"
+        action="action_crowdfunding_challenge"
+        parent="menu_crowdfunding_root"
+    />
+</data>

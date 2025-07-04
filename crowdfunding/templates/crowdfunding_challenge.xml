@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2025 Hunki Enterprises BV
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl-3.0) -->
+<data>
+    <template id="template_challenge_list" name="Crowdfunding">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <nav class="navbar navbar-light border-top">
+                    <div class="container">
+                        Crowdfunding
+                    </div>
+                </nav>
+                <div class="container">
+                    <div class="card" t-foreach="results" t-as="result">
+                        <div class="card-body">
+                            <a t-att-href="result.website_url"><t t-out="result.name" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="template_challenge_detail">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="object.name" />
+            <div id="wrap">
+                <t t-call="crowdfunding.template_dialog_claim" />
+                <t t-call="crowdfunding.template_dialog_pledge" />
+                <div class="container">
+                    <section class="mb24">
+                        <div class="container">
+                            <h1 t-field="object.name" />
+                            <div t-field="object.description" />
+                        </div>
+                        <div class="container">
+                            Amount pledged: <span t-field="object.pledged_amount" />
+                        </div>
+                        <div class="container" t-if="object.claimed_partner_id">
+                            Claimed by <t t-out="object.claimed_partner_id.sudo().name" />
+                        </div>
+                        <div class="container">
+                            <a t-if="object._can_claim(request.env.user.partner_id)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dialog-claim" href="#">Claim</a>
+                            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dialog-pledge" href="#">Pledge</a>
+                        </div>
+                    </section>
+                    <div id="discuss">
+                        <t t-call="portal.message_thread"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="template_dialog_claim">
+        <div role="dialog" class="modal fade" id="dialog-claim">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <header class="modal-header">
+                    <h4 class="modal-title">Claim</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </header>
+                <form t-attf-action="/crowdfunding/{{object.id}}/claim" method="post">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <main class="modal-body">
+                    <textarea name="comment" placeholder="Please write something about your implementation" class="form-control" required="" />
+                </main>
+                <footer class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Claim
+                    </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </footer>
+                </form>
+            </div>
+            </div>
+        </div>
+    </template>
+    <template id="template_dialog_pledge">
+        <div role="dialog" class="modal fade" id="dialog-pledge">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <header class="modal-header">
+                    <h4 class="modal-title">Pledge amount</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </header>
+                <form t-attf-action="/crowdfunding/{{object.id}}/pay" method="get">
+                <main class="modal-body">
+                    <input class="form-input" type="number" name="amount" required="" /> <t t-out="object.company_id.currency_id.name" />
+                </main>
+                <footer class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Pledge
+                    </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </footer>
+                </form>
+            </div>
+            </div>
+        </div>
+    </template>
+</data>
