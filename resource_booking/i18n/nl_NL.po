@@ -56,7 +56,7 @@ msgstr "%(resources)s"
 #: code:addons/resource_booking/models/resource_booking_combination.py:0
 #, python-format
 msgid "%(resources)s (using calendar %(calendar)s)"
-msgstr "%(resources)s (gebruikt kalender %(kalender)s)"
+msgstr "%(resources)s (gebruikt kalender %(calendar)s)"
 
 #. module: resource_booking
 #: model_terms:ir.ui.view,arch_db:resource_booking.alert_availability_lost
