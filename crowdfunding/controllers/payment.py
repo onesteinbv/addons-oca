@@ -33,9 +33,9 @@ class Payment(PaymentPortal):
     def _get_extra_payment_form_values(self, crowdfunding_challenge_id=None, **kwargs):
         values = super()._get_extra_payment_form_values(**kwargs)
         if crowdfunding_challenge_id:
-            values[
-                "transaction_route"
-            ] = f"/crowdfunding/{crowdfunding_challenge_id}/transaction"
+            values["transaction_route"] = (
+                f"/crowdfunding/{crowdfunding_challenge_id}/transaction"
+            )
         return values
 
     @http.route(
