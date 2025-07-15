@@ -1,4 +1,5 @@
 odoo.define("resource_booking.tour", function (require) {
+    "use strict";
     var tour = require("web_tour.tour");
 
     tour.register(
