@@ -29,7 +29,6 @@
                     name="overdue_reminder"
                     string="Overdue Reminder"
                     invisible="not overdue"
-                    groups="account.group_account_invoice,account.group_account_readonly"
                 >
                     <group name="overdue_reminder_main" col="4">
                         <field name="overdue_reminder_counter" />
@@ -40,11 +39,6 @@
                     </group>
                 </page>
             </notebook>
-            <field name="id" position="after">
-                <field name="overdue" invisible="1" />
-                <field name="overdue_remind_sent" invisible="1" />
-                <field name="no_overdue_reminder" invisible="1" />
-            </field>
         </field>
     </record>
 
@@ -52,8 +46,12 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_invoice_tree" />
         <field name="arch" type="xml">
-            <field name="checked" position="after">
-                <field name="overdue_reminder_counter" optional="hide" />
+            <field name="status_in_payment" position="after">
+                <field
+                    name="overdue_reminder_counter"
+                    optional="hide"
+                    column_invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund')"
+                />
             </field>
         </field>
     </record>

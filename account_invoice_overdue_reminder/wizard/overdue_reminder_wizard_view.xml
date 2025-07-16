@@ -15,16 +15,20 @@
                     <field name="user_ids" widget="many2many_tags" />
                 </group>
                 <group name="options" string="Options">
-                    <field name="partner_policy" />
-                    <field name="interface" />
-                    <label for="start_days" />
-                    <div name="start_days">
+                    <group name="options-left">
+                        <field name="partner_policy" />
+                        <field name="interface" />
+                    </group>
+                    <group name="options-right">
+                        <label for="start_days" />
+                        <div name="start_days">
                     <field name="start_days" class="oe_inline" /> days
                 </div>
-                    <label for="min_interval_days" />
-                    <div name="min_interval_days">
+                        <label for="min_interval_days" />
+                        <div name="min_interval_days">
                     <field name="min_interval_days" class="oe_inline" /> days
                 </div>
+                    </group>
                 </group>
                 <group name="payment_ids" string="Payments up-to-date ?">
                     <field name="payment_ids" nolabel="1" colspan="2">
@@ -59,7 +63,7 @@
     <menuitem
         id="overdue_reminder_start_menu"
         action="overdue_reminder_start_action"
-        sequence="16"
+        sequence="30"
         parent="account.menu_finance_receivables"
     />
 
@@ -107,24 +111,25 @@
         <field name="model">overdue.reminder.step</field>
         <field name="arch" type="xml">
             <form>
-                <group name="main" col="4">
-                    <field name="commercial_partner_id" />
-                    <field name="counter" />
-                    <field
-                        name="partner_id"
-                        domain="[('id', 'child_of', commercial_partner_id)]"
-                    />
-                    <field name="partner_phone" widget="phone" />
-                    <field name="partner_email" widget="email" />
-                    <field name="partner_mobile" widget="phone" />
-                    <field name="date" invisible="1" />
-                    <field name="company_id" invisible="1" />
+                <group name="main">
+                    <group name="main-left">
+                        <field name="commercial_partner_id" />
+                        <field
+                            name="partner_id"
+                            domain="[('id', 'child_of', commercial_partner_id)]"
+                        />
+                        <field name="partner_email" widget="email" />
+                        <field name="date" invisible="1" />
+                        <field name="company_id" invisible="1" />
+                    </group>
+                    <group name="main-right">
+                        <field name="counter" />
+                        <field name="partner_phone" widget="phone" />
+                        <field name="partner_mobile" widget="phone" />
+                    </group>
                 </group>
-                <group
-                    invisible="not warn_unreconciled_move_line_ids"
-                    string="WARNING: unreconciled payments/refunds"
-                    col="1"
-                >
+                <div invisible="not warn_unreconciled_move_line_ids">
+                    <h4 style="color: red">WARNING: unreconciled payments/refunds</h4>
                     <p>
                     Customer has unreconciled payments/refunds. You should
                     reconcile these payments/refunds and start the overdue
@@ -137,7 +142,7 @@
                         nolabel="1"
                         colspan="2"
                     />
-                </group>
+                </div>
                 <group name="invoices">
                     <field
                         name="invoice_ids"
@@ -241,7 +246,7 @@
                         name="skip"
                         type="object"
                         string="Skip"
-                        class="btn-default"
+                        class="btn-secondary"
                     />
                     <button special="cancel" string="Cancel" class="btn-default" />
                 </footer>
@@ -250,10 +255,10 @@
     </record>
 
     <record id="overdue_reminder_step_tree" model="ir.ui.view">
-        <field name="name">overdue.reminder.step.tree</field>
+        <field name="name">overdue.reminder.step.list</field>
         <field name="model">overdue.reminder.step</field>
         <field name="arch" type="xml">
-            <list>
+            <list decoration-warning="warn_unreconciled_move_line_ids">
                 <header>
                     <button
                         name="%(mass_update_validate_action)d"
@@ -271,14 +276,57 @@
                         string="Skip"
                     />
                 </header>
-                <field name="commercial_partner_id" />
+                <field name="commercial_partner_id" decoration-bf="1" />
                 <field name="partner_id" />
                 <field name="counter" />
-                <field name="reminder_type" />
+                <field
+                    name="reminder_type"
+                    widget="badge"
+                    decoration-info="reminder_type == 'phone'"
+                    decoration-success="reminder_type == 'mail'"
+                    decoration-danger="reminder_type == 'post'"
+                />
                 <field name="invoice_ids" />
                 <field name="warn_unreconciled_move_line_ids" />
                 <field name="state" column_invisible="1" />
             </list>
+        </field>
+    </record>
+
+    <record id="overdue_reminder_step_search" model="ir.ui.view">
+        <field name="name">overdue.reminder.step.search</field>
+        <field name="model">overdue.reminder.step</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="commercial_partner_id" />
+                <filter
+                    name="mail"
+                    string="E-mail"
+                    domain="[('reminder_type', '=', 'mail')]"
+                />
+                <filter
+                    name="phone"
+                    string="Phone"
+                    domain="[('reminder_type', '=', 'phone')]"
+                />
+                <filter
+                    name="post"
+                    string="Post"
+                    domain="[('reminder_type', '=', 'post')]"
+                />
+                <group name="groupby">
+                    <filter
+                        name="reminder_type_groupby"
+                        string="Type"
+                        context="{'group_by': 'reminder_type'}"
+                    />
+                    <filter
+                        name="counter_groupby"
+                        string="New Remind Counter"
+                        context="{'group_by': 'counter'}"
+                    />
+                </group>
+            </search>
         </field>
     </record>
 
@@ -305,8 +353,8 @@
                     <field name="update_action" />
                     <field
                         name="reminder_type"
-                        invisible="update_action != 'reminder_type'"
                         required="update_action == 'reminder_type'"
+                        invisible="update_action != 'reminder_type'"
                     />
                 </group>
                 <footer>

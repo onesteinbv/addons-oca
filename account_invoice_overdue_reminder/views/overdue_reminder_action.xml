@@ -30,7 +30,7 @@
                             name="reminder_ids"
                             nolabel="1"
                             colspan="2"
-                            context="{'form_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_form', 'tree_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_tree'}"
+                            context="{'form_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_form', 'list_view_ref': 'account_invoice_overdue_reminder.account_invoice_overdue_reminder_norelated_tree'}"
                         />
                     </group>
                 </sheet>
@@ -39,13 +39,13 @@
     </record>
 
     <record id="overdue_reminder_action_tree" model="ir.ui.view">
-        <field name="name">overdue.reminder.action.tree</field>
+        <field name="name">overdue.reminder.action.list</field>
         <field name="model">overdue.reminder.action</field>
         <field name="arch" type="xml">
             <list>
                 <field name="date" />
                 <field name="commercial_partner_id" />
-                <field name="user_id" widget="many2one_avatar_user" />
+                <field name="user_id" widget="many2one_avatar_user" optional="show" />
                 <field
                     name="reminder_type"
                     widget="badge"
@@ -53,7 +53,13 @@
                     decoration-success="reminder_type == 'mail'"
                     decoration-danger="reminder_type == 'post'"
                 />
+                <field
+                    name="mail_state"
+                    invisible="reminder_type != 'mail'"
+                    optional="hide"
+                />
                 <field name="result_id" />
+                <field name="result_notes" optional="hide" />
             </list>
         </field>
     </record>
