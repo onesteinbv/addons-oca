@@ -58,6 +58,7 @@ class AuditlogLog(models.Model):
             "view_mode": "list,form",
             "res_model": self.model_id.model,
             "domain": [("id", "in", safe_eval(self.res_ids))],
+            "name": _("Exported Records"),
         }
 
 
