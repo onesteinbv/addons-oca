@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2021 Onestein (<https://www.onestein.nl>)
+          License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl) -->
+
+<odoo>
+    <template id="delivery_method" inherit_id="website_sale.delivery_method">
+        <input name="o_delivery_radio" position="attributes">
+            <attribute name="t-att-data-sendcloud-service-point-required">dm.sendcloud_service_point_required</attribute>
+        </input>
+        <xpath expr="//div[@t-field='dm.website_description']" position="before">
+            <div t-if="dm.sendcloud_service_point_required" t-attf-class="position-relative d-flex gap-2 mt-2 o_website_sendcloud_div {{'' if is_selected else 'd-none'}}">
+                <t
+                        t-set="sendcloud_details"
+                        t-value="(is_selected and order.sendcloud_details) or {}"
+                />
+                <button class="btn btn-secondary o_website_sendcloud_btn"
+                        t-att-data-sendcloud-details="is_selected and sendcloud_details or {}" name="website_sendcloud_btn">
+                    <i class="fa fa-map-marker mr-2" /> Select Service Point
+                </button>
+            </div>
+        </xpath>
+    </template>
+</odoo>
