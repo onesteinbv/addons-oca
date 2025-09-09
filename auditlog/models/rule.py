@@ -592,7 +592,7 @@ class AuditlogRule(models.Model):
                 )
             elif method == "unlink" and auditlog_rule.capture_record:
                 log_vals["line_ids"] = self._create_log_line_on_read(
-                    vals,
+                    log_vals,
                     list(old_values.get(res_id, EMPTY_DICT).keys()),
                     old_values,
                     fields_to_exclude,
