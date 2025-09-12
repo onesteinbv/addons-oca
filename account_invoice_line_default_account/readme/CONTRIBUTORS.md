@@ -1,0 +1,6 @@
+- Ronald Portier, Therp
+- Jacques-Etienne Baudoux (BCIM) \<je@bcim.be\>
+- Denis Roussel \<denis.roussel@acsone.eu\>
+- [TAKOBI](https://takobi.online):
+  - Simone Rubino \<sir@takobi.online\>
+  - Lorenzo Battistini
