@@ -270,22 +270,22 @@ class AuditlogCommon:
             1,
         )
 
-    def test_LogExport(self):
-        self.groups_rule.subscribe()
 
-        auditlog_log = self.env["auditlog.log"]
-        self.env["res.groups"].search([]).export_data(["name"])
-        created_log = auditlog_log.search(
-            [
-                ("model_id", "=", self.groups_model_id),
-                ("method", "=", "export_data"),
-            ]
-        ).ensure_one()
-        self.assertTrue(created_log)
-        action = created_log.show_res_ids()
-        domain = action["domain"]  # [('id', 'in', [1, 2, ...])]
-        self.assertIsInstance(domain, list)
-        self.assertIsInstance(domain[0][2], list)
+class TestAuditlogFast(TransactionCase, AuditlogCommon):
+    def setUp(self):
+        super().setUp()
+        self.groups_model_id = self.env.ref("base.model_res_groups").id
+        self.groups_rule = self.env["auditlog.rule"].create(
+            {
+                "name": "testrule for groups",
+                "model_id": self.groups_model_id,
+                "log_read": True,
+                "log_create": True,
+                "log_write": True,
+                "log_unlink": True,
+                "log_type": "fast",
+            }
+        )
 
 
 class TestAuditlogFull(TransactionCase, AuditlogCommon):
@@ -309,7 +309,7 @@ class TestAuditlogFull(TransactionCase, AuditlogCommon):
         super().tearDown()
 
 
-class TestAuditlogFast(TransactionCase, AuditlogCommon):
+class TestAuditlogExportData(TransactionCase):
     def setUp(self):
         super().setUp()
         self.groups_model_id = self.env.ref("base.model_res_groups").id
@@ -317,17 +317,30 @@ class TestAuditlogFast(TransactionCase, AuditlogCommon):
             {
                 "name": "testrule for groups",
                 "model_id": self.groups_model_id,
-                "log_read": True,
-                "log_create": True,
-                "log_write": True,
-                "log_unlink": True,
-                "log_type": "fast",
+                "log_export_data": True,
             }
         )
 
     def tearDown(self):
         self.groups_rule.unlink()
         super().tearDown()
+
+    def test_LogExport(self):
+        self.groups_rule.subscribe()
+
+        auditlog_log = self.env["auditlog.log"]
+        self.env["res.groups"].search([]).export_data(["name"])
+        created_log = auditlog_log.search(
+            [
+                ("model_id", "=", self.groups_model_id),
+                ("method", "=", "export_data"),
+            ]
+        ).ensure_one()
+        self.assertTrue(created_log)
+        action = created_log.show_res_ids()
+        domain = action["domain"]  # [('id', 'in', [1, 2, ...])]
+        self.assertIsInstance(domain, list)
+        self.assertIsInstance(domain[0][2], list)
 
 
 class TestFieldRemoval(TransactionCase):
