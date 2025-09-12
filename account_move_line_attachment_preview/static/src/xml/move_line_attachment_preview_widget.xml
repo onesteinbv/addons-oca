@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+
+    <t t-name="account_move_line_attachment_preview.MoveLineAttachmentWidget" owl="1">
+        <a
+            t-if="this.props.record.data[this.props.name]"
+            href="#"
+            t-out="this.props.record.data[this.props.name] and this.props.record.data[this.props.name][1] or ' - - - '"
+            t-on-focusin.prevent.stop="() => this.openAttachment()"
+        />
+    </t>
+
+</templates>

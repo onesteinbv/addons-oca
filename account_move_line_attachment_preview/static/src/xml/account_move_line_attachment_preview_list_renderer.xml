@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="account_move_line_attachment_preview.ListRenderer" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="after">
+            <AttachmentPreviewWidget/>
+        </xpath>
+    </t>
+</templates>
