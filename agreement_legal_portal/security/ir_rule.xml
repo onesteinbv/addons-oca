@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="agreement_portal_rule" model="ir.rule">
+        <field name="name">agreement_portal_rule</field>
+        <field name="model_id" ref="agreement.model_agreement"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">
+            [('partner_id', '=', user.partner_id.id)]
+        </field>
+    </record>
+</odoo>
