@@ -71,10 +71,12 @@ class TestSubscriptionOCA(BaseCommon):
                 "amount": 0,
             }
         )
-        cls.product_1 = cls.env.ref("product.product_product_1")
+        cls.product_1 = cls.env.ref("product.product_product_5")
+        cls.product_1.list_price = 30.75
         cls.product_1.subscribable = True
         cls.product_1.taxes_id = [Command.set(cls.tax_10pc_incl.ids)]
-        cls.product_2 = cls.env.ref("product.product_product_2")
+        cls.product_2 = cls.env.ref("product.product_product_6")
+        cls.product_2.list_price = 38.25
         cls.product_2.taxes_id = [Command.set(cls.tax_0pc.ids)]
         cls.product_2.subscribable = True
 
@@ -331,7 +333,7 @@ class TestSubscriptionOCA(BaseCommon):
 
     def test_subscription_oca_sub_lines(self):
         # sale.subscription.line
-        self.assertEqual(self.sub_line.name, self.sub_line.product_id.name)
+        self.assertEqual(self.sub_line.name, self.sub_line.product_id.display_name)
         self.assertIsNotNone(self.sub_line.tax_ids)
         self.assertAlmostEqual(self.sub_line.price_unit, 30.75, 2)
         self.assertEqual(self.sub_line.discount, 0)
