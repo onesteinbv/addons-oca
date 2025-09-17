@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data>
+    <data noupdate="1">
         <record id="seq_id" model="ir.sequence">
             <field name="name">sale_subscription_sequencer</field>
             <field name="code">sale.subscription</field>
             <field name="prefix">SUB</field>
             <field name="padding">5</field>
         </record>
-    </data>
 
-    <data noupdate="1">
         <record id="subscription_stage_draft" model="sale.subscription.stage">
             <field name="name">Draft</field>
             <field name="sequence">0</field>

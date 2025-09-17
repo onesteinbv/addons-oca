@@ -135,6 +135,7 @@ class SaleSubscription(models.Model):
     crm_team_id = fields.Many2one(comodel_name="crm.team", string="Sale team")
     to_renew = fields.Boolean(default=False, string="To renew")
 
+    @api.model
     def cron_subscription_management(self):
         today = date.today()
         for subscription in self.search([], order="recurring_next_date asc"):
@@ -384,8 +385,8 @@ class SaleSubscription(models.Model):
     @api.depends("invoice_ids", "sale_order_ids.invoice_ids")
     def _compute_account_invoice_ids_count(self):
         for record in self:
-            record.account_invoice_ids_count = len(self.invoice_ids) + len(
-                self.sale_order_ids.invoice_ids
+            record.account_invoice_ids_count = len(record.invoice_ids) + len(
+                record.sale_order_ids.invoice_ids
             )
 
     def action_view_account_invoice_ids(self):

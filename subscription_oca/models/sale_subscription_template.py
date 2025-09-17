@@ -89,7 +89,7 @@ class SaleSubscriptionTemplate(models.Model):
     @api.depends("product_ids")
     def _compute_product_ids_count(self):
         for record in self:
-            record.product_ids_count = len(self.product_ids)
+            record.product_ids_count = len(record.product_ids)
 
     def action_view_product_ids(self):
         return {
