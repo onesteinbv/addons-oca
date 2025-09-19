@@ -105,8 +105,8 @@ class SaleSubscription(models.Model):
     )
 
     @api.model
-    def _read_group_stage_ids(self, stages, domain, order):
-        stage_ids = stages.search([], order=order)
+    def _read_group_stage_ids(self, stages, domain):
+        stage_ids = stages.search([], order=stages._order)
         return stage_ids
 
     stage_id = fields.Many2one(
