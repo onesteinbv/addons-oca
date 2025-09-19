@@ -679,7 +679,7 @@ class TestSubscriptionOCA(BaseCommon):
         self.assertEqual(res["type"], "ir.actions.act_window")
         test_res.append(res["type"])
         group_stage_ids = subscription._read_group_stage_ids(
-            stages=self.env["sale.subscription.stage"].search([]), domain=[], order="id"
+            stages=self.env["sale.subscription.stage"].search([]), domain=[]
         )
         test_res.append(group_stage_ids)
         return test_res
