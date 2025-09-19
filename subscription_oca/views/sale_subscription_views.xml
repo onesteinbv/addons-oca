@@ -138,6 +138,7 @@
                                 colspan="2"
                                 name="subscription_total"
                             >
+                                <field name="currency_id" invisible="1" />
                                 <field
                                     name="recurring_total"
                                     widget="monetary"
