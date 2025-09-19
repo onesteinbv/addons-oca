@@ -105,6 +105,7 @@
                         >
                             <field name="sale_subscription_line_ids">
                                 <list editable="bottom">
+                                    <field name="currency_id" column_invisible="1" />
                                     <field name="product_id" required="True" />
                                     <field
                                         name="name"
