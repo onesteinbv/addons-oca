@@ -1,5 +1,5 @@
 import { ListRenderer } from "@web/views/list/list_renderer";
-import { SendcloudOnboarding } from "@delivery_sendcloud_oca/components/onboarding/onboarding";
+import { SendcloudOnboarding } from "@delivery_sendcloud_oca/components/onboarding/onboarding.esm";
 import { listView } from "@web/views/list/list_view";
 import { registry } from '@web/core/registry';
 
