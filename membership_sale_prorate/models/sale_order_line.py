@@ -2,7 +2,6 @@
 from datetime import timedelta
 
 from odoo import api, fields, models
-from odoo.tests import Form
 
 
 class SaleOrderLine(models.Model):
@@ -43,17 +42,5 @@ class SaleOrderLine(models.Model):
             sale_line_vals = self._prepare_sale_line_prorate_vals(sale_line)
             if sale_line_vals:
                 quantity = sale_line_vals["quantity"]
-                order = sale_line.order_id
-                with Form(order) as sale_form:
-                    index = next(
-                        (
-                            index
-                            for (index, d) in enumerate(sale_form.order_line._records)
-                            if d["id"] == sale_line.id
-                        ),
-                        None,
-                    )
-                    if index is not None:
-                        with sale_form.order_line.edit(index) as line_form:
-                            line_form.product_uom_qty = quantity
+                sale_line.write({"product_uom_qty": quantity})
         return sale_lines
