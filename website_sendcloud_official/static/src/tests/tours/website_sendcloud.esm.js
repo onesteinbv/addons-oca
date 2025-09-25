@@ -2,7 +2,6 @@ import { registry } from "@web/core/registry";
 import wsTourUtils from "@website_sale/js/tours/tour_utils";
 
 registry.category("web_tour.tours").add('website_sendcloud', {
-    test: true,
     url: '/shop',
     steps: () => [
         ...wsTourUtils.addToCart({productName: "Acoustic Bloc Screens"}),
