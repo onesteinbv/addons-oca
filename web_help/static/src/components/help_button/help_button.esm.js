@@ -18,8 +18,10 @@ export class HelpButton extends Component {
         });
         onWillStart(async () => {
             const actionId = this.props.actionId;
+            const context =
+                (this.env.searchModel && this.env.searchModel.context) || {};
             const action = actionId
-                ? await this.actionService.loadAction(actionId)
+                ? await this.actionService.loadAction(actionId, context)
                 : {};
             if ("res_model" in action) {
                 const foundTrip = await findTrip(action.res_model, this.props.viewType);
