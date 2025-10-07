@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="question" inherit_id="survey.question_container">
+        <xpath expr="//t[@t-call='survey.question_text_box']/.." position="after">
+            <t t-if="question.question_type == 'nps_rate'">
+                <t t-call="survey_question_type_nps.nps_rate" />
+            </t>
+        </xpath>
+    </template>
+    <template id="result" inherit_id="survey.survey_page_statistics_question">
+        <xpath
+            expr="//span[@t-if=&quot;question.question_type in ['numerical_box', 'scale']&quot;]"
+            position="after"
+        >
+            <span
+                t-if="question.question_type in ['numerical_box', 'scale']"
+                class="d-flex gap-1 my-1 me-2"
+            >
+                <div
+                    class="btn-group o_survey_results_question_pill"
+                    role="group"
+                    aria-label="Maximum"
+                >
+                    <span
+                        class="badge text-bg-secondary only_left_radius px-2 pt-1"
+                    >Max</span>
+                    <span
+                        class="badge text-bg-success only_right_radius px-2 pt-1"
+                        t-esc="question_data['numerical_max']"
+                    />
+                </div>
+                <div
+                    class="btn-group o_survey_results_question_pill"
+                    role="group"
+                    aria-label="Minimum"
+                >
+                    <span
+                        class="badge text-bg-secondary only_left_radius px-2 pt-1"
+                    >Min</span>
+                    <span
+                        class="badge text-bg-danger only_right_radius px-2 pt-1"
+                        t-esc="question_data['numerical_min']"
+                    />
+                </div>
+                <div
+                    class="btn-group o_survey_results_question_pill"
+                    role="group"
+                    aria-label="Average"
+                >
+                    <span
+                        class="badge text-bg-secondary only_left_radius px-2 pt-1"
+                    >Avg</span>
+                    <span
+                        class="badge text-bg-warning only_right_radius px-2 pt-1"
+                        t-esc="question_data['numerical_average']"
+                    />
+                </div>
+            </span>
+        </xpath>
+        <xpath
+            expr="//li[@t-elif=&quot;question.question_type in ['numerical_box', 'date', 'datetime']&quot;]"
+            position="after"
+        >
+            <a
+                t-att-href="'#survey_stats_question_%d' % question.id"
+                t-att-aria-controls="'survey_stats_question_%d' % question.id"
+                data-bs-toggle="tab"
+                role="tab"
+                class="o_survey_results_data_tab nav-link btn btn-light py-1 px-2 active"
+            >
+                <i class="fa fa-trophy" />
+            </a>
+        </xpath>
+        <xpath
+            expr="//t[@t-call='survey.question_result_number_or_date_or_datetime']"
+            position="after"
+        >
+            <t t-elif="question.question_type == 'nps_rate'">
+                <t t-call="survey.question_result_number_or_date_or_datetime" />
+            </t>
+        </xpath>
+    </template>
+    <template
+        id="result_user"
+        inherit_id="survey.question_result_number_or_date_or_datetime"
+    >
+        <t t-elif="question.question_type == 'datetime'" position="after">
+            <span
+                t-elif="question.question_type == 'nps_rate'"
+                t-esc="common_line[0]"
+            />
+        </t>
+    </template>
+    <template id="survey_page_print" inherit_id="survey.survey_page_print">
+        <xpath expr="//t[@t-call='survey.question_matrix']/.." position="after">
+            <t t-if="question.question_type == 'nps_rate'">
+                <t t-call="survey_question_type_nps.nps_rate" />
+            </t>
+        </xpath>
+    </template>
+    <template id="nps_rate" name="NPS Rating">
+        <div class="row">
+            <div class="nps_rate nps_rate_widget">
+                <label
+                    for="num10"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 10 else ''}"
+                >10</label>
+                <label
+                    for="num9"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 9 else ''}"
+                >9</label>
+                <label
+                    for="num8"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 8 else ''}"
+                >8</label>
+                <label
+                    for="num7"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 7 else ''}"
+                >7</label>
+                <label
+                    for="num6"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 6 else ''}"
+                >6</label>
+                <label
+                    for="num5"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 5 else ''}"
+                >5</label>
+                <label
+                    for="num4"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 4 else ''}"
+                >4</label>
+                <label
+                    for="num3"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 3 else ''}"
+                >3</label>
+                <label
+                    for="num2"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 2 else ''}"
+                >2</label>
+                <label
+                    for="num1"
+                    t-attf-class="#{'checked' if answer_lines and answer_lines.value_numerical_box == 1 else ''}"
+                >1</label>
+                <input
+                    type="number"
+                    step="any"
+                    class="form-control"
+                    t-att-data-question-type="question.question_type"
+                    t-att-name="question.id"
+                    hidden="hidden"
+                    t-att-value="answer_lines[0].value_numerical_box if answer_lines else None"
+                />
+            </div>
+        </div>
+    </template>
+</odoo>
