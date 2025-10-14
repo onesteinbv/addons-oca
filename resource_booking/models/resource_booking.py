@@ -431,7 +431,7 @@ class ResourceBooking(models.Model):
             location=self.location,
             videocall_location=self.videocall_location,
             name=self.name
-            or self._get_name_formatted(self.partner_ids[0], self.type_id),
+            or self._get_name_formatted(self.partner_ids[:1], self.type_id),
             partner_ids=[
                 (4, partner.id, 0) for partner in self.partner_ids | resource_partners
             ],
@@ -696,7 +696,7 @@ class ResourceBooking(models.Model):
             elif not record.name:
                 # Automatic name for backend users
                 name = self._get_name_formatted(
-                    record.partner_ids[0], record.type_id, record.meeting_id
+                    record.partner_ids[:1], record.type_id, record.meeting_id
                 )
             new.append((id_, name))
         return new
