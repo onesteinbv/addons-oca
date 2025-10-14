@@ -1,13 +1,18 @@
 # Copyright 2021 Tecnativa - Jairo Llopis
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
 from odoo.tests.common import Form
 
 
 class SaleOrderBookingConfirm(models.TransientModel):
     _name = "sale.order.booking.confirm"
     _description = "Confirmation dialog to autofill resource bookings"
+
+    @api.model
+    def _default_resource_booking_ids(self):
+        order = self.env["sale.order"].browse(self.env.context.get("default_order_id"))
+        return order.order_line.mapped("resource_booking_ids")
 
     order_id = fields.Many2one(
         "sale.order",
@@ -17,8 +22,13 @@ class SaleOrderBookingConfirm(models.TransientModel):
         readonly=True,
         ondelete="cascade",
     )
-    resource_booking_ids = fields.One2many(
-        related="order_id.order_line.resource_booking_ids", readonly=False
+    resource_booking_ids = fields.Many2many(
+        "resource.booking",
+        "sale_order_booking_confirm_resource_booking_rel",
+        "sale_order_booking_confirm_id",
+        "resource_booking_id",
+        string="Bookings",
+        default=_default_resource_booking_ids,
     )
 
     def action_invite(self):
