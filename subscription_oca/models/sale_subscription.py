@@ -4,6 +4,7 @@ import logging
 from datetime import date, datetime
 
 from dateutil.relativedelta import relativedelta
+from markupsafe import Markup
 
 from odoo import Command, api, fields, models
 from odoo.exceptions import AccessError
@@ -361,7 +362,7 @@ class SaleSubscription(models.Model):
             invoice_number = self.env._("To validate")
             message_body = f"<b>{msg_static}</b> {invoice_number}"
         self.calculate_recurring_next_date(self.recurring_next_date)
-        self.message_post(body=message_body)
+        self.message_post(body=Markup(message_body))
 
     def manual_invoice(self):
         invoice_id = self.create_invoice()
