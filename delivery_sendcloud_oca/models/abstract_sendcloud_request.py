@@ -226,7 +226,7 @@ class SendcloudRequest(models.AbstractModel):
         return self._iterate_pagination(response, urlpath, "parcels")
 
     def get_parcel(self, code):
-        response = self._get_panel_request("/parcels/{code}")
+        response = self._get_panel_request(f"/parcels/{code}")
         return response.get("parcel")
 
     def get_parcels_statuses(self):
