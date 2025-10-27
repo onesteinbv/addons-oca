@@ -58,7 +58,7 @@ class VatStatementZmLine(models.Model):
                     )
                 )
             for code in country_codes:
-                if code not in europe_codes:
+                if code and code not in europe_codes:
                     raise ValidationError(
                         self.env._(
                             "Wrong country code ({code}) for ZM report"

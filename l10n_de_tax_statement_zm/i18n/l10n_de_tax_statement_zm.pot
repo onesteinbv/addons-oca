@@ -4,10 +4,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 05:03+0000\n"
-"PO-Revision-Date: 2024-01-23 05:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -98,11 +96,6 @@ msgid "Intra-Community transactions (ZM) line"
 msgstr ""
 
 #. module: l10n_de_tax_statement_zm
-#: model:ir.model.fields,field_description:l10n_de_tax_statement_zm.field_l10n_de_tax_statement_zm_line____last_update
-msgid "Last Modified on"
-msgstr ""
-
-#. module: l10n_de_tax_statement_zm
 #: model:ir.model.fields,field_description:l10n_de_tax_statement_zm.field_l10n_de_tax_statement_zm_line__write_uid
 msgid "Last Updated by"
 msgstr ""
@@ -119,8 +112,8 @@ msgid "Partner"
 msgstr ""
 
 #. module: l10n_de_tax_statement_zm
+#. odoo-python
 #: code:addons/l10n_de_tax_statement_zm/models/l10n_de_tax_statement.py:0
-#, python-format
 msgid "Partner {} has no vat id!"
 msgstr ""
 
@@ -169,23 +162,22 @@ msgstr ""
 #. module: l10n_de_tax_statement_zm
 #. odoo-python
 #: code:addons/l10n_de_tax_statement_zm/models/l10n_de_tax_statement_zm_line.py:0
-#, python-format
 msgid ""
 "Wrong country code (DE) for ZM report at partner \"{partner}\" ({ref}) with "
 "vat \"{vat}\"."
 msgstr ""
 
 #. module: l10n_de_tax_statement_zm
+#. odoo-python
 #: code:addons/l10n_de_tax_statement_zm/models/l10n_de_tax_statement_zm_line.py:0
-#, python-format
 msgid ""
 "Wrong country code ({code}) for ZM report at partner \"{partner}\" ({ref}) "
 "with vat \"{vat}\". Please check your configuration."
 msgstr ""
 
 #. module: l10n_de_tax_statement_zm
+#. odoo-python
 #: code:addons/l10n_de_tax_statement_zm/models/l10n_de_tax_statement.py:0
-#, python-format
 msgid "You cannot modify a final statement!"
 msgstr ""
 

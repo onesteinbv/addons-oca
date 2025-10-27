@@ -183,7 +183,9 @@ class VatStatement(models.Model):
                 res[vat]["2_amount_products"] += zml.amount_products
                 res[vat]["3_amount_services"] += zml.amount_services
         lines = [
-            ["Umsatzsteuer-Identifikationsnummer", "Betrag (Euro)", "Art der Leistung"]
+            ["#v3.0"],
+            ["#ve3.2.1"],
+            ["Umsatzsteuer-Identifikationsnummer", "Betrag (Euro)", "Art der Leistung"],
         ]
         for vat in res:
             v = res[vat]
