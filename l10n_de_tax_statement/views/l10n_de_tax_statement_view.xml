@@ -68,18 +68,14 @@
                                 name="date_range_id"
                                 readonly="state in ('posted', 'final')"
                             />
-                            <label for="from_date" string="Date" />
-                            <div class="o_row">
-                                <field
-                                    name="from_date"
-                                    widget="daterange"
-                                    nolabel="1"
-                                    class="oe_inline"
-                                    options="{'end_date_field': 'to_date'}"
-                                    readonly="state in ('posted', 'final')"
-                                />
-                                <field name="to_date" invisible="1" />
-                            </div>
+                            <field
+                                name="from_date"
+                                widget="daterange"
+                                string="Date"
+                                options="{'end_date_field': 'to_date'}"
+                                readonly="state in ('posted', 'final')"
+                            />
+                            <field name="to_date" invisible="1" />
                         </group>
                         <group name="extra_parameters">
                             <field name="date_posted" />
@@ -128,7 +124,7 @@
                                     <field name="format_tax" column_invisible="1" />
                                     <field
                                         name="base"
-                                        invisible="not format_base"
+                                        optional="show"
                                         readonly="is_readonly"
                                     />
                                     <button
@@ -140,7 +136,7 @@
                                     />
                                     <field
                                         name="tax"
-                                        invisible="not format_tax"
+                                        optional="show"
                                         readonly="is_readonly"
                                     />
                                     <button
