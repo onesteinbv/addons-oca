@@ -102,7 +102,7 @@ ServicePointSelectorField.props = standardFieldProps;
 export const servicePointSelectorField = {
     component: ServicePointSelectorField,
     supportedTypes: ["text"],
-    displayName: _t("Service Point Selector")
+    displayName: _t("Service Point Selector"),
 };
 
 registry

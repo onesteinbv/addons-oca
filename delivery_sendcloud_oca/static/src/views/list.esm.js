@@ -1,8 +1,7 @@
-import { ListRenderer } from "@web/views/list/list_renderer";
-import { SendcloudOnboarding } from "@delivery_sendcloud_oca/components/onboarding/onboarding.esm";
-import { listView } from "@web/views/list/list_view";
-import { registry } from '@web/core/registry';
-
+import {ListRenderer} from "@web/views/list/list_renderer";
+import {SendcloudOnboarding} from "@delivery_sendcloud_oca/components/onboarding/onboarding.esm";
+import {listView} from "@web/views/list/list_view";
+import {registry} from "@web/core/registry";
 
 export class SendcloudListRenderer extends ListRenderer {
     static template = "delivery_sendcloud_oca.SendcloudListRenderer";
@@ -12,7 +11,7 @@ export class SendcloudListRenderer extends ListRenderer {
     };
 }
 
-registry.category('views').add('sendcloud_list', {
+registry.category("views").add("sendcloud_list", {
     ...listView,
     Renderer: SendcloudListRenderer,
 });

@@ -60,10 +60,8 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <xpath expr="//list" position="attributes">
-<!--                <widget name="sendcloud_onboarding"/>-->
-                <attribute
-                    name="js_class"
-                >sendcloud_list</attribute>
+                <!--                <widget name="sendcloud_onboarding"/>-->
+                <attribute name="js_class">sendcloud_list</attribute>
             </xpath>
         </field>
     </record>
@@ -115,5 +113,4 @@
         <field name="context">{'search_default_is_sendcloud': True}</field>
         <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
     </record>
-
 </odoo>

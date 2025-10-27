@@ -6,6 +6,7 @@ from contextlib import contextmanager
 from os.path import dirname, join
 
 import requests
+import responses
 from vcr import VCR
 
 from odoo.exceptions import UserError, ValidationError
@@ -155,11 +156,13 @@ class TestDeliverySendCloud(TransactionCase):
         sale_order = self.env.ref("sale.sale_order_1").copy()
         europe_codes = self.env.ref("base.europe").country_ids.mapped("code")
         partner_country = sale_order.partner_id.country_id.code
+        sale_order.partner_id.street_number2 = "test"
         self.assertFalse(partner_country in europe_codes)
 
         # Feature "Auto create invoice" not enabled by default
         self.assertFalse(sale_order.company_id.sendcloud_auto_create_invoice)
-
+        # Set Sendcloud Price
+        shipping_method0.sendcloud_price = 100.0
         # Set Sendcloud delivery method
         choose_delivery_form = Form(
             self.env["choose.delivery.carrier"].with_context(
@@ -201,6 +204,7 @@ class TestDeliverySendCloud(TransactionCase):
                 sale_order.with_context(
                     force_sendcloud_shipment_code="c9b2058d-2621-4ce5-afb0-f14e8e5565b6"
                 ).action_confirm()
+        shipping_method0.sendcloud_price = 0.0
         # Set country_of_origin and confirm order
         if is_product_harmonized_system_installed:
             sale_order.mapped("order_line.product_id").write(
@@ -340,6 +344,9 @@ class TestDeliverySendCloud(TransactionCase):
             UserError, "Label not available: no label printer url provided."
         ):
             sendcloud_parcel_rec.action_get_parcel_label()
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
+            sendcloud_parcel_rec.label_printer_url = "https://panel.sendcloud.sc/api/v2"
+            sendcloud_parcel_rec.action_get_parcel_label()
         with self.assertRaisesRegex(
             UserError, "Document not available: no link provided."
         ):
@@ -467,6 +474,11 @@ class TestDeliverySendCloud(TransactionCase):
             "The company is mandatory when delivery carrier is Sendcloud.",
         ):
             shipping_method0.company_id = False
+        with self.assertRaisesRegex(
+            ValidationError,
+            "The company is not consistent with the integration company.",
+        ):
+            shipping_method0.company_id = 2
         shipping_method0.company_id = self.env.company.id
         shipping_method0._compute_sendcloud_country_ids()
         # Set Sendcloud delivery method
@@ -544,6 +556,9 @@ class TestDeliverySendCloud(TransactionCase):
             sale_order.picking_ids.action_cancel()
         with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
             sale_order.picking_ids.unlink()
+        shipping_method0.sendcloud_get_return_label(sale_order.picking_ids)
+        sale_order.with_context(disable_cancel_warning=True).action_cancel()
+        sale_order.unlink()
 
     @mute_logger("py.warnings")
     def test_11_set_custom_price_wizard(self):
@@ -666,6 +681,7 @@ class TestDeliverySendCloud(TransactionCase):
     @mute_logger("py.warnings")
     def test_14_sendcloud_onboarding(self):
         onboarding_onboarding_step_obj = self.env["onboarding.onboarding.step"]
+        onboarding_onboarding_obj = self.env["onboarding.onboarding"]
         self.assertEqual(
             onboarding_onboarding_step_obj.action_open_sendcloud_onboarding_integration()[
                 "res_model"
@@ -684,7 +700,8 @@ class TestDeliverySendCloud(TransactionCase):
             ],
             "sendcloud.warehouse.address.wizard",
         )
-        self.env["onboarding.onboarding"].action_close_sendcloud_onboarding()
+        self.assertTrue(onboarding_onboarding_obj.get_sendcloud_onboarding_data())
+        onboarding_onboarding_obj.action_close_sendcloud_onboarding()
 
     @mute_logger("py.warnings")
     def test_15_sendcloud_action(self):
@@ -703,3 +720,67 @@ class TestDeliverySendCloud(TransactionCase):
         # Should generate an error on receiving message which is not in json format
         self.assertTrue(sendcloud_action_rec.error_on_parsing)
         sendcloud_action_obj.sendcloud_delete_old_actions()
+
+    @responses.activate
+    def test_16_sendcloud_integration_failure(self):
+        responses.add(
+            responses.POST,
+            "https://localhost/shop/sendcloud_integration_webhook/1",
+            json={"error": "not found"},
+            status=300,
+        )
+        form = Form(self.env["sendcloud.integration.wizard"])
+        wizard = form.save()
+        wizard.base_url = "https://localhost"
+        wizard.button_update()
+
+    @responses.activate
+    def test_17_sendcloud_integration_success(self):
+        responses.add(
+            responses.POST,
+            "https://f482-185-247-144-87.eu.ngrok.io/shop/sendcloud_integration_webhook/1",
+            json={"success": "true"},
+            status=200,
+        )
+        form = Form(self.env["sendcloud.integration.wizard"])
+        wizard = form.save()
+        wizard.base_url = "https://f482-185-247-144-87.eu.ngrok.io"
+        wizard.button_update()
+
+    @responses.activate
+    def test_18_sendcloud_integration_request_errors(self):
+        responses.add(
+            responses.GET,
+            "https://panel.sendcloud.sc/api/v2/integrations",
+            json={"error": {"message": "500 Server Error"}},
+            status=500,
+        )
+        with self.assertRaises(UserError):
+            self.integration.action_sendcloud_update_integrations()
+        responses.reset()
+        responses.add(
+            responses.GET,
+            "https://panel.sendcloud.sc/api/v2/integrations",
+            json={"error": {"message": "504 Server Error"}},
+            status=504,
+        )
+        with self.assertRaises(UserError):
+            self.integration.action_sendcloud_update_integrations()
+        responses.reset()
+        responses.add(
+            responses.GET,
+            "https://panel.sendcloud.sc/api/v2/integrations",
+            body=requests.exceptions.Timeout("Timeout"),
+            status=408,
+        )
+        with self.assertRaises(UserError):
+            self.integration.action_sendcloud_update_integrations()
+        responses.reset()
+        responses.add(
+            responses.GET,
+            "https://panel.sendcloud.sc/api/v2/integrations",
+            body=requests.exceptions.ConnectionError("Connection Error"),
+            status=503,
+        )
+        with self.assertRaises(UserError):
+            self.integration.action_sendcloud_update_integrations()

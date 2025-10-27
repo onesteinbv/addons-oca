@@ -446,14 +446,14 @@ class StockPicking(models.Model):
             [("name", "=", "product_harmonized_system"), ("state", "=", "installed")],
             limit=1,
         )
-        if is_product_harmonized_system_installed:
+        if is_product_harmonized_system_installed:  # pragma: no cover
             # use field provided by OCA module "product_harmonized_system" if installed
             hs_code = product_tmplate.hs_code_id.hs_code
             origin_country = product_tmplate.origin_country_id.code or origin_country
         is_account_intrastat_installed = self.env["ir.module.module"].search(
             [("name", "=", "account_intrastat"), ("state", "=", "installed")], limit=1
         )
-        if is_account_intrastat_installed:
+        if is_account_intrastat_installed:  # pragma: no cover
             # use field provided by Enterprise module "account_intrastat" if installed
             hs_code = product_tmplate.intrastat_code_id.code or hs_code
             origin_country = (

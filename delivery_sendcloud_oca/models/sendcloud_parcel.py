@@ -249,8 +249,8 @@ class SendcloudParcel(models.Model):
         for parcel in self.filtered(lambda p: p.label_printer_url):
             if not parcel.attachment_id:
                 integration = parcel.company_id.sendcloud_default_integration_id
-                label = integration.get_parcel_label(parcel.label_printer_url)
                 filename = parcel._generate_parcel_label_filename()
+                label = integration.get_parcel_label(parcel.label_printer_url)
                 attachment_id = self.env["ir.attachment"].create(
                     [
                         {

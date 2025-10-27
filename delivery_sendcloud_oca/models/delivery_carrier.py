@@ -181,25 +181,6 @@ class DeliveryCarrier(models.Model):
         )
         other_carriers = res.filtered(lambda c: c.delivery_type != "sendcloud")
         if sendcloud_carriers:
-            if not order:
-                # Retrieve current sale order
-                order_id = self.env.context.get("sale_order_id")
-                if not order_id:
-                    order_id = self.env.context.get("default_order_id")
-                if (
-                    not order_id
-                    and self.env.context.get("active_model")
-                    == "choose.delivery.carrier"
-                ):
-                    wizard = self.env["choose.delivery.carrier"].browse(
-                        self.env.context.get("active_id")
-                    )
-                    order_id = wizard.order_id.id
-                if order_id:
-                    order = self.env["sale.order"].browse(order_id)
-            if not order:
-                return other_carriers
-
             # get sender address (warehouse)
             warehouse = order.warehouse_id
             if not warehouse.sencloud_sender_address_id:
@@ -277,9 +258,12 @@ class DeliveryCarrier(models.Model):
 
     def _sendcloud_get_price_per_country(self, country_code):
         self.ensure_one()
+        sendcloud_shipping_method_country_obj = self.env[
+            "sendcloud.shipping.method.country"
+        ]
         if self.sendcloud_price:
-            return self.sendcloud_price
-        shipping_method_country = self.env["sendcloud.shipping.method.country"].search(
+            return self.sendcloud_price, sendcloud_shipping_method_country_obj
+        shipping_method_country = sendcloud_shipping_method_country_obj.search(
             [
                 ("iso_2", "=", country_code),
                 ("company_id", "=", self.company_id.id),
