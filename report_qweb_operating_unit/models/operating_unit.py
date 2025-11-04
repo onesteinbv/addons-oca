@@ -35,6 +35,21 @@ class OperatingUnit(models.Model):
         compute="_compute_empty_operating_unit_details"
     )
 
+    partner_image = fields.Image(
+        string="Logo",
+        compute="_compute_partner_image",
+        inverse="_inverse_partner_image",
+    )
+
+    @api.depends("partner_id", "partner_id.image_1920")
+    def _compute_partner_image(self):
+        for operating_unit in self:
+            operating_unit.partner_image = operating_unit.partner_id.image_1920
+
+    def _inverse_partner_image(self):
+        for operating_unit in self:
+            operating_unit.partner_id.image_1920 = operating_unit.partner_image
+
     @api.depends("company_id")
     def _compute_report_header(self):
         for operating_unit in self:
