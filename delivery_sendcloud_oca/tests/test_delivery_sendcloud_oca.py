@@ -784,3 +784,72 @@ class TestDeliverySendCloud(TransactionCase):
         )
         with self.assertRaises(UserError):
             self.integration.action_sendcloud_update_integrations()
+
+    def test_19_sendcloud_available_carriers(self):
+        delivery_carrier_obj = self.env["delivery.carrier"]
+        test_partner = self.env["res.partner"].create(
+            [
+                {
+                    "name": "test",
+                    "country_id": self.env.ref("base.nl").id,
+                    "street": "Bloemstraat 42",
+                    "zip": "4817RH",
+                    "city": "Groningen",
+                    "phone": "+31 6 12345678",
+                    "state_id": self.env.ref("base.state_nl_gr").id,
+                    "email": "admin@yourcompany.example.com",
+                }
+            ]
+        )
+        sale_order = self.env.ref("sale.sale_order_1").copy()
+        sale_order.partner_id = test_partner.id
+        # Retrieve Sendcloud shipping methods
+        with recorder.use_cassette("shipping_methods"):
+            delivery_carrier_obj.sendcloud_sync_shipping_method()
+        shipping_method0 = delivery_carrier_obj.search(
+            [
+                ("sendcloud_is_return", "=", True),
+                ("company_id", "=", self.env.company.id),
+            ],
+            limit=1,
+        )
+        self.assertFalse(shipping_method0._is_available_for_order(sale_order))
+        shipping_method1 = delivery_carrier_obj.search(
+            [
+                ("delivery_type", "=", "sendcloud"),
+                ("sendcloud_min_weight", ">", 15.00),
+                ("company_id", "=", self.env.company.id),
+            ],
+            limit=1,
+        )
+        self.assertFalse(shipping_method1._is_available_for_order(sale_order))
+        with recorder.use_cassette("update_integration_2"):
+            self.integration.write(
+                {"service_point_enabled": True, "service_point_carriers": "['postnl']"}
+            )
+        shipping_method2 = delivery_carrier_obj.search(
+            [
+                ("delivery_type", "=", "sendcloud"),
+                ("sendcloud_service_point_input", "=", "required"),
+                ("sendcloud_carrier", "=", "dhl"),
+                ("company_id", "=", self.env.company.id),
+            ],
+            limit=1,
+        )
+        self.assertFalse(shipping_method2._is_available_for_order(sale_order))
+        shipping_method3 = delivery_carrier_obj.search(
+            [
+                ("delivery_type", "=", "sendcloud"),
+                ("sendcloud_min_weight", "=", 0.001),
+                ("company_id", "=", self.env.company.id),
+            ],
+            limit=1,
+        )
+        self.assertFalse(shipping_method3._is_available_for_order(sale_order))
+        sale_order.warehouse_id.sencloud_sender_address_id = False
+        self.assertFalse(shipping_method3._is_available_for_order(sale_order))
+        self.assertTrue(
+            self.env.ref("delivery.free_delivery_carrier")._is_available_for_order(
+                sale_order
+            )
+        )
