@@ -13,10 +13,10 @@ class HrTimesheetSwitch(models.TransientModel):
         result = super()._closest_suggestion()
         if (
             not result
-            and self.env.context["active_model"] == "helpdesk.ticket"
+            and self.env.context.get("active_model") == "helpdesk.ticket"
             and self.env.user
         ):
-            return self.env["account.analytic.line"].search(
+            result = self.env["account.analytic.line"].search(
                 [
                     ("user_id", "=", self.env.user.id),
                     ("ticket_id", "=", self.env.context["active_id"]),
