@@ -24,18 +24,17 @@ class SaleResourceBookingsCase(BaseCommon):
         )
 
     def test_action_invite(self):
-        # Open wizard
         order_f = Form(self.env["sale.order"])
         order_f.partner_id = self.partner
         with order_f.order_line.new() as line_f:
             line_f.product_id = self.product
         order = order_f.save()
-        wizard = self.env["sale.order.booking.confirm"].create(
-            {
-                "order_id": order.id,
-            }
-        )
         order.action_confirm()
+        bookings = order.order_line.mapped("resource_booking_ids")
+        # Open wizard
+        wizard = self.env["sale.order.booking.confirm"].create(
+            {"order_id": order.id, "resource_booking_ids": [(6, 0, bookings.ids)]}
+        )
         self.assertEqual(order.resource_booking_count, 1)
         # Trigger invite with context
         wizard = wizard.with_context(trigger_booking_email=True)
@@ -50,11 +49,10 @@ class SaleResourceBookingsCase(BaseCommon):
             line_f.product_id = self.product
         order = order_f.save()
         order.action_confirm()
+        bookings = order.order_line.mapped("resource_booking_ids")
         self.assertEqual(order.resource_booking_count, 1)
         wizard = self.env["sale.order.booking.confirm"].create(
-            {
-                "order_id": order.id,
-            }
+            {"order_id": order.id, "resource_booking_ids": [(6, 0, bookings.ids)]}
         )
         # Trigger noop with context
         wizard = wizard.with_context(trigger_booking_email=True)
