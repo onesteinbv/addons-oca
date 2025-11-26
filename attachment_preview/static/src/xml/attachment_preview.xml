@@ -9,7 +9,7 @@
             >
                 <button
                     t-if="this._canPreviewAttachment(attachment)"
-                    class="d-flex justify-content-center align-items-center w-100 h-100 rounded-0 bg-300"
+                    class="d-flex justify-content-center align-items-center w-100 h-100 border-0 bg-300"
                     t-att-data-id="attachment.id"
                     t-att-data-url="attachment.defaultSource"
                     t-on-click.stop="() => this._onPreviewAttachment(attachment)"
@@ -20,7 +20,7 @@
                 </button>
                 <button
                     t-if="this._canPreviewAttachment(attachment)"
-                    class="d-flex justify-content-center align-items-center w-100 h-100 rounded-0 bg-300"
+                    class="d-flex justify-content-center align-items-center w-100 h-100 border-0 bg-300"
                     data-target="new"
                     t-att-data-id="attachment.id"
                     t-att-data-url="attachment.defaultSource"
