@@ -19,30 +19,9 @@ msgstr ""
 
 #. module: web_responsive
 #. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Activities"
-msgstr ""
-
-#. module: web_responsive
-#. odoo-javascript
 #: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
 msgid "All"
-msgstr ""
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachment counter loading..."
-msgstr ""
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachments"
 msgstr ""
 
 #. module: web_responsive

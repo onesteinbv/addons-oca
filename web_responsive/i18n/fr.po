@@ -18,31 +18,10 @@ msgstr ""
 
 #. module: web_responsive
 #. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Activities"
-msgstr "Activités"
-
-#. module: web_responsive
-#. odoo-javascript
 #: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
 msgid "All"
 msgstr "Tout"
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachment counter loading..."
-msgstr "Chargement du compteur de pièces jointes..."
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachments"
-msgstr "Pièces Jointes"
 
 #. module: web_responsive
 #. odoo-javascript
@@ -143,6 +122,18 @@ msgstr "Envoyer un message"
 #, python-format
 msgid "View switcher"
 msgstr "Bascule de vue"
+
+#, python-format
+#~ msgid "Attachment counter loading..."
+#~ msgstr "Chargement du compteur de pièces jointes..."
+
+#, python-format
+#~ msgid "Attachments"
+#~ msgstr "Pièces Jointes"
+
+#, python-format
+#~ msgid "Activities"
+#~ msgstr "Activités"
 
 #, python-format
 #~ msgid "Create"

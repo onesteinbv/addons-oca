@@ -9,22 +9,16 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-01-10 10:49+0000\n"
-"PO-Revision-Date: 2023-09-20 17:50+0000\n"
-"Last-Translator: kikopeiro <francisco.peiro@factorlibre.com>\n"
+"PO-Revision-Date: 2024-07-29 18:13+0000\n"
+"Last-Translator: carolinafernandez-tecnativa <carolina.fernandez@tecnativa."
+"com>\n"
 "Language-Team: Spanish (https://www.transifex.com/oca/teams/23907/es/)\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Activities"
-msgstr "Actividades"
+"X-Generator: Weblate 5.6.2\n"
 
 #. module: web_responsive
 #. odoo-javascript
@@ -32,20 +26,6 @@ msgstr "Actividades"
 #, python-format
 msgid "All"
 msgstr "Todos"
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachment counter loading..."
-msgstr "Carga del contador de archivos adjuntos..."
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachments"
-msgstr "Archivos adjuntos"
 
 #. module: web_responsive
 #. odoo-javascript
@@ -81,7 +61,7 @@ msgstr "Menú de Inicio"
 #: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
 #, python-format
 msgid "Log note"
-msgstr "Nota de registro"
+msgstr "Registrar una nota"
 
 #. module: web_responsive
 #. odoo-javascript
@@ -146,6 +126,18 @@ msgstr "Enviar mensaje"
 #, python-format
 msgid "View switcher"
 msgstr "Vista del conmutador"
+
+#, python-format
+#~ msgid "Attachment counter loading..."
+#~ msgstr "Carga del contador de archivos adjuntos..."
+
+#, python-format
+#~ msgid "Attachments"
+#~ msgstr "Archivos adjuntos"
+
+#, python-format
+#~ msgid "Activities"
+#~ msgstr "Actividades"
 
 #, python-format
 #~ msgid "Create"
