@@ -21,31 +21,10 @@ msgstr ""
 
 #. module: web_responsive
 #. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Activities"
-msgstr "Aktivitäten"
-
-#. module: web_responsive
-#. odoo-javascript
 #: code:addons/web_responsive/static/src/components/search_panel/search_panel.xml:0
 #, python-format
 msgid "All"
 msgstr "Alles"
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachment counter loading..."
-msgstr "Anhangszähler wird geladen..."
-
-#. module: web_responsive
-#. odoo-javascript
-#: code:addons/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml:0
-#, python-format
-msgid "Attachments"
-msgstr "Anhänge"
 
 #. module: web_responsive
 #. odoo-javascript
@@ -146,6 +125,18 @@ msgstr "Nachricht senden"
 #, python-format
 msgid "View switcher"
 msgstr "Ansichtsumschalter"
+
+#, python-format
+#~ msgid "Attachment counter loading..."
+#~ msgstr "Anhangszähler wird geladen..."
+
+#, python-format
+#~ msgid "Attachments"
+#~ msgstr "Anhänge"
+
+#, python-format
+#~ msgid "Activities"
+#~ msgstr "Aktivitäten"
 
 #, python-format
 #~ msgid "Create"

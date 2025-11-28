@@ -8,7 +8,7 @@
 {
     "name": "Web Responsive",
     "summary": "Responsive web client, community-supported",
-    "version": "16.0.1.2.3",
+    "version": "16.0.1.4.0",
     "category": "Website",
     "website": "https://github.com/OCA/web",
     "author": "LasLabs, Tecnativa, ITerra, Onestein, "
@@ -17,11 +17,11 @@
     "installable": True,
     "depends": ["web", "mail"],
     "development_status": "Production/Stable",
-    "maintainers": ["Yajo", "Tardo", "SplashS"],
+    "maintainers": ["Tardo", "SplashS"],
     "excludes": ["web_enterprise"],
-    "data": ["views/web.xml"],
     "assets": {
         "web.assets_backend": [
+            "/web_responsive/static/src/views/form/form_controller.esm.js",
             "/web_responsive/static/src/legacy/scss/web_responsive.scss",
             "/web_responsive/static/src/legacy/js/web_responsive.js",
             "/web_responsive/static/src/components/ui_context.esm.js",
@@ -39,6 +39,7 @@
             "/web_responsive/static/src/components/hotkey/hotkey.xml",
             "/web_responsive/static/src/components/chatter_topbar/chatter_topbar.esm.js",
             "/web_responsive/static/src/components/chatter_topbar/chatter_topbar.xml",
+            "/web_responsive/static/src/components/chatter_topbar/chatter_topbar.scss",
             "/web_responsive/static/src/components/attachment_viewer/attachment_viewer.scss",
             "/web_responsive/static/src/components/attachment_viewer/attachment_viewer.esm.js",
             "/web_responsive/static/src/components/attachment_viewer/attachment_viewer.xml",
