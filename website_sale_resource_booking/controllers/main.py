@@ -8,7 +8,6 @@ from dateutil.parser import isoparse
 from odoo import _
 from odoo.exceptions import ValidationError
 from odoo.http import request, route
-from odoo.tests import Form
 
 from ...website_sale.controllers import main
 
@@ -118,8 +117,7 @@ class WebsiteSale(main.WebsiteSale):
         when_tz_aware = isoparse(when)
         when_naive = when_tz_aware.astimezone(timezone.utc).replace(tzinfo=None)
         try:
-            with Form(booking_sudo) as booking_form:
-                booking_form.start = when_naive
+            booking_sudo.start = when_naive
         except ValidationError as error:
             url = f"/shop/booking/{index}/schedule?error={quote_plus(str(error))}"
             return request.redirect(url)
