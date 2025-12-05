@@ -75,7 +75,6 @@ patch(fonts, {
      *              }
      */
     getCssSelectors(filter) {
-        console.log(this.cacheCssSelectors[filter]);
         if (this.cacheCssSelectors[filter]) {
             return this.cacheCssSelectors[filter];
         }
@@ -118,7 +117,6 @@ patch(fonts, {
                 }
             }
         }
-        console.log(this.cacheCssSelectors[filter]);
         return this.cacheCssSelectors[filter];
     },
 });
