@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <template>
     <t t-name="sendcloud.Onboarding">
-        <t t-call="sendcloud_onboarding_panel" />
+        <t t-if="steps">
+            <t t-call="sendcloud_onboarding_panel" />
+        </t>
     </t>
 
     <t t-name="sendcloud_onboarding_panel">
