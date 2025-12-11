@@ -39,7 +39,7 @@
     </t>
 
     <t t-name="attachment_preview.AttachmentPreviewWidget">
-        <div class="attachment_preview_widget d-none" t-ref="root">
+        <div class="attachment_preview_widget d-none">
             <div class="attachment_preview_buttons">
                 <div class="button-group pull-left">
                     <button

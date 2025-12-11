@@ -12,8 +12,8 @@ export class AttachmentPreviewWidget extends Component {
             ({detail: {attachment_id, attachment_info_list}}) =>
                 this._onAttachmentPreview(attachment_id, attachment_info_list)
         );
+        Component.env.bus.addEventListener("hide_attachment_preview", this.hide);
         this.state = useState({activeIndex: 0});
-        this.rootRef = useRef("root");
         this.currentRef = useRef("current");
         this.iframeRef = useRef("iframe");
         onWillStart(async () => {
@@ -60,13 +60,11 @@ export class AttachmentPreviewWidget extends Component {
     }
 
     show() {
-        $(this.rootRef.el).removeClass("d-none");
-        Component.env.bus.trigger("shown");
+        $(".attachment_preview_widget").removeClass("d-none");
     }
 
     hide() {
-        $(this.rootRef.el).addClass("d-none");
-        Component.env.bus.trigger("hidden");
+        $(".attachment_preview_widget").addClass("d-none");
     }
 
     updatePaginator() {
