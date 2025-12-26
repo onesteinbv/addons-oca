@@ -9,6 +9,12 @@
     "category": "Website",
     "depends": ["website"],
     "data": ["templates/disable_odoo.xml"],
+    "assets": {
+        "web.assets_backend": [
+            "website_odoo_debranding/static/src/client_actions/configurator.esm.js",
+            "website_odoo_debranding/static/src/components/website_loader.esm.js",
+        ],
+    },
     "installable": True,
     "post_init_hook": "post_init_hook",
 }
