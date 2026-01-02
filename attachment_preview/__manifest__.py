@@ -25,9 +25,6 @@
             "attachment_preview/static/src/scss/attachment_preview.scss",
             "attachment_preview/static/src/xml/attachment_preview.xml",
         ],
-        "web.assets_frontend": [],
-        "web.assets_tests": [],
-        "web.qunit_suite_tests": [],
     },
     "installable": True,
 }

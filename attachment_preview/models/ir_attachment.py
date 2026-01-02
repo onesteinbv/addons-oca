@@ -8,6 +8,8 @@ import os.path
 
 from odoo import api, models
 
+from odoo.addons.mail.tools.discuss import Store
+
 _logger = logging.getLogger(__name__)
 
 
@@ -25,7 +27,6 @@ class IrAttachment(models.Model):
             for this in (
                 self.env[model].with_context(bin_size=True).browse(ids_to_browse)
             ):
-                # result[this.id] = False
                 extension = ""
                 if hasattr(this, filename_field) and this[filename_field]:
                     filename, extension = os.path.splitext(this[filename_field])
@@ -74,3 +75,13 @@ class IrAttachment(models.Model):
     @api.model
     def get_attachment_extension(self, ids):
         return self.get_binary_extension(self._name, ids, "datas", "name")
+
+    def _to_store(self, store: Store, /, *, fields=None, extra_fields=None):
+        """Adds extension in Store for attachments"""
+        res = super()._to_store(store=store, fields=fields, extra_fields=extra_fields)
+        attachment_extension = self.get_attachment_extension(self.ids)
+        for attachment in store.data.get("ir.attachment"):
+            store.data["ir.attachment"][attachment]["extension"] = (
+                attachment_extension.get(attachment[0], "")
+            )
+        return res

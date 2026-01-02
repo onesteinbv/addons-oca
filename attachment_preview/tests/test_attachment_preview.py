@@ -4,6 +4,7 @@
 import base64
 
 from odoo.addons.base.tests.common import BaseCommon
+from odoo.addons.mail.tools.discuss import Store
 
 
 class TestAttachmentPreview(BaseCommon):
@@ -28,7 +29,10 @@ class TestAttachmentPreview(BaseCommon):
         )
         res = self.env["ir.attachment"].get_attachment_extension(attachment.id)
         self.assertEqual(res, "txt")
-
+        store = Store()
+        attachment._to_store(store)
+        store_data = store.get_result()
+        self.assertIn("extension", store_data["ir.attachment"][0])
         res = self.env["ir.attachment"].get_attachment_extension(
             [attachment.id, attachment2.id]
         )
