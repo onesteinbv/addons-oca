@@ -6,6 +6,33 @@ from .common import TestHelpdeskTicketBase
 
 
 class TestHelpdeskTicketTeam(TestHelpdeskTicketBase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Model = cls.env["helpdesk.ticket.team"]
+        cls.root = cls.Model.create(
+            {
+                "name": "Root",
+            }
+        )
+        cls.child = cls.Model.create(
+            {
+                "name": "Child",
+                "parent_id": cls.root.id,
+            }
+        )
+        cls.grandchild = cls.Model.create(
+            {
+                "name": "Grandchild",
+                "parent_id": cls.child.id,
+            }
+        )
+
+    def test_complete_name_computation(self):
+        self.assertEqual(self.root.complete_name, "Root")
+        self.assertEqual(self.child.complete_name, "Root / Child")
+        self.assertEqual(self.grandchild.complete_name, "Root / Child / Grandchild")
+
     @users("helpdesk_mgmt-user_own")
     def test_helpdesk_ticket_user_own(self):
         tickets = self.env["helpdesk.ticket"].search([])
@@ -73,3 +100,18 @@ class TestHelpdeskTicketTeam(TestHelpdeskTicketBase):
             2,
             "Helpdesk Ticket: Helpdesk ticket team should have two ticket to do.",
         )
+
+    def test_dashboard_buttons(self):
+        self.env["helpdesk.ticket"].search([]).write({"active": False})
+        dashboard = self.env["helpdesk.ticket.team"]._retrieve_dashboard()
+        self.assertEqual(dashboard[0]["value"], 0)
+        self.assertEqual(dashboard[1]["value"], 0)
+        ticket = self._create_ticket(self.env["helpdesk.ticket.team"])
+        dashboard = self.env["helpdesk.ticket.team"]._retrieve_dashboard()
+        self.assertEqual(dashboard[0]["value"], 1)
+        self.assertEqual(dashboard[1]["value"], 1)
+        ticket.team_id = self.team_a
+        ticket.flush_recordset()
+        dashboard = self.env["helpdesk.ticket.team"]._retrieve_dashboard()
+        self.assertEqual(dashboard[0]["value"], 0)
+        self.assertEqual(dashboard[1]["value"], 1)

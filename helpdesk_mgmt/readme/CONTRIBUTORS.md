@@ -18,6 +18,8 @@
   - Víctor Martínez
   - Carolina Fernandez
   - Carlos Roca
+  - Juan Carlos Oñate
+  - David Bañón Gil
 - [ID42 Sistemas](https://www.id42.com.br):
   - Marcel Savegnago
   - Eduardo Aparício
@@ -25,6 +27,7 @@
   - Vicent Cubells
 - [Solvos](https://www.solvos.es):
   - David Alonso
+  - Dante Pereyra
 - [XCG Consulting](https://xcg-consulting.fr):
   - Houzéfa Abbasbhay
 - [Kencove](https://kencove.com):
