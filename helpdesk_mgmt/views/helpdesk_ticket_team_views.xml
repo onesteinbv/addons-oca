@@ -48,6 +48,15 @@
                             <field name="name" placeholder="Helpdesk Team name..." />
                         </h1>
                         <div name="options_active" />
+                        <label
+                            for="parent_id"
+                            class="oe_edit_only"
+                            string="Parent Team"
+                        />
+                        <h4>
+                            <field name="parent_id" placeholder="Parent Team name..." />
+                        </h4>
+                        <div name="options_active" />
                     </div>
                     <group>
                         <group name="left">
@@ -62,24 +71,31 @@
                                     required="0"
                                 />
                                 <div
-                                    class="oe_edit_only oe_inline"
+                                    class="oe_inline"
                                     name="edit_alias"
                                     style="display: inline;"
                                 >
-                                    <field name="alias_name" class="oe_inline" />
-@                                    <field
-                                    name="alias_domain"
-                                    class="oe_inline"
-                                    readonly="1"
-                                />
+                                    <div class="oe_edit_only" dir="ltr">
+                                        <field
+                                        name="alias_name"
+                                        placeholder="alias"
+                                        class="oe_inline"
+                                    />@
+                                        <field
+                                        name="alias_domain_id"
+                                        class="oe_inline"
+                                        placeholder="e.g. mycompany.com"
+                                        options="{'no_create': True, 'no_open': True}"
+                                    />
+                                    </div>
                                     <button
-                                    icon="fa-arrow-right"
-                                    type="action"
-                                    name="%(base_setup.action_general_configuration)d"
-                                    string="Configure domain name"
-                                    class="btn-link"
-                                    invisible="alias_domain"
-                                />
+                                        icon="oi-arrow-right"
+                                        type="action"
+                                        name="%(base_setup.action_general_configuration)d"
+                                        string="Choose or configure a custom domain"
+                                        class="p-0 btn-link"
+                                        invisible="alias_domain_id"
+                                    />
                                 </div>
                             </div>
                             <field
@@ -93,6 +109,7 @@
                                 groups="base.group_multi_company"
                             />
                             <field name="show_in_portal" />
+                            <field name="category_ids" widget="many2many_tags" />
                         </group>
                         <group name="right" />
                     </group>
