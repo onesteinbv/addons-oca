@@ -2,7 +2,7 @@ from odoo import fields, models
 from odoo.exceptions import UserError
 
 
-class helpdeskTicketDuplicateWizard(models.TransientModel):
+class HelpdeskTicketDuplicateWizard(models.TransientModel):
     _name = "helpdesk.ticket.duplicate.wizard"
     _description = "helpdesk Ticket Duplicate Wizard"
 
