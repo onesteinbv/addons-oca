@@ -4,6 +4,7 @@ from freezegun import freeze_time
 
 from odoo import Command
 from odoo.tests import Form, tagged
+from odoo.tools import mute_logger
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 
@@ -96,6 +97,36 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
                 "match_partner": True,
                 "match_partner_ids": [],
                 "line_ids": [(0, 0, {"account_id": cls.current_assets_account.id})],
+            }
+        )
+        cls.rule_3 = cls.env["account.reconcile.model"].create(
+            {
+                "name": "Line with Bank Fees",
+                "rule_type": "writeoff_suggestion",
+                "match_label": "contains",
+                "match_label_param": "BRT",
+                "line_ids": [
+                    Command.create(
+                        {
+                            "label": "Due amount",
+                            "account_id": cls.company_data[
+                                "default_account_deferred_expense"
+                            ].id,
+                            "amount_type": "regex",
+                            "amount_string": r"BRT: ([\d,.]+)",
+                        }
+                    ),
+                    Command.create(
+                        {
+                            "label": "Bank Fees",
+                            "account_id": cls.company_data[
+                                "default_tax_account_receivable"
+                            ].id,
+                            "amount_type": "percentage",
+                            "amount_string": "100",
+                        }
+                    ),
+                ],
             }
         )
 
@@ -812,6 +843,7 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
             },
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_larger_invoice_auto_reconcile(self):
         """Test auto reconciliation with an invoice with larger amount than the
         statement line's, for rules without write-offs."""
@@ -1048,6 +1080,7 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
             },
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_invoice_matching_rule_no_partner(self):
         """Tests that a statement line without any partner can be matched to the
         right invoice if they have the same payment reference.
@@ -1286,6 +1319,7 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
             },
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_payment_similar_communications(self):
         def create_payment_line(amount, memo, partner):
             payment = self.env["account.payment"].create(
@@ -1339,6 +1373,13 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
                 },
             },
         )
+        self.rule_1.unique_matching = True
+        self._check_statement_matching(
+            self.rule_1,
+            {
+                self.bank_line_1: {},
+            },
+        )
 
     def test_no_amount_check_keep_first(self):
         """In case the reconciliation model doesn't check the total amount of the
@@ -1361,6 +1402,14 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
                     "model": self.rule_1,
                     "status": "write_off",
                 },
+            },
+        )
+        self.rule_1.unique_matching = True
+        self._check_statement_matching(
+            self.rule_1,
+            {
+                self.bank_line_1: {},
+                self.bank_line_2: {},
             },
         )
 
@@ -1621,3 +1670,65 @@ class TestReconciliationMatchingRules(AccountTestInvoicingCommon):
                     },
                 },
             )
+
+    def test_regex_matching_simple(self):
+        lines = self.rule_3._get_write_off_move_lines_dict(
+            90.0,
+            False,
+            label="R:9772938 10/07 AX 9415116318 T:5 BRT: 100.00 C/ croip",
+        )
+        self.assertEqual(len(lines), 2)
+        for line in lines:
+            if (
+                line["account_id"]
+                == self.company_data["default_account_deferred_expense"].id
+            ):
+                due_line = line
+            elif (
+                line["account_id"]
+                == self.company_data["default_tax_account_receivable"].id
+            ):
+                tax_line = line
+        self.assertTrue(due_line)
+        self.assertTrue(tax_line)
+        self.assertEqual(due_line["debit"], 100.0)
+        self.assertEqual(tax_line["credit"], 10.0)
+
+    def test_regex_matching_thousand_sep(self):
+        lines = self.rule_3._get_write_off_move_lines_dict(
+            90.0,
+            False,
+            label="R:9772938 10/07 AX 9415116318 T:5 BRT: 1,234.56 C/ croip",
+        )
+        for line in lines:
+            if (
+                line["account_id"]
+                == self.company_data["default_account_deferred_expense"].id
+            ):
+                due_line = line
+        self.assertTrue(due_line)
+        self.assertEqual(due_line["debit"], 1234.56)
+
+    def test_regex_matching_comma_decimal(self):
+        lines = self.rule_3._get_write_off_move_lines_dict(
+            90.0,
+            False,
+            label="R:9772938 10/07 AX 9415116318 T:5 BRT: 1234,56 C/ croip",
+        )
+        for line in lines:
+            if (
+                line["account_id"]
+                == self.company_data["default_account_deferred_expense"].id
+            ):
+                due_line = line
+        self.assertTrue(due_line)
+        self.assertEqual(due_line["debit"], 1234.56)
+
+    def test_regex_not_matched(self):
+        lines = self.rule_3._get_write_off_move_lines_dict(
+            90.0,
+            False,
+            label="R:9772938 10/07 AX 9415116318 T:5 BRT: XX100.00 C/ croip",
+        )
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0]["debit"], 90.0)
