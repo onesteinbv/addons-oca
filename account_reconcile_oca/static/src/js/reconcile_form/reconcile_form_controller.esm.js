@@ -1,7 +1,7 @@
-import {FetchRecordError} from "@web/model/relational_model/errors";
 import {FormController} from "@web/views/form/form_controller";
 import {useService} from "@web/core/utils/hooks";
 import {useViewButtons} from "@web/views/view_button/view_button_hook";
+import {FetchRecordError} from "@web/model/relational_model/errors";
 const {useRef} = owl;
 
 export class ReconcileFormController extends FormController {

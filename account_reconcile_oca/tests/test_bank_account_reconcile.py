@@ -2,14 +2,14 @@ import time
 
 from odoo import Command
 from odoo.tests import Form, tagged
+from odoo.tools import mute_logger
 
 from odoo.addons.account_reconcile_model_oca.tests.common import (
-    TestAccountReconciliationCommon,
+    TestAccountReconciliationCommon as TestAccountReconciliationModelCommon,
 )
 
 
-@tagged("post_install", "-at_install")
-class TestReconciliationWidget(TestAccountReconciliationCommon):
+class TestAccountReconciliationCommon(TestAccountReconciliationModelCommon):
     @classmethod
     def _setup_context(cls):
         return {**cls.env.context, "_test_account_reconcile_oca": True}
@@ -88,6 +88,9 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             }
         )
 
+
+@tagged("post_install", "-at_install")
+class TestReconciliationWidget(TestAccountReconciliationCommon):
     # Testing reconcile action
 
     def test_reconcile_invoice_currency(self):
@@ -121,6 +124,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             self.assertFalse(f.add_account_move_line_id)
             self.assertTrue(f.can_reconcile)
 
+    @mute_logger("odoo.models.unlink")
     def test_manual_line_with_currency(self):
         bank_stmt = self.acc_bank_stmt_model.create(
             {
@@ -156,6 +160,67 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         self.assertEqual(receivable_line.currency_id.id, self.currency_usd_id)
         self.assertEqual(receivable_line.amount_currency, -100)
         self.assertEqual(receivable_line.balance, -50)
+
+    @mute_logger("odoo.models.unlink")
+    def test_two_manual_lines_with_currency(self):
+        """We want to test the reconcile widget for bank statements
+        on manual lines with foreign currency.
+        We enforce the currency rate to be sure that the amounts are correct
+        """
+        self.env["res.currency.rate"].create(
+            {
+                "currency_id": self.env.ref("base.USD").id,
+                "name": time.strftime("%Y-07-15"),
+                "rate": 2,
+            }
+        )
+        bank_stmt = self.acc_bank_stmt_model.create(
+            {
+                "journal_id": self.bank_journal_euro.id,
+                "date": time.strftime("%Y-07-15"),
+                "name": "test",
+            }
+        )
+        bank_stmt_line = self.acc_bank_stmt_line_model.create(
+            {
+                "name": "testLine",
+                "journal_id": self.bank_journal_euro.id,
+                "statement_id": bank_stmt.id,
+                "amount": 50,
+                "amount_currency": 100,
+                "foreign_currency_id": self.currency_usd_id,
+                "date": time.strftime("%Y-07-15"),
+            }
+        )
+        receivable_acc = self.company_data["default_account_receivable"]
+        expense_acc = self.company_data["default_account_expense"]
+        with Form(
+            bank_stmt_line,
+            view="account_reconcile_oca.bank_statement_line_form_reconcile_view",
+        ) as f:
+            self.assertFalse(f.can_reconcile)
+            f.manual_reference = "reconcile_auxiliary;1"
+            f.manual_account_id = receivable_acc
+            f.manual_amount_in_currency = -40
+            self.assertFalse(f.can_reconcile)
+            f.manual_reference = "reconcile_auxiliary;2"
+            f.manual_account_id = expense_acc
+            self.assertTrue(f.can_reconcile)
+        bank_stmt_line.reconcile_bank_line()
+        receivable_line = bank_stmt_line.line_ids.filtered(
+            lambda line: line.account_id == receivable_acc
+        )
+        self.assertEqual(receivable_line.currency_id.id, self.currency_usd_id)
+        self.assertEqual(receivable_line.amount_currency, -40)
+        self.assertEqual(receivable_line.balance, -20)
+        matched_line = False
+        for line in bank_stmt_line.reconcile_data_info["data"]:
+            if line["id"] == receivable_line.id:
+                matched_line = True
+                self.assertEqual(line["currency_amount"], -40)
+                self.assertEqual(line["amount"], -20)
+                break
+        self.assertEqual(matched_line, True)
 
     def test_reconcile_invoice_reconcile_full(self):
         """
@@ -205,6 +270,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             f.manual_reference = f"account.move.line;{receivable1.id}"
             self.assertEqual(-100, f.manual_amount)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_unreconcile(self):
         """
         We want to test the reconcile widget for bank statements on invoices.
@@ -265,6 +331,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             )
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_partial(self):
         """
         We want to partially reconcile two invoices from a single payment.
@@ -324,6 +391,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         self.assertEqual(inv1.amount_residual_signed, 30)
         self.assertEqual(inv2.amount_residual_signed, 70)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_partial_supplier(self):
         """
         We want to partially reconcile two invoices from a single payment.
@@ -387,6 +455,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         self.assertEqual(inv1.amount_residual_signed, -30)
         self.assertEqual(inv2.amount_residual_signed, -70)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_model(self):
         """
         We want to test what happens when we select an reconcile model to fill a
@@ -427,6 +496,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             )
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_model_tax_included(self):
         """
         We want to test what happens when we select an reconcile model to fill a
@@ -476,6 +546,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             )
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_model(self):
         """
         We want to test what happens when we select a reconcile model to fill a
@@ -532,6 +603,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         )
         self.assertEqual(0, inv1.amount_residual)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_rule_on_create(self):
         """
         Testing the fill of the bank statment line with
@@ -569,6 +641,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         )
         self.assertTrue(bank_stmt_line.is_reconciled)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_keep(self):
         """
         We want to test how the keep mode works, keeping the original move lines.
@@ -625,6 +698,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         self.assertTrue(reconcile_move.reversal_move_ids)
         self.assertFalse(bank_stmt_line.is_reconciled)
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_model_with_foreign_currency(self):
         """
         We want to test what happens when we select a reconcile model to fill a
@@ -678,6 +752,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
 
     # Testing to check functionality
 
+    @mute_logger("odoo.models.unlink")
     def test_reconcile_invoice_to_check_reconciled(self):
         """
         We want to test the reconcile widget for bank statements on invoices.
@@ -1099,6 +1174,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             parent_partner,
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_journal_foreign_currency(self):
         inv1 = self.create_invoice(currency_id=self.currency_usd_id, invoice_amount=100)
         bank_stmt = self.acc_bank_stmt_model.create(
@@ -1140,6 +1216,7 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
             ).full_reconcile_id
         )
 
+    @mute_logger("odoo.models.unlink")
     def test_journal_foreign_currency_change(self):
         cny = self.env.ref("base.CNY")
         cny.write({"active": True})
@@ -1202,8 +1279,12 @@ class TestReconciliationWidget(TestAccountReconciliationCommon):
         self.assertEqual(len(bank_stmt_line.reconcile_data_info["data"]), 3)
         exchange_line = bank_stmt_line.reconcile_data_info["data"][-1]
         self.assertEqual(exchange_line["amount"], 61.42)
+        self.assertEqual(exchange_line["currency_amount"], 0)
         bank_stmt_line.reconcile_bank_line()
         self.assertEqual(inv1.payment_state, "paid")
+        exchange_line = bank_stmt_line.reconcile_data_info["data"][-1]
+        self.assertEqual(exchange_line["amount"], 61.42)
+        self.assertEqual(exchange_line["currency_amount"], 0)
 
     def test_invoice_foreign_currency_change(self):
         self.env["res.currency.rate"].create(

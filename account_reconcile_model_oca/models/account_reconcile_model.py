@@ -3,11 +3,22 @@ from collections import defaultdict
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import Command, fields, models, tools
+from odoo import Command, api, fields, models, tools
 
 
 class AccountReconcileModel(models.Model):
     _inherit = "account.reconcile.model"
+
+    unique_matching = fields.Boolean(
+        string="Unique match",
+        help="If this box is checked, counterparts will only be suggested if only "
+        "one possible counterpart is found.",
+    )
+
+    @api.onchange("rule_type")
+    def _onchange_rule_type(self):
+        if self.rule_type != "invoice_matching":
+            self.unique_matching = False
 
     ####################################################
     # RECONCILIATION PROCESS
@@ -105,7 +116,18 @@ class AccountReconcileModel(models.Model):
         base_line_dict["tax_tag_ids"] = [(6, 0, res["base_tags"])]
         return new_aml_dicts
 
-    def _get_write_off_move_lines_dict(self, residual_balance, partner_id):
+    @api.model
+    def _str2float(self, amount_string):
+        """Convert a string to float"""
+        # Remove thousands separator
+        seps = [" ", ",", "."]
+        for sep in seps:
+            amount_string = amount_string[:-3].replace(sep, "") + amount_string[-3:]
+        # Use dot as decimal separator
+        amount_string = amount_string.replace(",", ".")
+        return float(amount_string)
+
+    def _get_write_off_move_lines_dict(self, residual_balance, partner_id, label=None):
         """Get move.lines dict corresponding to the reconciliation model's write-off
         lines.
         :param residual_balance: The residual balance of the account on the manual
@@ -131,6 +153,15 @@ class AccountReconcileModel(models.Model):
                 balance = currency.round(
                     line.amount * (1 if residual_balance > 0.0 else -1)
                 )
+            elif line.amount_type == "regex":
+                m = re.findall(line.amount_string, label or "")
+                if m:
+                    extracted_amount = self._str2float(m[0])
+                    balance = currency.round(
+                        extracted_amount * (1 if residual_balance > 0.0 else -1)
+                    )
+                else:
+                    balance = 0.0
             else:
                 balance = 0.0
 
@@ -490,7 +521,10 @@ class AccountReconcileModel(models.Model):
                 all_params + [tuple(numerical_tokens + exact_tokens)],
             )
             candidate_ids = [r[0] for r in self._cr.fetchall()]
-            if candidate_ids:
+            if candidate_ids and (
+                not self.unique_matching
+                or (self.unique_matching and len(candidate_ids) == 1)
+            ):
                 return {
                     "allow_auto_reconcile": True,
                     "amls": self.env["account.move.line"].browse(candidate_ids),
@@ -542,7 +576,9 @@ class AccountReconcileModel(models.Model):
             amls = self.env["account.move.line"].search(
                 aml_domain, order=get_order_by_clause()
             )
-        if amls:
+        if amls and (
+            not self.unique_matching or (self.unique_matching and len(amls) == 1)
+        ):
             return {
                 "allow_auto_reconcile": False,
                 "amls": amls,

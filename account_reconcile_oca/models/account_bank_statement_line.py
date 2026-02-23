@@ -1,4 +1,5 @@
 # Copyright 2023 Dixmit
+# Copyright 2025 Jacques-Etienne Baudoux (BCIM) <je@bcim.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from collections import defaultdict
@@ -9,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from odoo import Command, _, api, fields, models, tools
 from odoo.exceptions import UserError
 from odoo.fields import first
-from odoo.tools import LazyTranslate, float_compare, float_is_zero
+from odoo.tools import LazyTranslate, float_compare, float_is_zero, groupby
 
 _lt = LazyTranslate(__name__, default_lang="en_US")
 
@@ -42,6 +43,7 @@ class AccountBankStatementLine(models.Model):
         store=False,
         default=False,
         prefetch=False,
+        domain=[("deprecated", "=", False)],
     )
     manual_partner_id = fields.Many2one(
         "res.partner",
@@ -78,6 +80,12 @@ class AccountBankStatementLine(models.Model):
         prefetch=False,
         currency_field="manual_in_currency_id",
     )
+    previous_manual_amount_in_currency = fields.Monetary(
+        store=False,
+        default=False,
+        prefetch=False,
+        currency_field="manual_in_currency_id",
+    )
     manual_exchange_counterpart = fields.Boolean(
         store=False,
     )
@@ -87,7 +95,11 @@ class AccountBankStatementLine(models.Model):
         store=False,
         default=False,
         prefetch=False,
-        domain=[("rule_type", "=", "writeoff_button")],
+        domain="""
+        [('rule_type', '=', 'writeoff_button'),
+        '|',
+        ('match_journal_ids', '=', False), ('match_journal_ids', '=', journal_id)]
+        """,
     )
     manual_name = fields.Char(store=False, default=False, prefetch=False)
     manual_amount = fields.Monetary(
@@ -385,6 +397,7 @@ class AccountBankStatementLine(models.Model):
             "currency_id"
         ] != line.get("line_currency_id")
         self.manual_amount_in_currency = line.get("currency_amount")
+        self.previous_manual_amount_in_currency = line.get("currency_amount")
         self.manual_name = line["name"]
         self.manual_exchange_counterpart = line.get("is_exchange_counterpart", False)
         self.manual_partner_id = line.get("partner_id") and line["partner_id"][0]
@@ -403,10 +416,6 @@ class AccountBankStatementLine(models.Model):
         data = self.reconcile_data_info.get("data", [])
         new_data = []
         related_move_line_id = False
-        for line in data:
-            if line.get("reference") == self.manual_reference:
-                related_move_line_id = line.get("id")
-                break
         for line in data:
             if (
                 self.manual_delete
@@ -430,21 +439,6 @@ class AccountBankStatementLine(models.Model):
         )
         self.can_reconcile = self.reconcile_data_info.get("can_reconcile", False)
 
-    @api.onchange("manual_amount_in_currency")
-    def _onchange_manual_amount_in_currency(self):
-        if (
-            self.manual_line_id.exists()
-            and self.manual_line_id
-            and self.manual_kind != "liquidity"
-        ):
-            self.manual_amount = self.manual_in_currency_id._convert(
-                self.manual_amount_in_currency,
-                self.company_id.currency_id,
-                self.company_id,
-                self.manual_line_id.date,
-            )
-        self._onchange_manual_reconcile_vals()
-
     def _get_manual_reconcile_vals(self):
         vals = {
             "name": self.manual_name,
@@ -463,6 +457,7 @@ class AccountBankStatementLine(models.Model):
             "credit": -self.manual_amount if self.manual_amount < 0 else 0.0,
             "debit": self.manual_amount if self.manual_amount > 0 else 0.0,
             "analytic_distribution": self.analytic_distribution,
+            "currency_amount": self.manual_amount_in_currency,
         }
         liquidity_lines, _suspense_lines, _other_lines = self._seek_for_lines()
         if self.manual_line_id and self.manual_line_id.id not in liquidity_lines.ids:
@@ -484,11 +479,35 @@ class AccountBankStatementLine(models.Model):
         "manual_name",
         "manual_amount",
         "analytic_distribution",
+        "manual_amount_in_currency",
     )
     def _onchange_manual_reconcile_vals(self):
         self.ensure_one()
         data = self.reconcile_data_info.get("data", [])
         new_data = []
+        if (
+            self.manual_in_currency_id
+            and float_compare(
+                self.manual_amount_in_currency,
+                self.previous_manual_amount_in_currency,
+                precision_rounding=self.manual_in_currency_id.rounding,
+            )
+            != 0
+        ):
+            in_currency_date = self.date
+            if (
+                self.manual_line_id.exists()
+                and self.manual_line_id
+                and self.manual_kind != "liquidity"
+            ):
+                in_currency_date = self.manual_line_id.date
+            self.manual_amount = self.manual_in_currency_id._convert(
+                self.manual_amount_in_currency,
+                self.manual_currency_id,
+                self.company_id,
+                in_currency_date,
+            )
+        self.previous_manual_amount_in_currency = self.manual_amount_in_currency
         for line in data:
             if line["reference"] == self.manual_reference:
                 if self._check_line_changed(line):
@@ -511,6 +530,7 @@ class AccountBankStatementLine(models.Model):
                 )
                 line.update(
                     {
+                        "currency_amount": self.manual_amount_in_currency,
                         "amount": amount,
                         "credit": -amount if amount < 0 else 0.0,
                         "debit": amount if amount > 0 else 0.0,
@@ -532,7 +552,7 @@ class AccountBankStatementLine(models.Model):
     @api.depends("reconcile_data", "is_reconciled")
     def _compute_reconcile_data_info(self):
         for record in self:
-            if record.reconcile_data:
+            if record.reconcile_data and not record.is_reconciled:
                 record.reconcile_data_info = record.reconcile_data
             else:
                 record.reconcile_data_info = record._default_reconcile_data(
@@ -570,7 +590,7 @@ class AccountBankStatementLine(models.Model):
             reconcile_model._get_partner_from_mapping(self) or self._retrieve_partner()
         )
         for line in reconcile_model._get_write_off_move_lines_dict(
-            -liquidity_amount, partner.id
+            -liquidity_amount, partner.id, label=self.payment_ref
         ):
             new_line = line.copy()
             new_line["partner_id"] = (
@@ -699,6 +719,7 @@ class AccountBankStatementLine(models.Model):
                                 "other",
                                 from_unreconcile=False,
                                 move=True,
+                                is_reconciled=self.is_reconciled,
                             )
                             data += lines
                         continue
@@ -740,7 +761,10 @@ class AccountBankStatementLine(models.Model):
                     data += lines
             else:
                 reconcile_auxiliary_id, lines = self._get_reconcile_line(
-                    line, "other", from_unreconcile=False
+                    line,
+                    "other",
+                    from_unreconcile=False,
+                    is_reconciled=self.is_reconciled,
                 )
                 data += lines
 
@@ -953,53 +977,75 @@ class AccountBankStatementLine(models.Model):
             "_test_account_reconcile_oca"
         ):
             return result
-        models = self.env["account.reconcile.model"].search(
-            [
-                ("rule_type", "in", ["invoice_matching", "writeoff_suggestion"]),
-                ("company_id", "in", result.company_id.ids),
-                ("auto_reconcile", "=", True),
-            ]
-        )
-        for record in result:
-            res = models._apply_rules(record, record._retrieve_partner())
-            if not res:
-                continue
-            liquidity_lines, suspense_lines, other_lines = record._seek_for_lines()
-            data = []
-            for line in liquidity_lines:
-                reconcile_auxiliary_id, lines = record._get_reconcile_line(
-                    line,
-                    "liquidity",
-                    move=True,
-                )
-                data += lines
-            reconcile_auxiliary_id = 1
-            if res.get("status", "") == "write_off":
-                data = record._recompute_suspense_line(
-                    *record._reconcile_data_by_model(
-                        data, res["model"], reconcile_auxiliary_id
-                    ),
-                    self.manual_reference,
-                )
-            elif res.get("amls"):
-                amount = self.amount_currency or self.amount
-                for line in res.get("amls", []):
-                    reconcile_auxiliary_id, line_datas = record._get_reconcile_line(
-                        line, "other", is_counterpart=True, max_amount=amount, move=True
-                    )
-                    amount -= sum(line_data.get("amount") for line_data in line_datas)
-                    data += line_datas
-                data = record._recompute_suspense_line(
-                    data,
-                    reconcile_auxiliary_id,
-                    self.manual_reference,
-                )
-            if not data.get("can_reconcile"):
-                continue
-            getattr(record, f"_reconcile_bank_line_{record.journal_id.reconcile_mode}")(
-                self._prepare_reconcile_line_data(data["data"])
-            )
+        result._auto_reconcile()
         return result
+
+    def _auto_reconcile(self):
+        """Try to auto reconcile records that are not yet reconciled"""
+        non_reconciled = self.filtered(lambda rec: not rec.is_reconciled)
+        lines_by_journal = groupby(non_reconciled, key=lambda r: r.journal_id)
+        for journal, ilines in lines_by_journal:
+            models = self.env["account.reconcile.model"].search(
+                [
+                    (
+                        "rule_type",
+                        "in",
+                        ["invoice_matching", "writeoff_suggestion"],
+                    ),
+                    ("company_id", "in", journal.company_id.ids),
+                    ("auto_reconcile", "=", True),
+                    "|",
+                    ("match_journal_ids", "=", False),
+                    ("match_journal_ids", "in", journal.id),
+                ]
+            )
+            for record in ilines:
+                record._do_auto_reconcile(models)
+
+    def _do_auto_reconcile(self, models):
+        self.ensure_one()
+        if self.is_reconciled:
+            # In case the method is run asynchronously, the record could have
+            # been already reconciled
+            return
+        res = models._apply_rules(self, self._retrieve_partner())
+        if not res:
+            return
+        liquidity_lines, suspense_lines, other_lines = self._seek_for_lines()
+        data = []
+        for line in liquidity_lines:
+            reconcile_auxiliary_id, lines = self._get_reconcile_line(
+                line,
+                "liquidity",
+                move=True,
+            )
+            data += lines
+        reconcile_auxiliary_id = 1
+        if res.get("status", "") == "write_off":
+            data = self._recompute_suspense_line(
+                *self._reconcile_data_by_model(
+                    data, res["model"], reconcile_auxiliary_id
+                ),
+                self.manual_reference,
+            )
+        elif res.get("amls"):
+            amount = self.amount_currency or self.amount
+            for line in res.get("amls", []):
+                reconcile_auxiliary_id, line_datas = self._get_reconcile_line(
+                    line, "other", is_counterpart=True, max_amount=amount, move=True
+                )
+                amount -= sum(line_data.get("amount") for line_data in line_datas)
+                data += line_datas
+            data = self._recompute_suspense_line(
+                data,
+                reconcile_auxiliary_id,
+                self.manual_reference,
+            )
+        if not data.get("can_reconcile"):
+            return
+        getattr(self, f"_reconcile_bank_line_{self.journal_id.reconcile_mode}")(
+            self._prepare_reconcile_line_data(data["data"])
+        )
 
     def _synchronize_to_moves(self, changed_fields):
         """We want to avoid to change stuff (mainly amounts ) in accounting entries
@@ -1159,6 +1205,7 @@ class AccountBankStatementLine(models.Model):
         from_unreconcile=False,
         reconcile_auxiliary_id=False,
         move=False,
+        is_reconciled=False,
     ):
         new_vals = super()._get_reconcile_line(
             line,
@@ -1167,6 +1214,7 @@ class AccountBankStatementLine(models.Model):
             max_amount=max_amount,
             from_unreconcile=from_unreconcile,
             move=move,
+            is_reconciled=is_reconciled,
         )
         rates = []
         for vals in new_vals:
