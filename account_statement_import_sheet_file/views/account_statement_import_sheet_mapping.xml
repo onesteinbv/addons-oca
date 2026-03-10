@@ -15,7 +15,7 @@
         </field>
     </record>
     <record id="account_statement_import_sheet_mapping_tree" model="ir.ui.view">
-        <field name="name">account.statement.import.sheet.mapping.list</field>
+        <field name="name">account.statement.import.sheet.mapping.tree</field>
         <field name="model">account.statement.import.sheet.mapping</field>
         <field name="arch" type="xml">
             <form>
@@ -45,10 +45,11 @@
                                 class="alert alert-warning"
                                 role="alert"
                                 invisible="not no_header"
+                                colspan="2"
                             >
-                                <span
-                                class="fa fa-info-circle"
-                            /> indicate the column number in the Columns section. The first column is 0.
+                                <span class="fa fa-info-circle">
+                                    indicate the column number in the Columns section. The first column is 0.
+                                </span>
                             </div>
                         </group>
                         <group invisible="not debit_credit_column">
@@ -65,11 +66,9 @@
                     <group string="Columns">
                         <group colspan="2" col="2">
                             <div class="alert alert-info" role="alert" colspan="2">
-                                <span
-                                class="fa fa-info-circle"
-                            /> Add the column names or column number (when the file has no header).
-                                You can concatenate multiple columns in the file into the same field, indicating the
-                                column names or numbers separated by comma.
+                                <span class="fa fa-info-circle">
+                                    Add the column names or column number (when the file has no header). You can concatenate multiple columns in the file into the same field, indicating the column names or numbers separated by comma.
+                                </span>
                             </div>
                         </group>
                         <group>
@@ -78,8 +77,8 @@
                             <field name="amount_type" />
                             <field
                                 name="amount_column"
-                                invisible="amount_type != 'simple_value'"
-                                required="amount_type == 'simple_value'"
+                                invisible="amount_type == 'distinct_credit_debit'"
+                                required="amount_type != 'distinct_credit_debit'"
                             />
 
                             <field
@@ -92,15 +91,15 @@
                                 invisible="amount_type != 'distinct_credit_debit'"
                                 required="amount_type == 'distinct_credit_debit'"
                             />
+                            <field name="amount_inverse_sign" />
+                            <field name="balance_column" />
+                            <field name="original_currency_column" />
+                            <field name="original_amount_column" />
                             <field
                                 name="debit_credit_column"
                                 invisible="amount_type != 'absolute_value'"
                                 required="amount_type == 'absolute_value'"
                             />
-                            <field name="amount_inverse_sign" />
-                            <field name="balance_column" />
-                            <field name="original_currency_column" />
-                            <field name="original_amount_column" />
                             <field name="transaction_id_column" />
                             <field name="description_column" />
                             <field name="notes_column" />

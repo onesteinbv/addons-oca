@@ -2,7 +2,7 @@
 # Copyright 2020 CorporateHub (https://corporatehub.eu)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -27,6 +27,9 @@ class AccountStatementImportSheetMapping(models.Model):
         string="Decimals Separator",
         selection=[("dot", "dot (.)"), ("comma", "comma (,)"), ("none", "none")],
         default="comma",
+        help="When the separator is 'none', the value will be shifted according "
+        "to the currency decimals. For example, 12345 will be converted to "
+        "123.45",
     )
     file_encoding = fields.Selection(
         string="Encoding",
@@ -194,11 +197,13 @@ class AccountStatementImportSheetMapping(models.Model):
         for item in self:
             if item.amount_type == "simple_value" and not item.amount_column:
                 raise ValidationError(
-                    _("Use amount_column if you have set Amount type = 'Single value'")
+                    self.env._(
+                        "Use amount_column if you have set Amount type = 'Single value'"
+                    )
                 )
             elif item.amount_type == "absolute_value" and not item.debit_credit_column:
                 raise ValidationError(
-                    _(
+                    self.env._(
                         "Use debit_credit_column if you have set "
                         "Amount type = 'Absolute value'"
                     )
@@ -207,7 +212,7 @@ class AccountStatementImportSheetMapping(models.Model):
                 not item.amount_debit_column or not item.amount_credit_column
             ):
                 raise ValidationError(
-                    _(
+                    self.env._(
                         "Use amount_debit_column and amount_credit_column if you "
                         "have set Amount type = 'Distinct Credit/debit Column'"
                     )
@@ -231,14 +236,7 @@ class AccountStatementImportSheetMapping(models.Model):
     def _check_columns(self):
         for mapping in self:
             if mapping.offset_column < 0:
-                raise ValidationError(_("Offsets cannot be negative"))
-
-    @api.onchange("amount_type")
-    def _clear_amount_columns(self):
-        self.amount_column = False
-        self.debit_credit_column = False
-        self.amount_debit_column = False
-        self.amount_credit_column = False
+                raise ValidationError(self.env._("Offsets cannot be negative"))
 
     def _get_float_separators(self):
         self.ensure_one()
