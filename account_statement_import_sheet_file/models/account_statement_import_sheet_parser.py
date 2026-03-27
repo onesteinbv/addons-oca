@@ -10,7 +10,7 @@ import re
 from collections.abc import Iterable
 from datetime import datetime
 from decimal import Decimal
-from io import BytesIO,StringIO
+from io import BytesIO, StringIO
 from os import path
 
 from odoo import api, models
@@ -20,6 +20,7 @@ _logger = logging.getLogger(__name__)
 
 try:
     from csv import reader
+
     import openpyxl
 except (OSError, ImportError) as err:  # pragma: no cover
     _logger.error(err)
@@ -158,7 +159,7 @@ class AccountStatementImportSheetParser(models.TransientModel):
             )
             sheet = workbook.active
             csv_or_xlsx = (workbook, sheet)
-        except Exception as e:
+        except Exception:
             csv_options = {}
             csv_delimiter = mapping._get_column_delimiter_character()
             if csv_delimiter:
@@ -384,7 +385,7 @@ class AccountStatementImportSheetParser(models.TransientModel):
             for row_num in range(label_line + 1, footer_line + 1):
                 values = []
                 for col_index in range(
-                        mapping.offset_column + 1, max_col + 1
+                    mapping.offset_column + 1, max_col + 1
                 ):  # +1 because openpyxl is 1-based
                     cell = sheet.cell(row_num, col_index)
                     cell_value = cell.value

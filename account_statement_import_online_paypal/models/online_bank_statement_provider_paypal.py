@@ -439,7 +439,7 @@ class OnlineBankStatementProviderPayPal(models.Model):
                         ),
                         data["transaction_details"],
                     )
-                    
+
                     transactions += list(
                         filter(
                             lambda transaction: interval_start
