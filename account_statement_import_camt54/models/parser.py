@@ -47,12 +47,12 @@ class CamtParser(models.AbstractModel):
             ) from None
         return isr[start:end].lstrip("0")
 
-    def parse_transaction_details(self, ns, node, transaction, base_currency=None):
+    def parse_transaction_details(self, ns, node, transaction):
         """Put ESR in label and add aditional information to label
         if no esr is available
         """
         super().parse_transaction_details(
-            ns, node, transaction, base_currency=base_currency
+            ns, node, transaction
         )
         # put the esr in the label. odoo reconciles based on the label,
         # if there is no esr it tries to use the information textfield
