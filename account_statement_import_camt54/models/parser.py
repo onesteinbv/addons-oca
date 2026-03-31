@@ -51,9 +51,7 @@ class CamtParser(models.AbstractModel):
         """Put ESR in label and add aditional information to label
         if no esr is available
         """
-        super().parse_transaction_details(
-            ns, node, transaction
-        )
+        super().parse_transaction_details(ns, node, transaction)
         # put the esr in the label. odoo reconciles based on the label,
         # if there is no esr it tries to use the information textfield
 
