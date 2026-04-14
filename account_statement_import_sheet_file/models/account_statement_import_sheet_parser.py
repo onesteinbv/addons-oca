@@ -325,9 +325,9 @@ class AccountStatementImportSheetParser(models.TransientModel):
             amount = -(credit_amount - debit_amount)
 
         if original_amount:
-            original_amount = math.copysign(
-                self._parse_decimal(original_amount, mapping), amount
-            )
+            original_amount = self._parse_decimal(original_amount, mapping)
+            if amount:
+                original_amount = math.copysign(original_amount, amount)
         else:
             original_amount = 0.0
         if mapping.amount_inverse_sign:
@@ -454,7 +454,14 @@ class AccountStatementImportSheetParser(models.TransientModel):
             )
             if currency:
                 transaction["currency_id"] = currency.id
-
+        if original_amount and original_currency and not amount:
+            amount = original_currency._convert(
+                from_amount=original_amount,
+                to_currency=currency,
+                company=self.env.company,
+                date=timestamp,
+            )
+            transaction["amount"] = amount
         if transaction_id:
             transaction["unique_import_id"] = (
                 f"{transaction_id}-{int(timestamp.timestamp())}"

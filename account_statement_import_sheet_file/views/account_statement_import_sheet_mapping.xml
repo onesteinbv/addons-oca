@@ -77,8 +77,8 @@
                             <field name="amount_type" />
                             <field
                                 name="amount_column"
-                                invisible="amount_type == 'distinct_credit_debit'"
-                                required="amount_type != 'distinct_credit_debit'"
+                                invisible="not amount_type or amount_type == 'distinct_credit_debit'"
+                                required="amount_type and amount_type != 'distinct_credit_debit'"
                             />
 
                             <field

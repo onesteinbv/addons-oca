@@ -119,7 +119,7 @@ class AccountStatementImportSheetMapping(models.Model):
             ("distinct_credit_debit", "Distinct Credit/debit Column"),
         ],
         string="Amount type",
-        required=True,
+        required=False,
         default="simple_value",
         help=(
             "Simple value: use igned amount in amount column\n"
