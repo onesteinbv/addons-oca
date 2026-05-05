@@ -131,7 +131,8 @@ class Sheet(models.Model):
     add_line_project_id = fields.Many2one(
         comodel_name="project.project",
         string="Select Project",
-        domain="[('company_id', '=', company_id), ('allow_timesheets', '=', True)]",
+        domain="[('company_id', 'in', [company_id, False]), "
+        "('allow_timesheets', '=', True)]",
         help="If selected, the associated project is added "
         "to the timesheet sheet when clicked the button.",
     )
@@ -228,7 +229,7 @@ class Sheet(models.Model):
     def _get_complete_name_components(self):
         """Hook for extensions"""
         self.ensure_one()
-        return [self.employee_id.display_name]
+        return [self.employee_id.display_name or ""]
 
     def _get_overlapping_sheet_domain(self):
         """Hook for extensions"""
@@ -354,9 +355,17 @@ class Sheet(models.Model):
             ("employee_id", "=", self.employee_id.id),
             ("company_id", "=", self._get_timesheet_sheet_company().id),
             ("project_id", "!=", False),
+            ("sheet_id", "in", [self.id, False]),
         ]
 
-    @api.depends("date_start", "date_end")
+    @api.depends(
+        "date_start",
+        "date_end",
+        "timesheet_ids.unit_amount",
+        "timesheet_ids.project_id",
+        "timesheet_ids.task_id",
+        "timesheet_ids.date",
+    )
     def _compute_line_ids(self):
         SheetLine = self.env["hr_timesheet.sheet.line"]
         for sheet in self:
@@ -390,12 +399,10 @@ class Sheet(models.Model):
     def _get_matrix_sortby(self, key):
         res = []
         for attribute in key:
-            if hasattr(attribute, "name_get"):
-                name = attribute.display_name
-                value = name if name else ""
+            if attribute:
+                res.append(getattr(attribute, "display_name", attribute))
             else:
-                value = attribute
-            res.append(value)
+                res.append("")
         return res
 
     def _get_data_matrix(self):
@@ -447,7 +454,7 @@ class Sheet(models.Model):
                 rec.available_task_ids = project_task_obj.search(
                     [
                         ("project_id", "=", rec.add_line_project_id.id),
-                        ("company_id", "=", rec.company_id.id),
+                        ("company_id", "in", [rec.company_id.id, False]),
                         ("id", "not in", rec.timesheet_ids.mapped("task_id").ids),
                     ]
                 ).ids
@@ -478,6 +485,14 @@ class Sheet(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             self._check_employee_user_link(vals)
+            if "timesheet_ids" in vals:
+                timesheets = vals["timesheet_ids"]
+                filtered_timesheets = []
+                for val in timesheets:
+                    if val[0] != 2:
+                        # deleting Delete commands that may appear when changing period
+                        filtered_timesheets.append(val)
+                vals["timesheet_ids"] = filtered_timesheets
         res = super().create(vals_list)
         res.write({"state": "draft"})
         return res
@@ -639,13 +654,13 @@ class Sheet(models.Model):
         return values
 
     @api.model
-    def _prepare_empty_analytic_line(self):
+    def _prepare_empty_analytic_line(self, project=None, task=None):
         return {
             "name": empty_name,
             "employee_id": self.employee_id.id,
             "date": self.date_start,
-            "project_id": self.add_line_project_id.id,
-            "task_id": self.add_line_task_id.id,
+            "project_id": (project or self.add_line_project_id).id,
+            "task_id": (task or self.add_line_task_id).id,
             "sheet_id": self.id,
             "unit_amount": 0.0,
             "company_id": self.company_id.id,
