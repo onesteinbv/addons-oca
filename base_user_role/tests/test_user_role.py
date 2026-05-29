@@ -4,16 +4,16 @@ import datetime
 
 from odoo import fields
 from odoo.exceptions import AccessError
-from odoo.tests.common import TransactionCase
+from odoo.fields import Command
+from odoo.tests import tagged
+
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestUserRole(TransactionCase):
+class TestUserRoleCommon(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(
-            context=dict(cls.env.context, tracking_disable=True, no_reset_password=True)
-        )
         cls.user_model = cls.env["res.users"]
         cls.role_model = cls.env["res.users.role"]
         cls.wiz_model = cls.env["wizard.groups.into.role"]
@@ -58,7 +58,7 @@ class TestUserRole(TransactionCase):
         # Setup for multi-company testing
         cls.multicompany_user_1 = cls.user_model.create(
             {
-                "name": "User 2",
+                "name": "multicompany_user_1",
                 "company_id": cls.company1.id,
                 "company_ids": [(6, 0, [cls.company1.id, cls.company2.id])],
                 "groups_id": [(6, 0, cls.env.ref("base.group_erp_manager").ids)],
@@ -67,7 +67,7 @@ class TestUserRole(TransactionCase):
         )
         cls.multicompany_user_2 = cls.user_model.create(
             {
-                "name": "User 2",
+                "name": "multicompany_user_2",
                 "company_id": cls.company2.id,
                 "company_ids": [(6, 0, [cls.company2.id])],
                 "groups_id": [(6, 0, cls.env.ref("base.group_user").ids)],
@@ -82,6 +82,8 @@ class TestUserRole(TransactionCase):
             }
         )
 
+
+class TestUserRole(TestUserRoleCommon):
     def test_role_1(self):
         self.user_id.write({"role_line_ids": [(0, 0, {"role_id": self.role1_id.id})]})
         user_group_ids = sorted({group.id for group in self.user_id.groups_id})
@@ -227,7 +229,7 @@ class TestUserRole(TransactionCase):
         # Check that the user cannot read multicompany data again since it lost
         # its admin privileges
         with self.assertRaisesRegex(
-            AccessError, "You are not allowed to access 'User role'"
+            AccessError, "You are not allowed to access 'User Role'"
         ):
             role.read()
 
@@ -274,3 +276,60 @@ class TestUserRole(TransactionCase):
         self.assertEqual(new_role.name, "Test Role")
         # Check that the role has the correct groups (even if the order is not equal)
         self.assertEqual(set(new_role.implied_ids.ids), set(user_group_ids))
+
+
+@tagged("post_install", "-at_install")
+class TestUserRoleMail(TestUserRoleCommon):
+    def test_notification_type_not_reset(self):
+        """Test that roles don't reset notification settings."""
+        if self.env["ir.module.module"]._get("mail").state != "installed":
+            self.skipTest("Mail module is not installed.")
+        notification_group = self.env.ref("mail.group_mail_notification_type_inbox")
+        self.assertNotIn(notification_group, self.user_id.groups_id)
+        self.user_id.notification_type = "inbox"
+        self.assertIn(notification_group, self.user_id.groups_id)
+        self.user_id.write(
+            {"role_line_ids": [Command.create({"role_id": self.role1_id.id})]}
+        )
+        self.assertIn(notification_group, self.user_id.groups_id)
+
+    def test_notification_type_reset(self):
+        """When user is demoted to share user, update notification settings.
+
+        The issue only occurs when the writing user is not the superuser, and
+        if an intermittent flush is triggered by for instance
+        `_check_one_user_type` in website's res.users override. This triggers
+        constraint res_users_notification_type as Odoo has not yet recomputed
+        this at that point.
+        """
+        # Notification settings depend on mail being installed
+        if self.env["ir.module.module"]._get("mail").state != "installed":
+            self.skipTest("Mail module is not installed.")
+
+        # Set up a non-superuser user
+        admin_user = self.env["res.users"].create(
+            {
+                "name": "Some admin",
+                "login": "admin@example.com",
+            },
+        )
+        admin_user.groups_id += self.env.ref("base.group_system")
+
+        self.user_id.write(
+            {
+                "role_line_ids": [Command.create({"role_id": self.role1_id.id})],
+                "notification_type": "inbox",
+            },
+        )
+
+        # As non-superuser, delete all roles from the user
+        user = self.user_id.with_user(admin_user)
+        user.write(
+            {
+                "role_line_ids": [
+                    Command.delete(rl.id) for rl in self.user_id.role_line_ids
+                ],
+            },
+        )
+        # Database constraint has not been triggered
+        self.assertEqual(user.notification_type, "email")
