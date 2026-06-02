@@ -8,7 +8,7 @@ import urllib.parse
 import uuid
 from datetime import datetime, timezone
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
 from odoo.exceptions import AccessError
 from odoo.fields import Command
 from odoo.tools import SQL, email_split
@@ -152,7 +152,7 @@ class MailTrackingEmail(models.Model):
         _check_access() for more details about those rules.
         """
         query = super()._search(domain, offset, limit, order)
-        if not self.env.user.has_group("base.group_system"):
+        if not self.env.is_superuser():
             records = self.browse(query)
             allowed_ids = self._get_allowed_ids(records.ids)
             return self.browse(allowed_ids)._as_query(order)
@@ -161,7 +161,7 @@ class MailTrackingEmail(models.Model):
 
     def _make_access_error(self, operation: str) -> AccessError:
         return AccessError(
-            _(
+            self.env._(
                 "The requested operation cannot be completed due to security restrictions. "  # noqa: E501
                 "Please contact your system administrator.\n\n"
                 "(Document type: %(type)s, Operation: %(operation)s)\n\n"
@@ -231,23 +231,30 @@ class MailTrackingEmail(models.Model):
             )
         )
         result = self.env.cr.fetchall()
-        for id_, mail_msg_id, mail_id, partner_id in result:
-            msg_ids = (
-                self.env["mail.message"].search([("id", "=", mail_msg_id)]).ids
-                if mail_msg_id
-                else []
-            )
+        msg_ids, mail_ids, partner_ids = [], [], []
+        if result:
+            _, msg_ids, mail_ids, partner_ids = zip(*result, strict=True)
+        msg_ids = (
+            self.env["mail.message"]
+            .search([("id", "in", [x for x in msg_ids if x])])
+            .ids
+        )
+        # Only users from group_system can read mail.mail
+        if self.env.user.has_group("base.group_system"):
             mail_ids = (
-                self.env["mail.mail"].search([("id", "=", mail_id)]).ids
-                if mail_id
-                else []
+                self.env["mail.mail"]
+                .search([("id", "in", [x for x in mail_ids if x])])
+                .ids
             )
-            partner_ids = (
-                self.env["res.partner"].search([("id", "=", partner_id)]).ids
-                if partner_id
-                else []
-            )
+        else:
+            mail_ids = []
+        partner_ids = (
+            self.env["res.partner"]
+            .search([("id", "in", [x for x in partner_ids if x])])
+            .ids
+        )
 
+        for id_, mail_msg_id, mail_id, partner_id in result:
             if (
                 (mail_msg_id in msg_ids)
                 or (mail_id in mail_ids)
@@ -491,15 +498,6 @@ class MailTrackingEmail(models.Model):
             else:
                 _logger.debug("Concurrent event '%s' discarded", event_type)
         return event_ids
-
-    # TODO Remove useless method
-    @api.model
-    def event_process(self, request, post, metadata, event_type=None):
-        # Generic event process hook, inherit it and
-        # - return 'OK' if processed
-        # - return 'NONE' if this request is not for you
-        # - return 'ERROR' if any error
-        return "NONE"  # pragma: no cover
 
     def _get_old_mail_tracking_email_domain(self, max_age_days):
         target_write_date = fields.Datetime.subtract(

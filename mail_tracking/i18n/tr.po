@@ -9,14 +9,15 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-07-22 00:51+0000\n"
-"PO-Revision-Date: 2017-07-22 00:51+0000\n"
-"Last-Translator: OCA Transbot <transbot@odoo-community.org>, 2016\n"
+"PO-Revision-Date: 2026-02-13 12:09+0000\n"
+"Last-Translator: Betül Öğmen <betulo@eska.biz>\n"
 "Language-Team: Turkish (https://www.transifex.com/oca/teams/23907/tr/)\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #. module: mail_tracking
 #: model:ir.model.fields,help:mail_tracking.field_mail_tracking_email__state
@@ -43,47 +44,41 @@ msgid ""
 msgstr ""
 
 #. module: mail_tracking
-#. odoo-javascript
-#: code:addons/mail_tracking/static/src/components/failed_messages_panel/failed_messages_panel.esm.js:0
-msgid "%s failed messages found"
-msgstr ""
-
-#. module: mail_tracking
 #: model:ir.model.fields,help:mail_tracking.field_mail_message__email_cc
 msgid "Additional recipients that receive a \"Carbon Copy\" of the e-mail"
-msgstr ""
+msgstr "E-postanın \"Karbon Kopyası\"nı alan ek alıcılar"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_thread.py:0
 msgid "Anon. To"
-msgstr ""
+msgstr "Anonim. Kime"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Anonymous Recipient"
-msgstr ""
+msgstr "Anonim Alıcı"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Bounce"
-msgstr ""
+msgstr "Atla"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__bounce_description
 msgid "Bounce Description"
-msgstr ""
+msgstr "Atlama Açıklaması"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__bounce_type
 msgid "Bounce Type"
-msgstr ""
+msgstr "Atlama Tipi"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__bounced
 msgid "Bounced"
-msgstr ""
+msgstr "Geri Döndü"
 
 #. module: mail_tracking
 #. odoo-javascript
@@ -97,32 +92,32 @@ msgstr ""
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Click"
-msgstr ""
+msgstr "Tıkla"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__click
 msgid "Clicked"
-msgstr ""
+msgstr "Tıklandı"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__url
 msgid "Clicked URL"
-msgstr ""
+msgstr "Tıklanan URL"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_res_company
 msgid "Companies"
-msgstr ""
+msgstr "Şirketler"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_res_config_settings
 msgid "Config Settings"
-msgstr ""
+msgstr "Yapılandırma Ayarları"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_res_partner
 msgid "Contact"
-msgstr ""
+msgstr "Kontak"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_form
@@ -154,13 +149,13 @@ msgstr "Tarih"
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__deferral
 msgid "Deferral"
-msgstr ""
+msgstr "Erteleme"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__deferred
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 msgid "Deferred"
-msgstr ""
+msgstr "Ertelendi"
 
 #. module: mail_tracking
 #. odoo-python
@@ -170,25 +165,25 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Delivered"
-msgstr ""
+msgstr "Teslim Edildi"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Delivered Status Center Checkmark"
-msgstr ""
+msgstr "Teslim Edildi Durumu Merkez Tik"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Delivered Status Left Checkmark"
-msgstr ""
+msgstr "Teslim Edildi Durumu Sol Tik"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Delivered Status Right Checkmark"
-msgstr ""
+msgstr "Teslim Edildi Durumu Sağ Tik"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__display_name
@@ -205,43 +200,40 @@ msgstr "Eposta"
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_alias
 msgid "Email Aliases"
-msgstr ""
+msgstr "E-posta Rumuzları"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_bounced_mixin__email_bounced
 #: model:ir.model.fields,field_description:mail_tracking.field_res_partner__email_bounced
 #: model:ir.model.fields,field_description:mail_tracking.field_res_users__email_bounced
 msgid "Email Bounced"
-msgstr ""
+msgstr "E-posta Geri Döndü"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_alias_domain
 msgid "Email Domain"
-msgstr ""
+msgstr "E-posta Alan Adı"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_res_partner__email_score
 #: model:ir.model.fields,field_description:mail_tracking.field_res_users__email_score
-#, fuzzy
 msgid "Email Score"
-msgstr "Eposta"
+msgstr "E-posta Skoru"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_thread
-#, fuzzy
 msgid "Email Thread"
-msgstr "Eposta"
+msgstr "E-posta Konusu"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_res_partner_filter
 msgid "Email bounced"
-msgstr ""
+msgstr "E-posta geri döndü"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_resend_message
-#, fuzzy
 msgid "Email resend wizard"
-msgstr "Eposta"
+msgstr "E-posta tekrar iletme sihirbazı"
 
 #. module: mail_tracking
 #. odoo-python
@@ -255,34 +247,34 @@ msgstr "Hata"
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__error_description
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__error_description
 msgid "Error Description"
-msgstr ""
+msgstr "Hata Açıklaması"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__error_details
 msgid "Error Details"
-msgstr ""
+msgstr "Hata Detayları"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__error_smtp_server
 msgid "Error SMTP server"
-msgstr ""
+msgstr "Hata SMTP sunucusu"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Error Status"
-msgstr ""
+msgstr "Hata Durumu"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__error_type
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__error_type
 msgid "Error Type"
-msgstr ""
+msgstr "Hata Türü"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__event_type
 msgid "Event Type"
-msgstr ""
+msgstr "Etkinlik Türü"
 
 #. module: mail_tracking
 #. odoo-javascript
@@ -291,9 +283,18 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Failed"
-msgstr ""
+msgstr "Başarısız"
 
 #. module: mail_tracking
+#: model:ir.model.fields,field_description:mail_tracking.field_account_account__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_analytic_account__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_bank_statement_line__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_journal__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_move__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_payment__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_reconcile_model__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_setup_bank_manual_config__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_account_tax__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_calendar_event__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_discuss_channel__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_blacklist__failed_message_ids
@@ -305,43 +306,47 @@ msgstr ""
 #: model:ir.model.fields,field_description:mail_tracking.field_mailing_contact__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_mailing_mailing__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_phone_blacklist__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_product_category__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_product_pricelist__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_product_product__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_product_template__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_res_company__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_res_partner__failed_message_ids
+#: model:ir.model.fields,field_description:mail_tracking.field_res_partner_bank__failed_message_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_res_users__failed_message_ids
-#, fuzzy
 msgid "Failed Messages"
-msgstr "İleti"
+msgstr "Başarısız Mesajlar"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message/failed_message.xml:0
 #: code:addons/mail_tracking/static/src/core/message/message.xml:0
 msgid "Failed Recipients:"
-msgstr ""
+msgstr "Başarısız Alıcılar:"
 
 #. module: mail_tracking
 #. odoo-javascript
-#: code:addons/mail_tracking/static/src/components/failed_messages_panel/failed_messages_panel.esm.js:0
 #: code:addons/mail_tracking/static/src/core/chatter/chatter.xml:0
 msgid "Failed messages"
-msgstr ""
+msgstr "Başarısız iletiler"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_thread.py:0
 msgid "Failed sent messages"
-msgstr ""
+msgstr "Mesajları göndermek başarısız oldu"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message/failed_message.xml:0
 msgid "Go"
-msgstr ""
+msgstr "Git"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message/failed_message.xml:0
 msgid "Go to message"
-msgstr ""
+msgstr "Mesaja git"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
@@ -350,14 +355,9 @@ msgid "Group By"
 msgstr "Grupla"
 
 #. module: mail_tracking
-#: model:ir.model,name:mail_tracking.model_mail_guest
-msgid "Guest"
-msgstr ""
-
-#. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__hard_bounce
 msgid "Hard bounce"
-msgstr ""
+msgstr "Zorla atla"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__id
@@ -377,23 +377,25 @@ msgid ""
 "If set as positive integer enables the deletion of old mail tracking records "
 "to reduce the database size."
 msgstr ""
+"Pozitif bir tamsayı olarak ayarlanırsa, veritabanı boyutunu küçültmek için "
+"eski posta takip kayıtlarının silinmesini sağlar."
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message/failed_message.xml:0
 msgid "Info"
-msgstr ""
+msgstr "Bilgi"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_mail__is_failed_message
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_message__is_failed_message
 msgid "Is Failed Message"
-msgstr ""
+msgstr "Başarısız Olan Mesaj"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__mobile
 msgid "Is mobile?"
-msgstr ""
+msgstr "Devingen mi?"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__write_uid
@@ -410,68 +412,67 @@ msgstr "Son güncelleme"
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__mail_message_id
 msgid "Mail Message"
-msgstr ""
+msgstr "E-posta Mesajı"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_ir_mail_server
-#, fuzzy
 msgid "Mail Server"
-msgstr "Eposta"
+msgstr "E-posta Sunucusu"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_mail__mail_tracking_needs_action
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_message__mail_tracking_needs_action
 msgid "Mail Tracking Needs Action"
-msgstr ""
+msgstr "E-Posta Takibi Eylem Gerektiriyor"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_mail__mail_tracking_ids
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_message__mail_tracking_ids
 msgid "Mail Trackings"
-msgstr ""
+msgstr "E-Posta Takipleri"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_bounced_mixin
 msgid "Mail bounced mixin"
-msgstr ""
+msgstr "E-Posta geri döndü birleşim"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_tracking_email
 msgid "MailTracking email"
-msgstr ""
+msgstr "E-Posta Takibi eposta"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 msgid "MailTracking email search"
-msgstr ""
+msgstr "E-Posta Takibi eposta arama"
 
 #. module: mail_tracking
 #: model:ir.actions.act_window,name:mail_tracking.action_view_mail_tracking_email
 msgid "MailTracking emails"
-msgstr ""
+msgstr "E-Posta Takibi epostalar"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_tracking_event
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_form
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_form
 msgid "MailTracking event"
-msgstr ""
+msgstr "E-Posta Takibi etkinlik"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "MailTracking event search"
-msgstr ""
+msgstr "E-Posta Takibi etkinlik arama"
 
 #. module: mail_tracking
 #: model:ir.actions.act_window,name:mail_tracking.action_view_mail_tracking_event
 msgid "MailTracking events"
-msgstr ""
+msgstr "E-Posta Takibi etkinlikler"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_res_config_settings__mail_tracking_email_max_age_days
 #: model_terms:ir.ui.view,arch_db:mail_tracking.res_config_settings_view_form
 msgid "Max age in days of mail tracking email records"
-msgstr ""
+msgstr "Posta takibi e-posta kayıtlarının maksimum yaşı (gün olarak)"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_message
@@ -493,48 +494,48 @@ msgstr "Ay"
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_tree
 msgid "OS"
-msgstr ""
+msgstr "İşletim Sistemi"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__open
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Open"
-msgstr ""
+msgstr "Açık"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_message.py:0
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__opened
 msgid "Opened"
-msgstr ""
+msgstr "Açıldı"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Opened Status Center Checkmark"
-msgstr ""
+msgstr "Açıldı Durumu Merkez Tik"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Opened Status Left Checkmark"
-msgstr ""
+msgstr "Açıldı Durumu Sol Tik"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Opened Status Right Checkmark"
-msgstr ""
+msgstr "Açıldı Durumu Sağ Tik"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__os_family
 msgid "Operating system family"
-msgstr ""
+msgstr "İşletim sistemi ailesi"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_mail_mail
 msgid "Outgoing Mails"
-msgstr ""
+msgstr "Giden Postalar"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__partner_id
@@ -544,63 +545,63 @@ msgstr "İş Ortağı"
 #. module: mail_tracking
 #: model:ir.model.fields,help:mail_tracking.field_mail_message__email_to
 msgid "Raw TO recipients"
-msgstr ""
+msgstr "Ham TO alıcıları"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__recipient
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_tree
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Recipient"
-msgstr ""
+msgstr "Alıcı"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 msgid "Recipient Address"
-msgstr ""
+msgstr "Alıcı Adresi"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__recipient
 msgid "Recipient email"
-msgstr ""
+msgstr "Alıcı e-postası"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__recipient_address
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__recipient_address
 msgid "Recipient email address"
-msgstr ""
+msgstr "Alıcı e-posta adresi"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__rejected
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__reject
 msgid "Rejected"
-msgstr ""
+msgstr "Reddedildi"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message_review/failed_message_review.xml:0
 msgid "Retry"
-msgstr ""
+msgstr "Yeniden Dene"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__smtp_server
 msgid "SMTP server"
-msgstr ""
+msgstr "SMTP sunucusu"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__token
 msgid "Security Token"
-msgstr ""
+msgstr "Güvenlik Jetonu"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_tree
 msgid "Sender"
-msgstr ""
+msgstr "Gönderen"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__sender
 msgid "Sender email"
-msgstr ""
+msgstr "Gönderen e-postası"
 
 #. module: mail_tracking
 #. odoo-python
@@ -616,36 +617,36 @@ msgstr "Gönderildi"
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Sent Status"
-msgstr ""
+msgstr "Gönderildi Durumu"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message_review/failed_message_review.xml:0
 msgid "Set As Reviewed"
-msgstr ""
+msgstr "İncelendi Olarak Ayarla"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message_review/failed_message_review.xml:0
 msgid "Set as Reviewed"
-msgstr ""
+msgstr "İncelendi olarak Ayarla"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_res_company__mail_tracking_show_aliases
 #: model:ir.model.fields,field_description:mail_tracking.field_res_config_settings__mail_tracking_show_aliases
 #: model_terms:ir.ui.view,arch_db:mail_tracking.res_config_settings_view_form
 msgid "Show Aliases in Mail Tracking"
-msgstr ""
+msgstr "Posta Takibinde Takma Adları Göster"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__soft_bounce
 msgid "Soft bounce"
-msgstr ""
+msgstr "Geçici geri dönüş"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__soft-bounced
 msgid "Soft bounced"
-msgstr ""
+msgstr "Geçici geri döndü"
 
 #. module: mail_tracking
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_email__state__spam
@@ -663,7 +664,7 @@ msgstr "Durum"
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_message.py:0
 msgid "Status: %s"
-msgstr ""
+msgstr "Durum: %s"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__name
@@ -675,19 +676,19 @@ msgstr "Konu"
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/failed_message/failed_message.xml:0
 msgid "Subject:"
-msgstr ""
+msgstr "Konu:"
 
 #. module: mail_tracking
 #: model:ir.model.fields,help:mail_tracking.field_mail_mail__mail_tracking_needs_action
 #: model:ir.model.fields,help:mail_tracking.field_mail_message__mail_tracking_needs_action
 msgid "The message tracking will be considered to filter tracking issues"
-msgstr ""
+msgstr "İleti takibi, takip sorunlarını filtrelemek için dikkate alınacaktır"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_message.py:0
 msgid "The partner doesn't have a defined email"
-msgstr ""
+msgstr "Ortak tanımlı bir e-postaya sahip değil"
 
 #. module: mail_tracking
 #. odoo-python
@@ -700,6 +701,12 @@ msgid ""
 "\n"
 "Records: %(records)s, User: %(user)s"
 msgstr ""
+"İstenen işlem, güvenlik kısıtlamaları nedeniyle tamamlanamıyor. Lütfen "
+"sistem yöneticinize başvurun.\n"
+"\n"
+"(Belge türü: %(desc)s, İşlem: %(operation)s)\n"
+"\n"
+"Kayıtlar: %(records)s, Kullanıcı: %(user)s"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__time
@@ -707,36 +714,36 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "Time"
-msgstr ""
+msgstr "Zaman"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_message__email_to
 msgid "To"
-msgstr ""
+msgstr "Alıcı"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/core/message/message.xml:0
 msgid "To:"
-msgstr ""
+msgstr "Alıcı:"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_res_partner__tracking_emails_count
 #: model:ir.model.fields,field_description:mail_tracking.field_res_users__tracking_emails_count
 msgid "Tracking Emails Count"
-msgstr ""
+msgstr "Takip E-postaları Sayısı"
 
 #. module: mail_tracking
 #: model:ir.ui.menu,name:mail_tracking.menu_mail_tracking_email
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_partner_form
 msgid "Tracking emails"
-msgstr ""
+msgstr "Takip e-postaları"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__tracking_event_ids
 #: model:ir.ui.menu,name:mail_tracking.menu_mail_tracking_event
 msgid "Tracking events"
-msgstr ""
+msgstr "Takip etkinlikleri"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
@@ -752,19 +759,19 @@ msgstr ""
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_email__timestamp
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__timestamp
 msgid "UTC timestamp"
-msgstr ""
+msgstr "UTC zaman damgası"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_message.py:0
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmeyen"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Unknown Status"
-msgstr ""
+msgstr "Bilinmeyen Durum"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
@@ -776,57 +783,57 @@ msgstr "Takibi bırak"
 #: model:ir.model.fields.selection,name:mail_tracking.selection__mail_tracking_event__event_type__unsub
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_search
 msgid "Unsubscribed"
-msgstr ""
+msgstr "Takibi bırak"
 
 #. module: mail_tracking
 #: model:ir.model,name:mail_tracking.model_res_users
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__user_agent
 msgid "User Agent"
-msgstr ""
+msgstr "Kullanıcı Aracısı"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__ip
 msgid "User IP"
-msgstr ""
+msgstr "Kullanıcı IP"
 
 #. module: mail_tracking
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_email_form
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_tree
 msgid "User agent"
-msgstr ""
+msgstr "Kullanıcı aracısı"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__ua_family
 msgid "User agent family"
-msgstr ""
+msgstr "Kullanıcı aracısı ailesi"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__ua_type
 #: model_terms:ir.ui.view,arch_db:mail_tracking.view_mail_tracking_event_search
 msgid "User agent type"
-msgstr ""
+msgstr "Kullanıcı aracısı türü"
 
 #. module: mail_tracking
 #: model:ir.model.fields,field_description:mail_tracking.field_mail_tracking_event__user_country_id
 msgid "User country"
-msgstr ""
+msgstr "Kullanıcı ülkesi"
 
 #. module: mail_tracking
 #. odoo-python
 #: code:addons/mail_tracking/models/mail_message.py:0
 msgid "Waiting"
-msgstr ""
+msgstr "Beklemede"
 
 #. module: mail_tracking
 #. odoo-javascript
 #: code:addons/mail_tracking/static/src/components/message_tracking/message_tracking_status.xml:0
 msgid "Waiting Status"
-msgstr ""
+msgstr "Bekleme Durumu"
 
 #~ msgid "Last Modified on"
 #~ msgstr "Son değişiklik"
