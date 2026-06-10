@@ -1,7 +1,7 @@
 Currently, Odoo provides 2 options:
 
 - Google Recaptcha relies on tracking of the user. It implies cookies
-- Cloudfare Turnstile relies on signals of the browser so it is less RGDP problematic.
+- Cloudfare Turnstile relies on signals of the browser so it is less GDPR problematic.
   However, it relies on a third party infrastructure. 
   The decision is made from a probabilistic perspective (likely a human)
 

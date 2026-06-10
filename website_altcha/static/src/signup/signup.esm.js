@@ -26,13 +26,11 @@ export const AltchaFunctionality = {
 publicWidget.registry.SignupAltcha = publicWidget.Widget.extend({
     ...AltchaFunctionality,
     selector: ".oe_signup_form",
-    tokenName: "signup",
 });
 
 publicWidget.registry.ResetPasswordAltcha = publicWidget.Widget.extend({
     ...AltchaFunctionality,
     selector: ".oe_reset_password_form",
-    tokenName: "password_reset",
 });
 
 publicWidget.registry.s_website_form.include({
