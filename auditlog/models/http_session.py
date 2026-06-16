@@ -41,7 +41,7 @@ class AuditlogtHTTPSession(models.Model):
         if not request:
             return False
         httpsession = request.session
-        if httpsession:
+        if httpsession and request.env:
             existing_session = self.search(
                 [("name", "=", httpsession.sid), ("user_id", "=", request.uid)], limit=1
             )

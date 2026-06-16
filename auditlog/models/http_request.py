@@ -46,7 +46,7 @@ class AuditlogHTTPRequest(models.Model):
             return False
         http_session_model = self.env["auditlog.http.session"]
         httprequest = request.httprequest
-        if httprequest:
+        if httprequest and request.env:
             if hasattr(httprequest, "auditlog_http_request_id"):
                 # Verify existence. Could have been rolled back after a
                 # concurrency error
