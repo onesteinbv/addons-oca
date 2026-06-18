@@ -3,10 +3,8 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <template id="favicon_icon" inherit_id="web.layout" name="Web layout">
-        <xpath expr="//head/link[@rel='shortcut icon']" position="attributes">
-            <attribute
-                name="t-att-href"
-            >env['res.company'].sudo()._get_favicon() or '/web/static/img/favicon.ico'</attribute>
+        <xpath expr="//head/link[@rel='shortcut icon']" position="before">
+            <t t-set="x_icon" t-value="env['res.company'].sudo()._get_favicon()"/>
         </xpath>
     </template>
 </odoo>
