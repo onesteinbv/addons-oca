@@ -8,20 +8,18 @@
         name="Breadcrumbs"
     >
         <xpath expr="//header">
-            <t t-if="website.breadcrumb_enabled">
-                <t
-                    id="breadcrumb"
-                    t-if="request.env['website.menu']
-                     .search([('url', '=', request.httprequest.path)], limit=1)"
-                >
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <t t-call="website_breadcrumb.breadcrumb" />
-                            </div>
+            <t
+                id="breadcrumb"
+                t-if="request.env['website.menu']
+                 .search([('url', '=', request.httprequest.path)], limit=1)"
+            >
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <t t-call="website_breadcrumb.breadcrumb" />
                         </div>
                     </div>
-                </t>
+                </div>
             </t>
         </xpath>
     </template>

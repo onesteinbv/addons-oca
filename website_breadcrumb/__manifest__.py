@@ -12,9 +12,5 @@
     "application": False,
     "installable": True,
     "depends": ["website"],
-    "data": [
-        "views/templates.xml",
-        "views/layout.xml",
-        "views/res_config_settings_views.xml",
-    ],
+    "data": ["views/templates.xml", "views/layout.xml"],
 }
