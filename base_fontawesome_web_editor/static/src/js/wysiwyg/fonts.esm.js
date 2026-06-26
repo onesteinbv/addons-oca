@@ -1,12 +1,12 @@
-import {fonts} from "@web_editor/js/wysiwyg/fonts";
-import {patch} from "@web/core/utils/patch";
+import { fonts } from "@web_editor/js/wysiwyg/fonts";
+import { patch } from "@web/core/utils/patch";
 
 patch(fonts, {
     /**
      * Updated parser for FontAwesome >= 6.7.2 icons.
      * Matches icon classes like .fa-icon-name
      */
-    fontIcons: [{base: "fa", parser: /\.(fa-(?:\w|-)+)/i}],
+    fontIcons: [{ base: "fa", parser: /\.(fa-(?:\w|-)+)/i }],
 
     /**
      * Check if a CSS rule is a valid FontAwesome rule.
@@ -79,7 +79,7 @@ patch(fonts, {
             return this.cacheCssSelectors[filter];
         }
         this.cacheCssSelectors[filter] = [];
-        const seenUnicodes = new Set();
+        const rulesByUnicode = new Map();
         // eslint-disable-next-line no-undef
         const sheets = document.styleSheets;
         for (let i = 0; i < sheets.length; i++) {
@@ -103,16 +103,27 @@ patch(fonts, {
                 if (!this._isValidFontAwesomeRule(selectorText, cssText)) {
                     continue;
                 }
-                // Extract unicode value and skip if duplicate
+                // Extract unicode value
                 const unicodeMatch = cssText.match(/--fa:\s*["']\\([^"']+)["']/);
-                if (unicodeMatch && seenUnicodes.has(unicodeMatch[1])) {
-                    continue;
-                }
-                if (unicodeMatch) {
-                    seenUnicodes.add(unicodeMatch[1]);
-                }
+                const unicode = unicodeMatch ? unicodeMatch[1] : null;
+
                 const data = this._processRuleSelectors(selectorText, cssText, filter);
                 if (data) {
+                    // Merge Font Awesome aliases sharing the same unicode.
+                    if (unicode && rulesByUnicode.has(unicode)) {
+                        const existing = rulesByUnicode.get(unicode);
+                        existing.selector += `, ${data.selector}`;
+
+                        for (const name of data.names) {
+                            if (!existing.names.includes(name)) {
+                                existing.names.push(name);
+                            }
+                        }
+                        continue;
+                    }
+                    if (unicode) {
+                        rulesByUnicode.set(unicode, data);
+                    }
                     this.cacheCssSelectors[filter].push(data);
                 }
             }
