@@ -56,6 +56,34 @@ patch(fonts, {
     },
 
     /**
+     * Extract unicode value from CSS rule text.
+     *
+     * @private
+     * @param {String} cssText - The CSS rule text
+     * @returns {String|null} Extracted unicode value or null
+     */
+    _extractUnicode(cssText) {
+        const unicodeMatch = cssText.match(/--fa:\s*["']\\([^"']+)["']/);
+        return unicodeMatch ? unicodeMatch[1] : null;
+    },
+
+    /**
+     * Merge Font Awesome aliases sharing the same unicode.
+     *
+     * @private
+     * @param {Object} existing - The existing rule data object
+     * @param {Object} data - The new rule data object to merge
+     */
+    _mergeRuleData(existing, data) {
+        existing.selector += `, ${data.selector}`;
+        for (const name of data.names) {
+            if (!existing.names.includes(name)) {
+                existing.names.push(name);
+            }
+        }
+    },
+
+    /**
      * Override getCssSelectors to only process rules that define the --fa variable
      * (for FontAwesome >= 6.7.2 compatibility)
      * @param {RegExp} filter
@@ -104,21 +132,13 @@ patch(fonts, {
                     continue;
                 }
                 // Extract unicode value
-                const unicodeMatch = cssText.match(/--fa:\s*["']\\([^"']+)["']/);
-                const unicode = unicodeMatch ? unicodeMatch[1] : null;
+                const unicode = this._extractUnicode(cssText);
 
                 const data = this._processRuleSelectors(selectorText, cssText, filter);
                 if (data) {
                     // Merge Font Awesome aliases sharing the same unicode.
                     if (unicode && rulesByUnicode.has(unicode)) {
-                        const existing = rulesByUnicode.get(unicode);
-                        existing.selector += `, ${data.selector}`;
-
-                        for (const name of data.names) {
-                            if (!existing.names.includes(name)) {
-                                existing.names.push(name);
-                            }
-                        }
+                        this._mergeRuleData(rulesByUnicode.get(unicode), data);
                         continue;
                     }
                     if (unicode) {
