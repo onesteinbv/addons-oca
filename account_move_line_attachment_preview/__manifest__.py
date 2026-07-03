@@ -8,7 +8,6 @@
     "author": "Onestein,Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/account-financial-tools",
     "category": "Accounting/Accounting",
-    "development_status": "Alpha",
     "license": "AGPL-3",
     "depends": ["account", "attachment_preview"],
     "data": [
