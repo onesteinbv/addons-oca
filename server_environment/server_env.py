@@ -10,6 +10,7 @@ from itertools import chain
 from lxml import etree
 
 from odoo import api, fields, models
+from odoo.tools import mute_logger
 from odoo.tools.config import config as system_base_config
 
 from odoo.addons.base_sparse_field.models.fields import Serialized
@@ -212,11 +213,9 @@ class ServerConfiguration(models.TransientModel):
                 sparse="config",
                 readonly=True,
             )
-            setattr(
-                ServerConfiguration,
-                col_name,
-                tmp_field,
-            )
+            # Mute message related to new safeguard (PR odoo/odoo#247151)
+            with mute_logger("odoo.tests.common"):
+                setattr(ServerConfiguration, col_name, tmp_field)
             tmp_field.name = col_name
             ServerConfiguration._field_definitions.append(tmp_field)
             cls._conf_defaults[col_name] = value
