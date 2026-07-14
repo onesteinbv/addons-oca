@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="website_geoengine_store_locator_snipet"
+        inherit_id="website.snippets"
+        priority="8"
+    >
+        <xpath expr="//snippets[@id='snippet_structure']" position="inside">
+            <t 
+                t-snippet="website_geoengine_store_locator.s_openlayer_store_locator"
+                string="OCA/Geospatial"
+                group="content"
+                t-thumbnail="/website_geoengine_store_locator/static/src/img/snippets_thumbs/s_openlayer_store_locator.png"
+            >
+                <keywords>map, store</keywords>
+            </t>
+         </xpath>
+      </template>
+</odoo>
