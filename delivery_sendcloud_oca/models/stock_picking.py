@@ -59,31 +59,6 @@ class StockPicking(models.Model):
         compute="_compute_label_print_status",
         store=True,
     )
-    package_ids = fields.Many2many(
-        "stock.quant.package", compute="_compute_packages", string="Packages"
-    )
-
-    @api.depends("move_line_ids", "move_line_ids.result_package_id")
-    def _compute_packages(self):
-        counts = dict(
-            self.env["stock.move.line"]._read_group(
-                domain=[
-                    ("picking_id", "in", self.ids),
-                    ("result_package_id", "!=", False),
-                ],
-                groupby=["picking_id"],
-                aggregates=["__count"],
-            )
-        )
-        self.fetch(["move_line_ids"])
-        self.move_line_ids.fetch(["result_package_id"])
-        for picking in self:
-            packs = set()
-            if counts.get(picking, 0):
-                for move_line in picking.move_line_ids:
-                    if move_line.result_package_id:
-                        packs.add(move_line.result_package_id.id)
-            picking.package_ids = list(packs)
 
     @api.depends("sendcloud_parcel_ids", "sendcloud_parcel_ids.label_print_status")
     def _compute_label_print_status(self):
@@ -446,14 +421,14 @@ class StockPicking(models.Model):
             [("name", "=", "product_harmonized_system"), ("state", "=", "installed")],
             limit=1,
         )
-        if is_product_harmonized_system_installed:  # pragma: no cover
+        if is_product_harmonized_system_installed:
             # use field provided by OCA module "product_harmonized_system" if installed
             hs_code = product_tmplate.hs_code_id.hs_code
             origin_country = product_tmplate.origin_country_id.code or origin_country
         is_account_intrastat_installed = self.env["ir.module.module"].search(
             [("name", "=", "account_intrastat"), ("state", "=", "installed")], limit=1
         )
-        if is_account_intrastat_installed:  # pragma: no cover
+        if is_account_intrastat_installed:
             # use field provided by Enterprise module "account_intrastat" if installed
             hs_code = product_tmplate.intrastat_code_id.code or hs_code
             origin_country = (
@@ -467,7 +442,8 @@ class StockPicking(models.Model):
         vals_list = []
 
         # multicollo parcels (one collo is the master)
-        colli = self.package_ids
+        packages = self.move_line_ids.mapped("result_package_id")
+        colli = packages
 
         # in case only packages of a certain carrier should be considered
         # invoke this method passing "sendcloud_only_packs_with_carrier" in its context
@@ -489,7 +465,7 @@ class StockPicking(models.Model):
             vals["external_reference"] = self.name + "," + str(package.id)
             vals_list += [vals]
 
-        if self.weight_bulk or (self.package_ids - colli) or not vals_list:
+        if self.weight_bulk or (packages - colli) or not vals_list:
             weight = self._get_total_weight_bulk(total_sendcloud_package_weight)
             weight = self._sendcloud_convert_weight_to_kg(weight)
             weight = self._sendcloud_check_collo_weight(weight)

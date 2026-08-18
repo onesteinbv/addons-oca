@@ -79,12 +79,10 @@ class SendcloudIntegrationWizard(models.TransientModel):
             lambda i: not i.sendcloud_code and not i.public_key and not i.secret_key
         )
         if not integrations:
-            vals = [
-                {
-                    "shop_name": "API Integration " + self.env.company.name,
-                    "company_id": self.env.company.id,
-                }
-            ]
+            vals = {
+                "shop_name": "API Integration " + self.env.company.name,
+                "company_id": self.env.company.id,
+            }
             self.env["sendcloud.integration"].create(vals)
         if not self.check_webhook_url():
             action_name = (

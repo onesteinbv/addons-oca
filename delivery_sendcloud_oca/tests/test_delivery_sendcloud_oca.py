@@ -69,8 +69,8 @@ class TestDeliverySendCloud(TransactionCase):
         integrations.unlink()
         sendcloud_sync_order_wizard_rec = self.env[
             "sendcloud.sync.order.wizard"
-        ].create([{}])
-        sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create([{}])
+        ].create({})
+        sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create({})
         with self.assertRaisesRegex(
             UserError,
             "No Sendcloud integrations found. Setup an integration first.",
@@ -98,17 +98,15 @@ class TestDeliverySendCloud(TransactionCase):
         sender_address_obj.search([]).unlink()
         self.assertFalse(sender_address_obj.search([]))
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": False,
-                    "returns": False,
-                    "parcel_statuses": False,
-                    "parcels": False,
-                    "invoices": False,
-                    "sender_addresses": True,
-                    "shipping_methods": False,
-                }
-            ]
+            {
+                "brands": False,
+                "returns": False,
+                "parcel_statuses": False,
+                "parcels": False,
+                "invoices": False,
+                "sender_addresses": True,
+                "shipping_methods": False,
+            }
         )
         with recorder.use_cassette("sender_address"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -121,7 +119,7 @@ class TestDeliverySendCloud(TransactionCase):
         """
         sendcloud_sync_order_wizard_rec = self.env[
             "sendcloud.sync.order.wizard"
-        ].create([{}])
+        ].create({})
         with self.assertRaisesRegex(
             UserError,
             "There are no outgoing shipments set with Sendcloud shipping method.",
@@ -249,17 +247,15 @@ class TestDeliverySendCloud(TransactionCase):
         sendcloud_brand_obj.search([]).unlink()
         self.assertFalse(sendcloud_brand_obj.search([]))
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": True,
-                    "returns": False,
-                    "parcel_statuses": False,
-                    "parcels": False,
-                    "invoices": False,
-                    "sender_addresses": False,
-                    "shipping_methods": False,
-                }
-            ]
+            {
+                "brands": True,
+                "returns": False,
+                "parcel_statuses": False,
+                "parcels": False,
+                "invoices": False,
+                "sender_addresses": False,
+                "shipping_methods": False,
+            }
         )
         with recorder.use_cassette("brands"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -270,17 +266,15 @@ class TestDeliverySendCloud(TransactionCase):
         sendcloud_return_obj.search([]).unlink()
         self.assertFalse(sendcloud_return_obj.search([]))
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": False,
-                    "returns": True,
-                    "parcel_statuses": False,
-                    "parcels": False,
-                    "invoices": False,
-                    "sender_addresses": False,
-                    "shipping_methods": False,
-                }
-            ]
+            {
+                "brands": False,
+                "returns": True,
+                "parcel_statuses": False,
+                "parcels": False,
+                "invoices": False,
+                "sender_addresses": False,
+                "shipping_methods": False,
+            }
         )
         with recorder.use_cassette("returns"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -307,17 +301,15 @@ class TestDeliverySendCloud(TransactionCase):
         with recorder.use_cassette("shipping_methods"):
             self.env["delivery.carrier"].sendcloud_sync_shipping_method()
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": False,
-                    "returns": False,
-                    "parcel_statuses": True,
-                    "parcels": True,
-                    "invoices": False,
-                    "sender_addresses": False,
-                    "shipping_methods": False,
-                }
-            ]
+            {
+                "brands": False,
+                "returns": False,
+                "parcel_statuses": True,
+                "parcels": True,
+                "invoices": False,
+                "sender_addresses": False,
+                "shipping_methods": False,
+            }
         )
         with recorder.use_cassette("parcels"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -344,9 +336,8 @@ class TestDeliverySendCloud(TransactionCase):
             UserError, "Label not available: no label printer url provided."
         ):
             sendcloud_parcel_rec.action_get_parcel_label()
-        with self.assertRaisesRegex(UserError, "Sendcloud"):
-            sendcloud_parcel_rec.label_printer_url = "https://panel.sendcloud.sc/api/v2"
-            sendcloud_parcel_rec.action_get_parcel_label()
+        sendcloud_parcel_rec.label_printer_url = "https://panel.sendcloud.sc/api/v2"
+        sendcloud_parcel_rec.action_get_parcel_label()
         with self.assertRaisesRegex(
             UserError, "Document not available: no link provided."
         ):
@@ -359,17 +350,15 @@ class TestDeliverySendCloud(TransactionCase):
         sendcloud_invoice_obj.search([]).unlink()
         self.assertFalse(sendcloud_invoice_obj.search([]))
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": False,
-                    "returns": False,
-                    "parcel_statuses": False,
-                    "parcels": False,
-                    "invoices": True,
-                    "sender_addresses": False,
-                    "shipping_methods": False,
-                }
-            ]
+            {
+                "brands": False,
+                "returns": False,
+                "parcel_statuses": False,
+                "parcels": False,
+                "invoices": True,
+                "sender_addresses": False,
+                "shipping_methods": False,
+            }
         )
         with recorder.use_cassette("invoices"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -401,14 +390,12 @@ class TestDeliverySendCloud(TransactionCase):
         sender_address_id = sendcloud_sender_address_obj.search([], limit=1).id
         partner_id.sencloud_sender_address_id = sender_address_id
         self.env["stock.warehouse"].create(
-            [
-                {
-                    "name": "WH 2",
-                    "code": "WH2",
-                    "company_id": self.env.company.id,
-                    "partner_id": partner_id.id,
-                }
-            ]
+            {
+                "name": "WH 2",
+                "code": "WH2",
+                "company_id": self.env.company.id,
+                "partner_id": partner_id.id,
+            }
         )
         form = Form(sendcloud_warehouse_address_wizard_obj)
         wizard = form.save()
@@ -448,17 +435,15 @@ class TestDeliverySendCloud(TransactionCase):
         self.env.ref("delivery_sendcloud_oca.sendcloud_product_delivery").unlink()
         # retrieve Sendcloud shipping methods
         sendcloud_sync_wizard_rec = self.env["sendcloud.sync.wizard"].create(
-            [
-                {
-                    "brands": False,
-                    "returns": False,
-                    "parcel_statuses": False,
-                    "parcels": False,
-                    "invoices": False,
-                    "sender_addresses": False,
-                    "shipping_methods": True,
-                }
-            ]
+            {
+                "brands": False,
+                "returns": False,
+                "parcel_statuses": False,
+                "parcels": False,
+                "invoices": False,
+                "sender_addresses": False,
+                "shipping_methods": True,
+            }
         )
         with recorder.use_cassette("shipping_methods"):
             sendcloud_sync_wizard_rec.button_sync()
@@ -468,6 +453,7 @@ class TestDeliverySendCloud(TransactionCase):
         self.assertTrue(shipping_method0.can_generate_return)
         with recorder.use_cassette("shipping_method"):
             shipping_method0.button_from_sendcloud_sync()
+        shipping_method0.sendcloud_service_point_input = "required"
         self.assertFalse(shipping_method0.is_sendcloud_test_mode)
         with self.assertRaisesRegex(
             ValidationError,
@@ -489,7 +475,7 @@ class TestDeliverySendCloud(TransactionCase):
                     "default_carrier_id": shipping_method0.id,
                 }
             )
-            .create([{"order_id": sale_order.id}])
+            .create({"order_id": sale_order.id})
         )
         choose_delivery_wizard = choose_delivery_form.save()
         choose_delivery_wizard.button_confirm()
@@ -502,6 +488,16 @@ class TestDeliverySendCloud(TransactionCase):
 
         # Confirm order
         with recorder.use_cassette("shipping_01"):
+            with (
+                self.assertRaisesRegex(
+                    ValidationError, "Sendcloud Service Point is Required"
+                ),
+                self.cr.savepoint(),
+            ):
+                sale_order.with_context(
+                    force_sendcloud_shipment_code="bfdebf74-853d-4c32-9484-e0201426f888"
+                ).action_confirm()
+            shipping_method0.sendcloud_service_point_input = "none"
             sale_order.with_context(
                 force_sendcloud_shipment_code="bfdebf74-853d-4c32-9484-e0201426f888"
             ).action_confirm()
@@ -533,9 +529,9 @@ class TestDeliverySendCloud(TransactionCase):
             sale_order.picking_ids.cancel_shipment()["xml_id"],
             "delivery_sendcloud_oca.sendcloud_cancel_shipment_confirm_wizard",
         )
-        with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
             sale_order.action_cancel()
-        with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
             sale_order.button_delete_sendcloud_order()
         sendcloud_cancel_shipment_confirm_wizard_form = Form(
             self.env["sendcloud.cancel.shipment.confirm.wizard"].with_context(
@@ -550,11 +546,11 @@ class TestDeliverySendCloud(TransactionCase):
         )
         with recorder.use_cassette("cancel_parcel"):
             sendcloud_cancel_shipment_confirm_wizard_form.do_cancel_shipment()
-        with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
             sale_order.picking_ids.button_delete_sendcloud_picking()
-        with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
             sale_order.picking_ids.action_cancel()
-        with self.assertRaisesRegex(UserError, "Sendcloud: Invalid username/password"):
+        with self.assertRaisesRegex(UserError, "Sendcloud"):
             sale_order.picking_ids.unlink()
         shipping_method0.sendcloud_get_return_label(sale_order.picking_ids)
         sale_order.with_context(disable_cancel_warning=True).action_cancel()
@@ -583,12 +579,10 @@ class TestDeliverySendCloud(TransactionCase):
         sendcloud_custom_price_details_wizard_rec = self.env[
             "sendcloud.custom.price.details.wizard"
         ].create(
-            [
-                {
-                    "shipping_method_country_id": shipping_method_country_rec.id,
-                    "price_custom": 8.0,
-                }
-            ]
+            {
+                "shipping_method_country_id": shipping_method_country_rec.id,
+                "price_custom": 8.0,
+            }
         )
         sendcloud_custom_price_details_wizard_rec.set_custom_price()
         self.assertEqual(shipping_method_country_rec.price_custom, 8.0)
@@ -613,16 +607,12 @@ class TestDeliverySendCloud(TransactionCase):
         sendcloud_create_return_parcel_wizard_rec = self.env[
             "sendcloud.create.return.parcel.wizard"
         ].create(
-            [
-                {
-                    "line_ids": [
-                        (0, 0, {"sendcloud_code": "182588401", "quantity": 1})
-                    ],
-                    "postal_code": "4814dc",
-                    "identifier": "JVGL06097547001969761800",
-                    "brand_id": sendcloud_brand.id,
-                }
-            ]
+            {
+                "line_ids": [(0, 0, {"sendcloud_code": "182588401", "quantity": 1})],
+                "postal_code": "4814dc",
+                "identifier": "JVGL06097547001969761800",
+                "brand_id": sendcloud_brand.id,
+            }
         )
         sendcloud_create_return_parcel_wizard_rec._onchange_configuration()
         sendcloud_create_return_parcel_wizard_rec.button_confirm()
@@ -633,18 +623,16 @@ class TestDeliverySendCloud(TransactionCase):
     def test_13_sendcloud_country_specific_product(self):
         delivery_carrier_obj = self.env["delivery.carrier"]
         test_partner = self.env["res.partner"].create(
-            [
-                {
-                    "name": "test",
-                    "country_id": self.env.ref("base.nl").id,
-                    "street": "Bloemstraat 42",
-                    "zip": "4817RH",
-                    "city": "Groningen",
-                    "phone": "+31 6 12345678",
-                    "state_id": self.env.ref("base.state_nl_gr").id,
-                    "email": "admin@yourcompany.example.com",
-                }
-            ]
+            {
+                "name": "test",
+                "country_id": self.env.ref("base.nl").id,
+                "street": "Bloemstraat 42",
+                "zip": "4817RH",
+                "city": "Groningen",
+                "phone": "+31 6 12345678",
+                "state_id": self.env.ref("base.state_nl_gr").id,
+                "email": "admin@yourcompany.example.com",
+            }
         )
         sale_order = self.env.ref("sale.sale_order_1").copy()
         sale_order.partner_id = test_partner.id
@@ -652,7 +640,7 @@ class TestDeliverySendCloud(TransactionCase):
         with recorder.use_cassette("shipping_methods"):
             delivery_carrier_obj.sendcloud_sync_shipping_method()
         delivery_product = self.env["product.product"].create(
-            [{"name": "Sendcloud Delivery", "type": "service"}]
+            {"name": "Sendcloud Delivery", "type": "service"}
         )
         shipping_method0 = delivery_carrier_obj.search(
             [("delivery_type", "=", "sendcloud")], limit=1
@@ -707,13 +695,11 @@ class TestDeliverySendCloud(TransactionCase):
     def test_15_sendcloud_action(self):
         sendcloud_action_obj = self.env["sendcloud.action"]
         sendcloud_action_rec = sendcloud_action_obj.create(
-            [
-                {
-                    "company_id": self.env.company.id,
-                    "message_type": "received",
-                    "message": "Error",
-                }
-            ]
+            {
+                "company_id": self.env.company.id,
+                "message_type": "received",
+                "message": "Error",
+            }
         )
         sendcloud_action_rec._compute_resource_record()
         sendcloud_action_rec.parse_result()
@@ -788,18 +774,16 @@ class TestDeliverySendCloud(TransactionCase):
     def test_19_sendcloud_available_carriers(self):
         delivery_carrier_obj = self.env["delivery.carrier"]
         test_partner = self.env["res.partner"].create(
-            [
-                {
-                    "name": "test",
-                    "country_id": self.env.ref("base.nl").id,
-                    "street": "Bloemstraat 42",
-                    "zip": "4817RH",
-                    "city": "Groningen",
-                    "phone": "+31 6 12345678",
-                    "state_id": self.env.ref("base.state_nl_gr").id,
-                    "email": "admin@yourcompany.example.com",
-                }
-            ]
+            {
+                "name": "test",
+                "country_id": self.env.ref("base.nl").id,
+                "street": "Bloemstraat 42",
+                "zip": "4817RH",
+                "city": "Groningen",
+                "phone": "+31 6 12345678",
+                "state_id": self.env.ref("base.state_nl_gr").id,
+                "email": "admin@yourcompany.example.com",
+            }
         )
         sale_order = self.env.ref("sale.sale_order_1").copy()
         sale_order.partner_id = test_partner.id

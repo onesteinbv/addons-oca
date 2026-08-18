@@ -332,6 +332,17 @@ OCA, or the Odoo Community Association, is a nonprofit organization whose
 mission is to support the collaborative development of Odoo features and
 promote its widespread use.
 
+.. |maintainer-tarteo| image:: https://github.com/tarteo.png?size=40px
+    :target: https://github.com/tarteo
+    :alt: tarteo
+.. |maintainer-bytemeasap| image:: https://github.com/bytemeasap.png?size=40px
+    :target: https://github.com/bytemeasap
+    :alt: bytemeasap
+
+Current `maintainers <https://odoo-community.org/page/maintainer-role>`__:
+
+|maintainer-tarteo| |maintainer-bytemeasap| 
+
 This module is part of the `OCA/delivery-carrier <https://github.com/OCA/delivery-carrier/tree/18.0/delivery_sendcloud_oca>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.

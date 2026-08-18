@@ -124,20 +124,18 @@ class SendcloudRequest(models.AbstractModel):
             raise UserError(_("Sendcloud: %s") % error_msg or resp.text)
         company = self.company_id
         self.env["sendcloud.action"].create(
-            [
-                {
-                    "company_id": company.id,
-                    "sendcloud_integration_id": self.id,
-                    "message_type": "sent",
-                    "exitcode": str(resp.status_code) if resp.status_code else False,
-                    "action": f"{type_request}: {url}",
-                    "message": decoded_content,
-                    "response_time": response_time,
-                    "sent_payload": sent_payload or False,
-                    "model": self._name,
-                    "resid": self.id,
-                }
-            ]
+            {
+                "company_id": company.id,
+                "sendcloud_integration_id": self.id,
+                "message_type": "sent",
+                "exitcode": str(resp.status_code) if resp.status_code else False,
+                "action": f"{type_request}: {url}",
+                "message": decoded_content,
+                "response_time": response_time,
+                "sent_payload": sent_payload or False,
+                "model": self._name,
+                "resid": self.id,
+            }
         )
 
     def _iterate_pagination(self, response, urlpath, list_name):

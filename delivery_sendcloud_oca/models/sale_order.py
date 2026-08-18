@@ -165,12 +165,10 @@ class SaleOrder(models.Model):
                         }
                     )
                     .create(
-                        [
-                            {
-                                "advance_payment_method": "percentage",
-                                "amount": 100,
-                            }
-                        ]
+                        {
+                            "advance_payment_method": "percentage",
+                            "amount": 100,
+                        }
                     )
                 )
                 downpayment_wizard.create_invoices()

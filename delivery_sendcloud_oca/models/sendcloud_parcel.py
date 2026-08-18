@@ -162,7 +162,7 @@ class SendcloudParcel(models.Model):
         for parcel in self:
             brands = parcel.company_id.sendcloud_brand_ids
             # TODO only brands with domain?
-            parcel.brand_id = brands and brands[0]
+            parcel.brand_id = brands[:1]
 
     @api.model
     def _prepare_sendcloud_parcel_from_response(self, parcel):
@@ -247,22 +247,19 @@ class SendcloudParcel(models.Model):
 
     def _generate_parcel_labels(self):
         for parcel in self.filtered(lambda p: p.label_printer_url):
-            if not parcel.attachment_id:
-                integration = parcel.company_id.sendcloud_default_integration_id
-                filename = parcel._generate_parcel_label_filename()
-                label = integration.get_parcel_label(parcel.label_printer_url)
-                attachment_id = self.env["ir.attachment"].create(
-                    [
-                        {
-                            "name": filename,
-                            "res_id": parcel.id,
-                            "res_model": parcel._name,
-                            "datas": base64.b64encode(label),
-                            "description": parcel.name,
-                        }
-                    ]
-                )
-                parcel.attachment_id = attachment_id
+            integration = parcel.company_id.sendcloud_default_integration_id
+            filename = parcel._generate_parcel_label_filename()
+            label = integration.get_parcel_label(parcel.label_printer_url)
+            attachment_id = self.env["ir.attachment"].create(
+                {
+                    "name": filename,
+                    "res_id": parcel.id,
+                    "res_model": parcel._name,
+                    "datas": base64.b64encode(label),
+                    "description": parcel.name,
+                }
+            )
+            parcel.attachment_id = attachment_id
 
     def _generate_parcel_label_filename(self):
         self.ensure_one()
@@ -399,15 +396,13 @@ class SendcloudParcelDocument(models.Model):
             content = integration.get_parcel_document(document.link)
             filename = document.generate_parcel_document_filename()
             attachment_id = self.env["ir.attachment"].create(
-                [
-                    {
-                        "name": filename,
-                        "res_id": document.id,
-                        "res_model": document._name,
-                        "datas": base64.b64encode(content),
-                        "description": document.name,
-                    }
-                ]
+                {
+                    "name": filename,
+                    "res_id": document.id,
+                    "res_model": document._name,
+                    "datas": base64.b64encode(content),
+                    "description": document.name,
+                }
             )
             document.attachment_id = attachment_id
 

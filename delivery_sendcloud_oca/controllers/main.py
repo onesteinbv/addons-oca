@@ -111,7 +111,7 @@ class DeliverySendcloud(http.Controller):
                         and not i.secret_key
                         and not i.sendcloud_code
                     )
-                    integration = integrations and integrations[0]
+                    integration = integrations and integrations[:1]
                     _logger.info("Sendcloud integration:%s", integration.id)
                     return integration
         return request.env["sendcloud.integration"]

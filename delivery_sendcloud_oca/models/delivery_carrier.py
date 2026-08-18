@@ -236,7 +236,6 @@ class DeliveryCarrier(models.Model):
         )
 
     def _is_available_for_order(self, order):
-        res = super()._is_available_for_order(order)
         if self.delivery_type == "sendcloud":
             if self.sendcloud_is_return:
                 return False
@@ -272,7 +271,8 @@ class DeliveryCarrier(models.Model):
             )
             if self.sendcloud_code not in countries.mapped("method_code"):
                 return False
-        return res
+        else:
+            return super()._is_available_for_order(order)
 
     # ----------------- #
     # Sendcloud methods #
@@ -349,19 +349,17 @@ class DeliveryCarrier(models.Model):
         if product:
             return product
         return self.env["product.product"].create(
-            [
-                {
-                    "name": "Sendcloud delivery charges",
-                    "default_code": "sendcloud_delivery",
-                    "type": "service",
-                    "categ_id": self.env.ref("delivery.product_category_deliveries").id,
-                    "sale_ok": False,
-                    "purchase_ok": False,
-                    "list_price": 0.0,
-                    "description_sale": "Delivery Cost",
-                    "company_id": company_id,
-                }
-            ]
+            {
+                "name": "Sendcloud delivery charges",
+                "default_code": "sendcloud_delivery",
+                "type": "service",
+                "categ_id": self.env.ref("delivery.product_category_deliveries").id,
+                "sale_ok": False,
+                "purchase_ok": False,
+                "list_price": 0.0,
+                "description_sale": "Delivery Cost",
+                "company_id": company_id,
+            }
         )
 
     @api.model

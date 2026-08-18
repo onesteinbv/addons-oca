@@ -8,6 +8,7 @@
     "version": "18.0.1.0.0",
     "website": "https://github.com/OCA/delivery-carrier",
     "author": "Onestein,Odoo Community Association (OCA)",
+    "maintainers": ["tarteo", "bytemeasap"],
     "license": "LGPL-3",
     "depends": ["base_address_extended", "stock_delivery", "web", "sale", "onboarding"],
     "data": [

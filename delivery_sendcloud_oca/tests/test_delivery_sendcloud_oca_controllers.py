@@ -40,7 +40,7 @@ class TestDeliverySendCloudControllers(HttpCase):
             "public_key": "test",
             "secret_key": "test",
         }
-        self.integration = self.env["sendcloud.integration"].create([vals])
+        self.integration = self.env["sendcloud.integration"].create(vals)
 
     @mute_logger("py.warnings")
     def test_01_sendcloud_integration_credentials(self):

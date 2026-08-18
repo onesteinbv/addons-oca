@@ -323,7 +323,7 @@ class SendcloudCreateReturnParcelWizard(models.TransientModel):
             parcels = self.env["sendcloud.parcel"].sendcloud_create_update_parcels(
                 [parcel_data], self.brand_id.company_id.id
             )
-            self.parcel_id = parcels and parcels[0]
+            self.parcel_id = parcels and parcels[:1]
 
             # Carriers
             carriers_data = outgoing_parcel_data.get("data", {}).get("carriers")
