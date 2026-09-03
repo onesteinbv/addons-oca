@@ -6,133 +6,133 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-05-13 14:32+0000\n"
-"Last-Translator: Marcel Savegnago <marcel.savegnago@gmail.com>\n"
+"PO-Revision-Date: 2026-05-17 14:46+0000\n"
+"Last-Translator: Mohamed Essam Salem <mohamed.e.salem@protonmail.com>\n"
 "Language-Team: none\n"
-"Language: pt_BR\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.10.4\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #. module: helpdesk_mgmt_merge
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_merge.helpdesk_ticket_merge_view_form
 msgid ""
-"<span class=\"text-muted\">NB: This will archive the selected tickets "
-"(Except the destination ticket)\n"
+"<span class=\"text-muted\">NB: This will archive the selected tickets (Except the destination ticket)\n"
 "                    </span>"
 msgstr ""
-"<span class=\"text-muted\">OBS: Isso arquivará os chamados selecionados "
-"(exceto o chamado de destino)\n"
+"<span class=\"text-muted\">ملاحظة: سيتم أرشفة الطلبات المحددة (باستثناء طلب "
+"الواجهة)\n"
 "                    </span>"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__user_id
 msgid "Assigned to"
-msgstr "Atribuído a"
+msgstr "مُسند إلى"
 
 #. module: helpdesk_mgmt_merge
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_merge.helpdesk_ticket_merge_view_form
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "إلغاء"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__create_new_ticket
 msgid "Create a new ticket"
-msgstr "Criar um novo chamado"
+msgstr "إنشاء طلب جديد"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__create_uid
 msgid "Created by"
-msgstr "Criado por"
+msgstr "أنشأ بواسطة"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__create_date
 msgid "Created on"
-msgstr "Criado em"
+msgstr "أنشأ في"
 
 #. module: helpdesk_mgmt_merge
 #. odoo-python
 #: code:addons/helpdesk_mgmt_merge/wizard/helpdesk_ticket_merge.py:0
 msgid "Description from ticket %(name)s: %(description)s"
-msgstr "Descrição do chamado %(name)s: %(description)s"
+msgstr "وصف من طلب %(name)s: %(description)s"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__dst_helpdesk_team_id
 msgid "Destination Helpdesk Team"
-msgstr "Equipe de Helpdesk de Destino"
+msgstr "وجهة فريق ادارة الطلبات"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__display_name
 msgid "Display Name"
-msgstr "Nome Exibido"
+msgstr "اسم العرض"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model,name:helpdesk_mgmt_merge.model_helpdesk_ticket_merge
 msgid "Helpdesk Ticket Merge"
-msgstr "Mesclagem de chamados do Helpdesk"
+msgstr "دمج الطلبات"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__id
 msgid "ID"
-msgstr "ID"
+msgstr "معرّف"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__write_uid
 msgid "Last Updated by"
-msgstr "Última Atualização por"
+msgstr "آخر تحديث بواسطة"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__write_date
 msgid "Last Updated on"
-msgstr "Última Atualização em"
+msgstr "آخر تحديث في"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.actions.act_window,name:helpdesk_mgmt_merge.action_helpdesk_ticket_merge
 msgid "Merge Helpdesk Tickets"
-msgstr "Mesclar Chamados do Helpdesk"
+msgstr "دمج الطلبات"
 
 #. module: helpdesk_mgmt_merge
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_merge.helpdesk_ticket_merge_view_form
 msgid "Merge Tickets"
-msgstr "Mesclar Chamados"
+msgstr "دمج الطلبات"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__dst_ticket_id
 msgid "Merge into an existing ticket"
-msgstr "Mesclar em um chamado existente"
+msgstr "دمج في طلب موجود"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__dst_ticket_name
 msgid "New ticket name"
-msgstr "Novo nome do chamado"
+msgstr "اسم الطلب الجديد"
 
 #. module: helpdesk_mgmt_merge
 #. odoo-python
 #: code:addons/helpdesk_mgmt_merge/wizard/helpdesk_ticket_merge.py:0
 msgid "No description"
-msgstr "Sem descrição"
+msgstr "لا يوجد وصف"
 
 #. module: helpdesk_mgmt_merge
 #. odoo-python
 #: code:addons/helpdesk_mgmt_merge/wizard/helpdesk_ticket_merge.py:0
 msgid "This helpdesk ticket has been merged %(way)s %(tickets)s"
-msgstr ""
+msgstr "تم دمج هذا الطلب %(way)s %(tickets)s"
 
 #. module: helpdesk_mgmt_merge
 #: model:ir.model.fields,field_description:helpdesk_mgmt_merge.field_helpdesk_ticket_merge__ticket_ids
 msgid "Tickets to Merge"
-msgstr "Chamados para o Mesclar"
+msgstr "الطلبات المراد دمجها"
 
 #. module: helpdesk_mgmt_merge
 #. odoo-python
 #: code:addons/helpdesk_mgmt_merge/wizard/helpdesk_ticket_merge.py:0
 msgid "from"
-msgstr ""
+msgstr "من"
 
 #. module: helpdesk_mgmt_merge
 #. odoo-python
 #: code:addons/helpdesk_mgmt_merge/wizard/helpdesk_ticket_merge.py:0
 msgid "to"
-msgstr ""
+msgstr "إلى"
