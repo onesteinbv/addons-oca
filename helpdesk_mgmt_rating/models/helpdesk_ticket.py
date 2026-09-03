@@ -37,7 +37,7 @@ class HelpdeskTicket(models.Model):
         if "stage_id" in vals and vals.get("stage_id"):
             stage = self.env["helpdesk.ticket.stage"].browse(vals.get("stage_id"))
             if stage.rating_mail_template_id:
-                self._send_ticket_rating_mail(force_send=False)
+                self._send_ticket_rating_mail(force_send=True)
         return res
 
     def _send_ticket_rating_mail(self, force_send=False):
@@ -51,35 +51,10 @@ class HelpdeskTicket(models.Model):
                         force_send=force_send,
                     )
 
-    def rating_apply(
-        self,
-        rate,
-        token=None,
-        rating=None,
-        feedback=None,
-        subtype_xmlid=None,
-        notify_delay_send=False,
-    ):
-        return super().rating_apply(
-            rate,
-            token=token,
-            rating=rating,
-            feedback=feedback,
-            subtype_xmlid="helpdesk_mgmt_rating.mt_ticket_rating",
-            notify_delay_send=notify_delay_send,
+    def _rating_apply_get_default_subtype_id(self):
+        return self.env["ir.model.data"]._xmlid_to_res_id(
+            "helpdesk_mgmt_rating.mt_ticket_rating"
         )
-
-    def _rating_get_partner(self):
-        res = super()._rating_get_partner()
-        if not res and self.partner_id:
-            return self.partner_id
-        return res
-
-    def rating_get_parent_model_name(self, vals):
-        return "helpdesk.ticket"
-
-    def rating_get_ticket_id(self):
-        return self.id
 
     def action_view_ticket_rating(self):
         self.ensure_one()

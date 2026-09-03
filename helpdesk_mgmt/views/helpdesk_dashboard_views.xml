@@ -4,7 +4,12 @@
         <field name="name">helpdesk.ticket.team.kanban</field>
         <field name="model">helpdesk.ticket.team</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile" create="0" js_class="helpdesk_kanban" highlight_color="color">
+            <kanban
+                class="o_kanban_mobile"
+                create="0"
+                js_class="helpdesk_kanban"
+                highlight_color="color"
+            >
                 <field name="name" />
                 <field name="color" />
                 <field name="todo_ticket_count" />
@@ -27,7 +32,7 @@
                                 </a>
                                 <div role="separator" class="dropdown-divider" />
                                 <t t-if="widget.editable">
-                                    <field name="color" widget="kanban_color_picker"/>
+                                    <field name="color" widget="kanban_color_picker" />
                                 </t>
                             </div>
                         </div>
@@ -56,9 +61,7 @@
                                             type="action"
                                             context="{'search_default_open': 1}"
                                         >
-                                            <t
-                                            t-esc="record.todo_ticket_count.value"
-                                        />
+                                            <t t-esc="record.todo_ticket_count.value" />
                                             To Do
                                         </button>
                                     </div>

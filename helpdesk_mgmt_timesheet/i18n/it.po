@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2025-04-28 09:24+0000\n"
+"PO-Revision-Date: 2026-01-05 20:43+0000\n"
 "Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -58,14 +58,25 @@ msgid "Analytic Line"
 msgstr "Riga analitica"
 
 #. module: helpdesk_mgmt_timesheet
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_helpdesk_ticket_page
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.timesheet_helpdesk_ticket_view_form
 msgid "Date"
 msgstr "Data"
 
 #. module: helpdesk_mgmt_timesheet
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_helpdesk_ticket_page
+msgid "Description"
+msgstr "Descrizione"
+
+#. module: helpdesk_mgmt_timesheet
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.timesheet_helpdesk_ticket_view_form
 msgid "Duration (Hour(s))"
 msgstr "Durata (ora(e))"
+
+#. module: helpdesk_mgmt_timesheet
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_helpdesk_ticket_page
+msgid "Employee"
+msgstr "Dipendente"
 
 #. module: helpdesk_mgmt_timesheet
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.helpdesk_ticket_kanban_view
@@ -135,6 +146,21 @@ msgid "Show Time Control"
 msgstr "Visualizza controllo orario"
 
 #. module: helpdesk_mgmt_timesheet
+#: model:ir.model.fields,field_description:helpdesk_mgmt_timesheet.field_helpdesk_ticket_team__show_timesheet_portal
+msgid "Show Timesheet Portal"
+msgstr "Visualizza portale fogli ore"
+
+#. module: helpdesk_mgmt_timesheet
+#: model:ir.model.fields,help:helpdesk_mgmt_timesheet.field_helpdesk_ticket_team__show_timesheet_portal
+msgid "Show spent time of tickets in the portal"
+msgstr "Visualizza il tempo impegnato nei ticket nel portale"
+
+#. module: helpdesk_mgmt_timesheet
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_ticket_list
+msgid "Spent Time"
+msgstr "Tempo impegnato"
+
+#. module: helpdesk_mgmt_timesheet
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.helpdesk_ticket_kanban_view
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.ticket_view_tree
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.timesheet_helpdesk_ticket_view_form
@@ -179,6 +205,11 @@ msgid "Tickets"
 msgstr "Ticket"
 
 #. module: helpdesk_mgmt_timesheet
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_helpdesk_ticket_page
+msgid "Time Spent"
+msgstr "Tempo impiegato"
+
+#. module: helpdesk_mgmt_timesheet
 #: model:ir.model.fields,field_description:helpdesk_mgmt_timesheet.field_helpdesk_ticket__timesheet_ids
 msgid "Timesheet"
 msgstr "Foglio ore"
@@ -191,6 +222,7 @@ msgstr "Foglio ore consentito"
 #. module: helpdesk_mgmt_timesheet
 #: model:ir.actions.act_window,name:helpdesk_mgmt_timesheet.helpdesk_timesheet_action
 #: model:ir.ui.menu,name:helpdesk_mgmt_timesheet.helpdesk_timesheet_menu
+#: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.portal_helpdesk_ticket_page
 #: model_terms:ir.ui.view,arch_db:helpdesk_mgmt_timesheet.timesheet_helpdesk_ticket_view_form
 msgid "Timesheets"
 msgstr "Fogli ore"
