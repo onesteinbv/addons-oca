@@ -1,12 +1,12 @@
-import {fonts} from "@web_editor/js/wysiwyg/fonts";
-import {patch} from "@web/core/utils/patch";
+import { fonts } from "@web_editor/js/wysiwyg/fonts";
+import { patch } from "@web/core/utils/patch";
 
 patch(fonts, {
     /**
      * Updated parser for FontAwesome >= 6.7.2 icons.
      * Matches icon classes like .fa-icon-name
      */
-    fontIcons: [{base: "fa", parser: /\.(fa-(?:\w|-)+)/i}],
+    fontIcons: [{ base: "fa", parser: /\.(fa-(?:\w|-)+)/i }],
 
     /**
      * Check if a CSS rule is a valid FontAwesome rule.
@@ -56,6 +56,34 @@ patch(fonts, {
     },
 
     /**
+     * Extract unicode value from CSS rule text.
+     *
+     * @private
+     * @param {String} cssText - The CSS rule text
+     * @returns {String|null} Extracted unicode value or null
+     */
+    _extractUnicode(cssText) {
+        const unicodeMatch = cssText.match(/--fa:\s*["']\\([^"']+)["']/);
+        return unicodeMatch ? unicodeMatch[1] : null;
+    },
+
+    /**
+     * Merge Font Awesome aliases sharing the same unicode.
+     *
+     * @private
+     * @param {Object} existing - The existing rule data object
+     * @param {Object} data - The new rule data object to merge
+     */
+    _mergeRuleData(existing, data) {
+        existing.selector += `, ${data.selector}`;
+        for (const name of data.names) {
+            if (!existing.names.includes(name)) {
+                existing.names.push(name);
+            }
+        }
+    },
+
+    /**
      * Override getCssSelectors to only process rules that define the --fa variable
      * (for FontAwesome >= 6.7.2 compatibility)
      * @param {RegExp} filter
@@ -79,7 +107,7 @@ patch(fonts, {
             return this.cacheCssSelectors[filter];
         }
         this.cacheCssSelectors[filter] = [];
-        const seenUnicodes = new Set();
+        const rulesByUnicode = new Map();
         // eslint-disable-next-line no-undef
         const sheets = document.styleSheets;
         for (let i = 0; i < sheets.length; i++) {
@@ -103,16 +131,19 @@ patch(fonts, {
                 if (!this._isValidFontAwesomeRule(selectorText, cssText)) {
                     continue;
                 }
-                // Extract unicode value and skip if duplicate
-                const unicodeMatch = cssText.match(/--fa:\s*["']\\([^"']+)["']/);
-                if (unicodeMatch && seenUnicodes.has(unicodeMatch[1])) {
-                    continue;
-                }
-                if (unicodeMatch) {
-                    seenUnicodes.add(unicodeMatch[1]);
-                }
+                // Extract unicode value
+                const unicode = this._extractUnicode(cssText);
+
                 const data = this._processRuleSelectors(selectorText, cssText, filter);
                 if (data) {
+                    // Merge Font Awesome aliases sharing the same unicode.
+                    if (unicode && rulesByUnicode.has(unicode)) {
+                        this._mergeRuleData(rulesByUnicode.get(unicode), data);
+                        continue;
+                    }
+                    if (unicode) {
+                        rulesByUnicode.set(unicode, data);
+                    }
                     this.cacheCssSelectors[filter].push(data);
                 }
             }
