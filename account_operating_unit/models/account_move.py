@@ -116,10 +116,12 @@ class AccountMove(models.Model):
 
     @api.model
     def _default_operating_unit_id(self):
+        if journal_id := self._context.get("default_journal_id"):
+            journal = self.env["account.journal"].browse(journal_id)
+            return journal.operating_unit_id
         if (
-            self._context.get("default_move_type", False)
-            and self._context.get("default_move_type") != "entry"
-        ):
+            move_type := self._context.get("default_move_type")
+        ) and move_type != "entry":
             return self.env["res.users"]._get_default_operating_unit()
         return False
 
