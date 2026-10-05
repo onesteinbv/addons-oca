@@ -34,7 +34,6 @@ class OperatingUnit(models.Model):
     is_operating_unit_details_empty = fields.Boolean(
         compute="_compute_empty_operating_unit_details"
     )
-
     partner_image = fields.Image(
         string="Logo",
         compute="_compute_partner_image",

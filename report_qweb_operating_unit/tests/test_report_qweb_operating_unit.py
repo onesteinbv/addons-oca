@@ -51,7 +51,7 @@ class TestReportQwebOperatingUnit(OperatingUnitCommon):
             b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC"
             b"0lEQVR42mNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
         )
-        self.ou.partner_image = empty_image
-        self.assertEqual(self.ou.partner_id.image_1920, empty_image)
-        self.ou.partner_id.image_1920 = other_image
-        self.assertEqual(self.ou.partner_image, other_image)
+        self.ou1.partner_image = empty_image
+        self.assertEqual(self.ou1.partner_id.image_1920, empty_image)
+        self.ou1.partner_id.image_1920 = other_image
+        self.assertEqual(self.ou1.partner_image, other_image)
