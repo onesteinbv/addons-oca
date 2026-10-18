@@ -193,3 +193,186 @@ class SaleResourceBookingsCase(BaseCommon):
         # Confirming order, the booking is confirmed too
         order.action_confirm()
         self.assertEqual(booking.state, "confirmed")
+
+    def test_variants_different_booking_types(self):
+        """Test product 'Head massage' with Duration variants: 1 hour, 2 hours, 3 hours."""
+        rbt_1h = self.rbt.copy({"name": "Head Massage 1h", "duration": 1.0})
+        rbt_2h = self.rbt.copy({"name": "Head Massage 2h", "duration": 2.0})
+        rbt_3h = self.rbt.copy({"name": "Head Massage 3h", "duration": 3.0})
+
+        attribute = self.env["product.attribute"].create({"name": "Duration"})
+        val_1h = self.env["product.attribute.value"].create(
+            {"name": "1 hour", "attribute_id": attribute.id}
+        )
+        val_2h = self.env["product.attribute.value"].create(
+            {"name": "2 hours", "attribute_id": attribute.id}
+        )
+        val_3h = self.env["product.attribute.value"].create(
+            {"name": "3 hours", "attribute_id": attribute.id}
+        )
+
+        template = self.env["product.template"].create(
+            {
+                "name": "Head massage",
+                "attribute_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "attribute_id": attribute.id,
+                            "value_ids": [(6, 0, [val_1h.id, val_2h.id, val_3h.id])],
+                        },
+                    )
+                ],
+            }
+        )
+
+        self.assertEqual(len(template.product_variant_ids), 3)
+        v_1h = template.product_variant_ids.filtered(
+            lambda p: val_1h
+            in p.product_template_attribute_value_ids.product_attribute_value_id
+        )
+        v_2h = template.product_variant_ids.filtered(
+            lambda p: val_2h
+            in p.product_template_attribute_value_ids.product_attribute_value_id
+        )
+        v_3h = template.product_variant_ids.filtered(
+            lambda p: val_3h
+            in p.product_template_attribute_value_ids.product_attribute_value_id
+        )
+
+        # Configure booking type per variant
+        v_1h.resource_booking_type_id = rbt_1h
+        v_2h.resource_booking_type_id = rbt_2h
+        v_3h.resource_booking_type_id = rbt_3h
+
+        self.assertEqual(v_1h.resource_booking_type_id, rbt_1h)
+        self.assertEqual(v_2h.resource_booking_type_id, rbt_2h)
+        self.assertEqual(v_3h.resource_booking_type_id, rbt_3h)
+
+        # Template with multiple variants differing in booking type computes to False
+        self.assertFalse(template.resource_booking_type_id)
+
+        # Search by booking type works on product and template
+        self.assertEqual(
+            self.env["product.product"].search(
+                [("resource_booking_type_id", "=", rbt_1h.id)]
+            ),
+            v_1h,
+        )
+        self.assertIn(
+            template,
+            self.env["product.template"].search(
+                [("resource_booking_type_id", "=", rbt_3h.id)]
+            ),
+        )
+
+        # Create sale order with lines for all 3 variants
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "order_line": [
+                    (0, 0, {"product_id": v_1h.id, "product_uom_qty": 1}),
+                    (0, 0, {"product_id": v_2h.id, "product_uom_qty": 1}),
+                    (0, 0, {"product_id": v_3h.id, "product_uom_qty": 1}),
+                ],
+            }
+        )
+        order.action_confirm()
+
+        self.assertEqual(order.resource_booking_count, 3)
+
+        line_1h = order.order_line.filtered(lambda l: l.product_id == v_1h)
+        line_2h = order.order_line.filtered(lambda l: l.product_id == v_2h)
+        line_3h = order.order_line.filtered(lambda l: l.product_id == v_3h)
+
+        booking_1h = line_1h.resource_booking_ids
+        booking_2h = line_2h.resource_booking_ids
+        booking_3h = line_3h.resource_booking_ids
+
+        self.assertEqual(len(booking_1h), 1)
+        self.assertEqual(len(booking_2h), 1)
+        self.assertEqual(len(booking_3h), 1)
+
+        self.assertEqual(booking_1h.type_id, rbt_1h)
+        self.assertEqual(booking_1h.duration, 1.0)
+
+        self.assertEqual(booking_2h.type_id, rbt_2h)
+        self.assertEqual(booking_2h.duration, 2.0)
+
+        self.assertEqual(booking_3h.type_id, rbt_3h)
+        self.assertEqual(booking_3h.duration, 3.0)
+
+    def test_product_without_variants_default_booking_type(self):
+        """Products without variants use the booking type configured on template by default."""
+        template = self.env["product.template"].create(
+            {"name": "Single variant product", "resource_booking_type_id": self.rbt.id,}
+        )
+        self.assertEqual(len(template.product_variant_ids), 1)
+        variant = template.product_variant_ids[0]
+
+        # By default, variant gets template's booking type
+        self.assertEqual(variant.resource_booking_type_id, self.rbt)
+
+        # Sale order creates booking with template booking type
+        order = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "order_line": [
+                    (0, 0, {"product_id": variant.id, "product_uom_qty": 1}),
+                ],
+            }
+        )
+        order.action_confirm()
+        self.assertEqual(order.resource_booking_count, 1)
+        self.assertEqual(order.resource_booking_ids.type_id, self.rbt)
+
+        # Changing template booking type updates the variant
+        rbt_new = self.rbt.copy({"name": "New Template Type", "duration": 3.0})
+        template.resource_booking_type_id = rbt_new
+        self.assertEqual(variant.resource_booking_type_id, rbt_new)
+
+    def test_multi_variant_booking_type_isolation(self):
+        """For products with multiple variants, configuring a booking type on one variant does not affect other variants or the template."""
+        rbt_custom = self.rbt.copy({"name": "Custom Variant Type", "duration": 3.0})
+        attribute = self.env["product.attribute"].create({"name": "Option"})
+        val_a = self.env["product.attribute.value"].create(
+            {"name": "Option A", "attribute_id": attribute.id}
+        )
+        val_b = self.env["product.attribute.value"].create(
+            {"name": "Option B", "attribute_id": attribute.id}
+        )
+
+        template = self.env["product.template"].create(
+            {
+                "name": "Template with multiple variants",
+                "attribute_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "attribute_id": attribute.id,
+                            "value_ids": [(6, 0, [val_a.id, val_b.id])],
+                        },
+                    )
+                ],
+            }
+        )
+        self.assertEqual(len(template.product_variant_ids), 2)
+        v_a = template.product_variant_ids.filtered(
+            lambda p: val_a
+            in p.product_template_attribute_value_ids.product_attribute_value_id
+        )
+        v_b = template.product_variant_ids.filtered(
+            lambda p: val_b
+            in p.product_template_attribute_value_ids.product_attribute_value_id
+        )
+
+        # Configure Variant A with custom booking type, leave Variant B without
+        v_a.resource_booking_type_id = rbt_custom
+
+        self.assertEqual(v_a.resource_booking_type_id, rbt_custom)
+        # Variant B has no booking type configured on variant
+        self.assertFalse(v_b.resource_booking_type_id)
+        # Template with multiple variants computes to False
+        self.assertFalse(template.resource_booking_type_id)
