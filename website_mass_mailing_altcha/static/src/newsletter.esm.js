@@ -48,4 +48,12 @@ publicWidget.registry.subscribe.include({
             rpcBus.removeEventListener("RPC:REQUEST", injectPayload);
         }
     },
+    start: function () {
+        const res = this._super(...arguments);
+        if (this.editableMode) {
+            // We should delete the altcha widget in edit mode
+            this.$el.find(".o_altcha_widget").parents(".s_website_form_custom").remove();
+        }
+        return res;
+    },
 });
